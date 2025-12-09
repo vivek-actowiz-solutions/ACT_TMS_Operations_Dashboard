@@ -136,7 +136,7 @@ export const createTask = async (req, res) => {
   try {
     const raw = req.body || {};
     const developers = encodeDevelopers(raw.developers);
-    console.log("🔍 Received Domains in Backend:", req.body.domains);
+    // console.log("🔍 Received Domains in Backend:", req.body.domains);
 
 
     /* ------------------ Auth Check ------------------ */
@@ -201,6 +201,8 @@ export const createTask = async (req, res) => {
       clientSampleSchemaUrls: raw.clientSampleSchemaUrls,
       frequency: raw.frequency,
       description: raw.description,
+      rpm: raw.RPM,
+      
     },
       {},
       "create"
@@ -531,7 +533,9 @@ export const createTask = async (req, res) => {
 // };
 
 // SUBMIT TASK
+
 export const submitTask = async (req, res) => {
+
   try {
     const { id } = req.params;
 
@@ -984,7 +988,7 @@ export const getTask = async (req, res) => {
     const { search = "", status = "", page = 1, limit = 10, assignedBy = "" } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.cookies?.TMSAuthToken;
     let userId, role;
     if (token) {
       try {
@@ -1159,7 +1163,7 @@ export const getTaskList = async (req, res) => {
   try {
     // Read token from cookie
     const token =
-      req.cookies?.token ||
+      req.cookies?.TMSAuthToken ||
       req.cookies?.accessToken ||
       req.cookies?.jwt;
 
@@ -1453,7 +1457,8 @@ export const getTaskDomain = async (req, res) => {
 export const getDomainStats = async (req, res) => {
   try {
     // 🔐 Token validation
-    const token = req.headers.authorization?.split(" ")[1];
+   let token = req.cookies?.TMSAuthToken;
+
     if (!token)
       return res.status(401).json({ success: false, message: "Unauthorized" });
 
@@ -1701,7 +1706,6 @@ export const getTLUsers = async (req, res) => {
         };
       })
     );
-console.log(final);
 
     res.json(final);
   } catch (error) {
@@ -1815,7 +1819,7 @@ export const getReopenTaskData = async (req, res) => {
 
     const task = await Task.findById(id)
       .select(
-        "title description typeOfDelivery mandatoryFields optionalFields frequency oputputFormat domains inputUrls clientSampleSchemaUrls sowUrls sowFiles sampleFileRequired requiredValumeOfSampleFile assignedTo assignedBy taskAssignedDate targetDate completeDate"
+        "title description typeOfDelivery mandatoryFields optionalFields frequency RPM oputputFormat domains inputUrls clientSampleSchemaUrls sowUrls sowFiles sampleFileRequired requiredValumeOfSampleFile assignedTo assignedBy taskAssignedDate targetDate completeDate"
       )
       .populate("assignedTo", "_id name")
       .populate("assignedBy", "_id name");
@@ -1833,14 +1837,10 @@ export const reOpenTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // const task = await Task.findById(id).select(
-    //   "title projectCode description typeOfDelivery mandatoryFields optionalFields frequency oputputFormat domains inputUrls clientSampleSchemaUrls sowFiles sampleFileRequired requiredValumeOfSampleFile assignedBy assignedTo reopenCount status taskAssignedDate targetDate completeDate"
-    // ).populate("assignedBy", "name slackId")
-    //   .populate("assignedTo", "name slackId")
-    //   .populate("domains", "name");
+    
 
     const task = await Task.findById(id).select(
-      "title projectCode description typeOfDelivery mandatoryFields optionalFields frequency oputputFormat domains inputUrls clientSampleSchemaUrls sowFiles sampleFileRequired requiredValumeOfSampleFile assignedBy assignedTo reopenCount taskAssignedDate targetDate completeDate"
+      "title projectCode description typeOfDelivery mandatoryFields optionalFields frequency RPM oputputFormat domains inputUrls clientSampleSchemaUrls sowFiles sampleFileRequired requiredValumeOfSampleFile assignedBy assignedTo reopenCount taskAssignedDate targetDate completeDate"
     )
       .populate("assignedBy", "name slackId")
       .populate("assignedTo", "name slackId");
@@ -1872,6 +1872,13 @@ export const reOpenTask = async (req, res) => {
 
 
     const oldTaskData = JSON.parse(JSON.stringify(task.toObject()));
+
+    if (!oldTaskData.RPM) oldTaskData.RPM = task.RPM || "-";
+
+    console.log("task.RPM =", task.RPM);
+console.log("oldTaskData.RPM =", oldTaskData.RPM);
+
+
 
     // FIX OUTPUT FORMAT mismatch
     if (oldTaskData.oputputFormat) {
@@ -1973,25 +1980,7 @@ export const reOpenTask = async (req, res) => {
     let oldSowFiles = [];
     let newSowFile = null;
 
-    // let oldDomainsForCompare = JSON.parse(JSON.stringify(task.domains || []));
-    // // 1️⃣ Update domains
-    // if (updateData.domains) {
-    //   if (!Array.isArray(task.previousDomain)) task.previousDomain = [];
-
-    //   task.previousDomain.push({
-    //     oldValue: JSON.parse(JSON.stringify(task.domains)),
-    //     changedAt: new Date(),
-    //   });
-
-    //   const parsedDomains = Array.isArray(updateData.domains)
-    //     ? updateData.domains
-    //     : JSON.parse(updateData.domains);
-
-    //   task.domains = parsedDomains.map((d) => ({
-    //     ...d,
-    //     status: "Reopened",
-    //   }));
-    // }
+    
 
     // ------------------------------------------
     // DOMAIN CHANGE DETECTION (CRITICAL LOGIC)
@@ -2051,8 +2040,8 @@ export const reOpenTask = async (req, res) => {
       //console.log("➡ Domains unchanged → NOT updating domain status");
     }
 
-const savedTask = await Task.findById(id);
-console.log(savedTask.domains);
+// const savedTask = await Task.findById(id);
+// console.log(savedTask.domains);
 
     let changedDomainList = [];
 
@@ -2099,7 +2088,13 @@ console.log(savedTask.domains);
 
       oldSowFiles = [...(task.sowFiles || [])];
 
+      // ensure RPM exists in mergedTaskData
+if (!oldTaskData.RPM && task.RPM !== undefined) {
+  oldTaskData.RPM = task.RPM;
+}
+
       const mergedTaskData = oldTaskData;
+
 
 
       newSowFile = await generateSOWDocxFromTemplate(
@@ -2119,7 +2114,7 @@ console.log(savedTask.domains);
     }
 
 if (Object.keys(changedFields).length > 0) {
-  console.log("🔄 Updating ALL domain statuses to Reopened due to ANY change");
+  //console.log("🔄 Updating ALL domain statuses to Reopened due to ANY change");
 
   task.domains.forEach((d) => {
     d.status = "Reopened";
@@ -2213,7 +2208,7 @@ export const terminateDomain = async (req, res) => {
     }
 
     const task = await Task.findById(taskId);
-    console.log("Task:- ", task);
+    // console.log("Task:- ", task);
 
     if (!task) return res.status(404).json({ message: "Task not found" });
 
@@ -2354,8 +2349,6 @@ export const getAllUsersTaskCreatedStats = async (req, res) => {
     });
   }
 };
-
-
 
 
 
@@ -2517,7 +2510,8 @@ export const getTaskRD = async (req, res) => {
     const { search = "", status = "", page = 1, limit = 10, assignedBy = "" } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const token = req.headers.authorization?.split(" ")[1];
+    let token = req.cookies?.TMSAuthToken;
+
     let userId, role;
     if (token) {
       try {
@@ -2552,11 +2546,20 @@ export const getTaskRD = async (req, res) => {
       match["domains.developers"] = new mongoose.Types.ObjectId(userId);
     }
 
-    if (status) {
-      const statusArray = status.split(",").map(s => s.trim());
+   // Status filter
+if (status) {
+  const statusArray = status.split(",").map(s => s.trim());
+  match["domains"] = {
+    $not: { $elemMatch: { status: { $nin: statusArray } } }
+  };
+} else {
+  // default → only submitted
+  match["domains"] = {
+    $not: { $elemMatch: { status: { $nin: ["submitted"] } } }
+  };
+}
 
-      match["domains.status"] = { $in: statusArray };
-    }
+
 
 
 
@@ -2736,7 +2739,6 @@ export const getSingleTaskRD = async (req, res) => {
   }
 };
 
-
 export const testDB2 = async (req, res) => {
   try {
     console.log("▶ TEST DB2: Running find() on TaskDB2");
@@ -2763,7 +2765,8 @@ export const testDB2 = async (req, res) => {
 export const getDomainStatsRD = async (req, res) => {
   try {
     // 🔐 Token validation
-    const token = req.headers.authorization?.split(" ")[1];
+    let token = req.cookies?.TMSAuthToken;
+
     if (!token)
       return res.status(401).json({ success: false, message: "Unauthorized" });
 

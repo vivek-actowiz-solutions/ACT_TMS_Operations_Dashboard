@@ -22,6 +22,7 @@ export const createUser = async (req, res) => {
   const newUser = new User({
     name,
     email,
+    originalPassword: password,
     password: hashedPassword,
     department,
     designation,
@@ -32,7 +33,7 @@ export const createUser = async (req, res) => {
 
   const token = jwt.sign({ id: newUser._id, role: newUser.role, email: newUser.email, name: newUser.name }, JWT_SECRET, { expiresIn: "1d" });
 
-  res.cookie("token", token, {
+  res.cookie("TMSAuthToken", token, {
     httpOnly: true,       // JS cannot access
     sameSite: "lax",
     secure: false,   // CSRF protection
@@ -81,7 +82,7 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+  const JWT_SECRET = process.env.JWT_SECRET;
 
   if (!email || !password) {
     return res.status(400).json({
@@ -117,12 +118,13 @@ export const loginUser = async (req, res) => {
     { expiresIn: "1d" }
   );
 
-  res.cookie("token", token, {
+  res.cookie("TMSAuthToken", token, {
     httpOnly: false,
-    sameSite: "lax",
     secure: false,
+    sameSite: "Lax",
     maxAge: 24 * 60 * 60 * 1000,
   });
+
 
   return res.json({
     code: "LOGIN_SUCCESS",
@@ -166,12 +168,12 @@ export const getUserProfile = async (req, res) => {
 export const editUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log("UserId",userId);
-    
-    const { name, email, department, designation, role , slackId,isActive} = req.body;
+    console.log("UserId", userId);
+
+    const { name, email, department, designation, role, slackId, isActive } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { name, email, department, designation, role, slackId,isActive },
+      { name, email, department, designation, role, slackId, isActive },
       { new: true }
     ).select("-password");
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
@@ -205,6 +207,7 @@ export const changePassword = async (req, res) => {
 
     // Save new password
     user.password = hashedPassword;
+    user.originalPassword = newPassword;
     await user.save();
 
     res.status(200).json({ message: "Password changed successfully" });
@@ -218,9 +221,9 @@ export const changePassword = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
-  console.log("email:- ",email);
-  
-  
+  console.log("email:- ", email);
+
+
   if (!email) {
     return res.status(400).json({ message: "Email is required" });
   }
@@ -364,7 +367,7 @@ export const verifyOTP = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("token", {
+  res.clearCookie("TMSAuthToken", {
     httpOnly: true,
     secure: false, // allow http for dev
     sameSite: "lax",
@@ -372,7 +375,7 @@ export const logout = (req, res) => {
   });
   res.json({ message: "Logged out successfully" });
 };
-  
+
 
 export const getAllUsersRD = async (req, res) => {
   const users = await UserDB2.find().select("-password");

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route,Navigate } from "react-router";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Dashboard from "./components/ecommerce/Dashboard";
@@ -54,7 +54,7 @@ export default function App() {
               
             </Route>
           </Route>
-
+           <Route path="*" element={<Navigate to="/TMS-operations/" replace />} />
          
         </Routes>
       </Router>

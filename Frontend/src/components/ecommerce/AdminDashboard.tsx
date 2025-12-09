@@ -91,7 +91,7 @@ const AdminDashboard: React.FC = () => {
           <table className="min-w-full text-left text-sm">
             <thead className="bg-gray-100 dark:bg-gray-800/50">
               <tr>
-                {["Sr", "Name", "Email", "Department", "Designation", "Role", "Actions"].map((h) => (
+                {["Sr", "Name", "Email","Password", "Department", "Designation", "Role", "Actions"].map((h) => (
                   <th
                     key={h}
                     className="px-4 py-3 text-gray-700 dark:text-gray-300 font-medium border-b border-gray-200 dark:border-gray-700"
@@ -110,6 +110,7 @@ const AdminDashboard: React.FC = () => {
                   <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 ">{idx + 1}</td>
                   <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">{user.name}</td>
                   <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">{user.email}</td>
+                  <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">{user.originalPassword}</td>
                   <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">{user.department}</td>
                   <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">{user.designation}</td>
                   <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">{user.role}</td>

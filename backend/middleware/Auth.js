@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 // make sure this is used in your app.js/server.js
 
-const JWT_SECRET=process.env.JWT_SECRET || "d103c928541d30cd72fa283c98d4d6a2";
+const JWT_SECRET=process.env.JWT_SECRET 
 
 
 const verifyToken = (req, res, next) => {
   // 1️⃣ Check token in cookie first
-  const token = req.cookies?.token;
-console.log(token);
+  const token = req.cookies?.TMSAuthToken;
+
 
   if (!token) {
     console.log("❌ No token found in cookies");

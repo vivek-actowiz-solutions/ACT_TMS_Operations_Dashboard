@@ -281,7 +281,7 @@ const TaskPage: React.FC = () => {
     }
   };
 
-  const token = getCookie("token");
+  const token = getCookie("TMSAuthToken");
   if (!token) return navigate("/TMS-operations/login");
 
   useEffect(() => {
@@ -355,10 +355,6 @@ const TaskPage: React.FC = () => {
 
       const res = await fetch(`${apiUrl}/tasks?${queryParams}`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
-        },
         credentials: "include",
       });
 
@@ -788,7 +784,7 @@ const TaskPage: React.FC = () => {
               onClick={() => setShowPOCModal(true)}
               className="bg-[#3C01AF] hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-semibold w-full sm:w-auto"
             >
-              💡 Generate POC File
+              💡 SOW For Production
             </button>
           )}
 

@@ -58,7 +58,18 @@ export const generateSOWDocxFromTemplate = async (task,
     return val.toString();
   };
 
+  const freqArray = task.frequency
+  ? task.frequency.split(",").map(f => f.trim())
+  : [];
 
+const isRPM = freqArray.includes("RPM");
+
+const formattedFreq = freqArray.map(f => {
+  if (f === "RPM") {
+    return `Request-Per-Minute (RPM: ${task.rpm})`; 
+  }
+  return f;
+});
 
 
   // 📄 Create DOCX document
@@ -457,22 +468,16 @@ export const generateSOWDocxFromTemplate = async (task,
 
           dividerLine,
 
-          // ===== 7️⃣ Frequency =====
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "7. Frequency",
-                bold: true,
-                size: 24,
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: 720 },
-            children: [
-              new TextRun({ text: `• ${safeJoin(task.frequency)}`, size: 24 }),
-            ],
-          }),
+         // ===== 7️⃣ Frequency =====
+new Paragraph({
+  children: [new TextRun({ text: "7. Frequency", bold: true, size: 24 })],
+}),
+...formattedFreq.map((f) =>
+  new Paragraph({
+    indent: { left: 720 },
+    children: [new TextRun({ text: `• ${f}`, size: 24 })],
+  })
+),
 
           dividerLine,
           // ===== 8️⃣ Additional Remarks =====

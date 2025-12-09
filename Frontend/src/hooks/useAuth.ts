@@ -25,7 +25,7 @@ export const useAuth = () => {
   });
 
   useEffect(() => {
-    const token = Cookies.get("token"); // read JWT from cookies
+    const token = Cookies.get("TMSAuthToken"); // read JWT from cookies
     if (token) {
       try {
         const decoded = jwtDecode<DecodedToken>(token); // type-safe decode
@@ -42,7 +42,7 @@ export const useAuth = () => {
   }, []);
 
   const logout = () => {
-    Cookies.remove("token"); // remove token cookie
+    Cookies.remove("TMSAuthToken"); // remove token cookie
     window.location.href = "/TMS-operations/login"; // redirect to login
   };
 

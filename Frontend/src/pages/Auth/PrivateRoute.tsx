@@ -17,14 +17,16 @@ interface TokenPayload {
 
 // Decode JWT token from cookie
 function decodeToken(): TokenPayload | null {
-  const token = Cookies.get("token");
-  //console.log("token", token)
+  const token = Cookies.get("TMSAuthToken");
+  console.log("Token from cookie:", token);
+
   if (!token) return null;
 
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
+    console.log("Decoded payload:", payload);
     return payload;
-  } catch (err) {
+  } catch (err) { 
     console.error("Invalid token", err);
     return null;
   }

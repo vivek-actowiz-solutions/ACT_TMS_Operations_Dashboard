@@ -47,6 +47,7 @@ const taskSchema = new mongoose.Schema(
     mandatoryFields: { type: String },
     optionalFields: { type: String },
     frequency: { type: String },
+    RPM: { type: Number },
     oputputFormat: { type: String },
    
     previousDomain: [

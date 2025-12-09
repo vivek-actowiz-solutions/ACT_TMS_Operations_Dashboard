@@ -31,6 +31,7 @@ const UserProfile: React.FC<UserProfileProps> = () => {
       try {
         const res = await fetch(`${apiUrl}/users/profile/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
         });
         const data = await res.json();
         setUser(data.user || data); // adapt to API response

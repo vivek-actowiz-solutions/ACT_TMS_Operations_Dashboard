@@ -277,7 +277,7 @@ const TaskPage: React.FC = () => {
     }
   };
 
-  const token = getCookie("token");
+  const token = getCookie("TMSAuthToken");
   if (!token) return navigate("/TMS-operations/login");
 
   useEffect(() => {
@@ -296,14 +296,14 @@ const TaskPage: React.FC = () => {
   }, []);
 
   const cards = [
-    { label: "Total ", value: stats.total, icon: <FiClipboard />, bgColor: "bg-blue-50", textColor: "text-gray-500" },
+    //{ label: "Total ", value: stats.total, icon: <FiClipboard />, bgColor: "bg-blue-50", textColor: "text-gray-500" },
     { label: "Completed ", value: stats.completed, icon: <FiCheckCircle />, bgColor: "bg-green-50", textColor: "text-gray-500" },
-    { label: "Pending ", value: stats.pending, icon: <FiClock />, bgColor: "bg-yellow-50", textColor: "text-gray-500" },
-    { label: "In-Progress ", value: stats.inProgress, icon: <FiPlay />, bgColor: "bg-purple-50", textColor: "text-gray-500" },
-    { label: "Delayed ", value: stats.delayed, icon: <LuClockAlert />, bgColor: "bg-red-50", textColor: "text-gray-500" },
-    { label: "In-R&D", value: stats.inRD, icon: <FiBox />, bgColor: "bg-orange-50", textColor: "text-gray-500" },
-    { label: "Reopened", value: stats.Reopened, icon: <GoIssueReopened />, bgColor: "bg-pink-50", textColor: "text-gray-500" },
-    { label: "Terminated", value: stats.Terminated || 0, icon: <MdDeleteOutline />, bgColor: "bg-gray-50", textColor: "text-gray-500" },
+    // { label: "Pending ", value: stats.pending, icon: <FiClock />, bgColor: "bg-yellow-50", textColor: "text-gray-500" },
+    // { label: "In-Progress ", value: stats.inProgress, icon: <FiPlay />, bgColor: "bg-purple-50", textColor: "text-gray-500" },
+    // { label: "Delayed ", value: stats.delayed, icon: <LuClockAlert />, bgColor: "bg-red-50", textColor: "text-gray-500" },
+    // { label: "In-R&D", value: stats.inRD, icon: <FiBox />, bgColor: "bg-orange-50", textColor: "text-gray-500" },
+    // { label: "Reopened", value: stats.Reopened, icon: <GoIssueReopened />, bgColor: "bg-pink-50", textColor: "text-gray-500" },
+    // { label: "Terminated", value: stats.Terminated || 0, icon: <MdDeleteOutline />, bgColor: "bg-gray-50", textColor: "text-gray-500" },
   ];
 
   if (token) {
@@ -683,7 +683,7 @@ const TaskPage: React.FC = () => {
       </div>
 
 
-      {(role === "Admin" || role === "Manager" || role === "TL") && (
+      {/* {(role === "Admin" || role === "Manager" || role === "TL") && (
         <div className="my-5 text-xl flex items-center font-semibold">
           <FaThumbtack className="inline-block mr-2 text-blue-600" />
           <p>Pinned Previous Tasks:-</p>
@@ -692,7 +692,7 @@ const TaskPage: React.FC = () => {
 
         </div>
 
-      )}
+      )} */}
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 flex-wrap">
         <div className="flex flex-col sm:flex-row gap-2 flex-1 w-full">
@@ -727,7 +727,7 @@ const TaskPage: React.FC = () => {
           )}
         </div>
 
-        <div className="relative w-full sm:w-48" ref={dropdownRef}>
+        {/* <div className="relative w-full sm:w-48" ref={dropdownRef}>
           <div
             className="border rounded-lg px-3 py-3 bg-white flex items-center justify-between cursor-pointer"
             onClick={() => setOpenStatusDropdown(!openStatusDropdown)}
@@ -769,7 +769,7 @@ const TaskPage: React.FC = () => {
               ))}
             </div>
           )}
-        </div>
+        </div> */}
 
         <div className="flex flex-wrap gap-2 w-full md:w-auto items-center">
           <button

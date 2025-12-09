@@ -171,7 +171,7 @@ const Dashboard: React.FC = () => {
 
 
   useEffect(() => {
-    const token = getCookie("token");
+    const token = getCookie("TMSAuthToken");
     if (!token) {
       navigate("/TMS-operations/login");
       return;
@@ -290,7 +290,7 @@ const Dashboard: React.FC = () => {
                 <tr>
                   <th className="border px-4 py-2">No.</th>
                   <th className="border px-4 py-2">Name</th>
-                  {["total", "completed", "pending", "inRD", "delayed",'Terminated'].map((col) => (
+                  {["total", "completed", "pending", "inRD", "delayed", 'Terminated'].map((col) => (
                     <th
                       key={col}
                       className="border px-4 py-2 cursor-pointer"
@@ -311,30 +311,30 @@ const Dashboard: React.FC = () => {
               </thead>
 
               <tbody>
-          {sortedDevelopers.map((dev, idx) => (
-            <tr key={idx} className="hover:bg-gray-100 text-center">
-              <td className="border px-4 py-2">{idx + 1}</td>
-              <td className="border px-4 py-2">{dev.name}</td>
-              <td className="border px-4 py-2">{dev.total}</td>
-              <td className="border px-4 py-2">{dev.submitted}</td>
-              <td className="border px-4 py-2">{dev.pending}</td>
-              <td className="border px-4 py-2">{dev.inRD}</td>
-              <td className="border px-4 py-2">{dev.delayed}</td>
-              <td className="border px-4 py-2">{dev.Terminated}</td>
-            </tr>
-          ))}
+                {sortedDevelopers.map((dev, idx) => (
+                  <tr key={idx} className="hover:bg-gray-100 text-center">
+                    <td className="border px-4 py-2">{idx + 1}</td>
+                    <td className="border px-4 py-2">{dev.name}</td>
+                    <td className="border px-4 py-2">{dev.total}</td>
+                    <td className="border px-4 py-2">{dev.submitted}</td>
+                    <td className="border px-4 py-2">{dev.pending}</td>
+                    <td className="border px-4 py-2">{dev.inRD}</td>
+                    <td className="border px-4 py-2">{dev.delayed}</td>
+                    <td className="border px-4 py-2">{dev.Terminated}</td>
+                  </tr>
+                ))}
 
-          <tr className="bg-gray-200 font-bold text-center">
-            <td className="border px-4 py-2"></td>
-            <td className="border px-4 py-2">Total</td>
-            <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.total, 0)}</td>
-            <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.submitted, 0)}</td>
-            <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.pending, 0)}</td>
-            <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.inRD, 0)}</td>
-            <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.delayed, 0)}</td>
-            <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.Terminated, 0)}</td>
-          </tr>
-        </tbody>
+                <tr className="bg-gray-200 font-bold text-center">
+                  <td className="border px-4 py-2"></td>
+                  <td className="border px-4 py-2">Total</td>
+                  <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.total, 0)}</td>
+                  <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.submitted, 0)}</td>
+                  <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.pending, 0)}</td>
+                  <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.inRD, 0)}</td>
+                  <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.delayed, 0)}</td>
+                  <td className="border px-4 py-2">{developers.reduce((sum, dev) => sum + dev.Terminated, 0)}</td>
+                </tr>
+              </tbody>
             </table>
           ) : (
             <p className="text-center text-gray-600 py-6">No developer data found</p>
@@ -362,7 +362,7 @@ const Dashboard: React.FC = () => {
                     { key: "name", label: "User" },
                     { key: "total", label: "Total" },
                     { key: "pending", label: "Pending" },
-                    
+
                     { key: "in-R&D", label: "In R&D" },
                     { key: "submitted", label: "Submitted" },
                     { key: "delayed", label: "Delayed" },

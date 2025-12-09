@@ -1,7 +1,7 @@
 // Small helper utilities for token decoding and role checks
 import Cookies from "js-cookie";
 export function decodeToken() {
-    const token = Cookies.get("token");
+    const token = Cookies.get("TMSAuthToken");
 
     if (!token) return null;
 
