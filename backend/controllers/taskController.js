@@ -834,7 +834,7 @@ CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_SUNIL}>,<@${process
       const slackMsg2 =
         `:white_check_mark: *Task Submitted Successfully*
      ${space}:briefcase: *Task:*  ${task.title || task.projectCode}
-     ${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (Developer)
+     ${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (TL)
      ${space}:paperclip: *Details:* Sample data and feasibility report have been uploaded. Please review and confirm.
      ${space}:bar_chart: *View Task:*  <${taskUrl}|Open Dashboard>
 CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>
@@ -2192,8 +2192,8 @@ export const reOpenTask = async (req, res) => {
     const slackMessage = `
 :repeat: Task Reopened
 ${space}:briefcase: Task: ${task.title}
-${space}:bust_in_silhouette: Assigned By: ${assignedByName}(Manager)
-${space}:date:Assigned To: ${assignedToName} (TL)
+${space}:bust_in_silhouette: Assigned By: ${assignedByName}(Sales)
+${space}:date:Assigned To: ${assignedToName} (Manager)
 ${space}:memo: Details: The task has been reopened due to required updates. Please review the changes and proceed accordingly.
 ${space}:link: <${dashboardUrl} |Open Dashboard>
 CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_SUNIL}>,<@${process.env.SLACK_ID_SUNIL}>
