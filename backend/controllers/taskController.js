@@ -820,7 +820,7 @@ export const submitTask = async (req, res) => {
 ${space}:briefcase: *Task:*  ${task.title || task.projectCode}
 ${space}:jigsaw: *Domain Details:*
 ${domainInfoLines}
-${space}:bust_in_silhouette: *Sales Person:* <@${assigner?.slackId || ''}> (Manager)
+${space}:bust_in_silhouette: *Assigned By:* <@${assigner?.slackId || ''}> (Manager)
 ${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (TL)
 ${space}:paperclip: *Details:* Sample data and feasibility report have been uploaded. Please review and confirm.
 ${space}:bar_chart: *View Task:*  <${taskUrl}|Open Dashboard>

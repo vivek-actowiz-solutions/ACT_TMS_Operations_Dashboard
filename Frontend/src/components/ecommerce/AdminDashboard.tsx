@@ -79,13 +79,7 @@ const AdminDashboard: React.FC = () => {
           </button>
         </div>
 
-         <div className="my-5 text-xl flex items-center font-semibold">
-                  <FaThumbtack className="inline-block mr-2 text-blue-600" />
-                  <p>Pinned Employees Details:-</p>
-                  <a href="https://docs.google.com/spreadsheets/d/16tHUYp5YTZKBZjtXl2Bmh9APwtUYIqaj/edit?gid=1294940762#gid=1294940762" target="_blank"
-                    rel="noopener noreferrer"><FaFileExcel className="inline-block mb-1 ml-2 text-green-600" size={25} /> <span className="text-[13px] font-medium underline text-blue-600">Click Here to View</span></a>
         
-       </div>
 
         {/* Users Table */}
         <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
