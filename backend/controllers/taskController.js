@@ -256,8 +256,8 @@ export const createTask = async (req, res) => {
     const slackMessage = `
         :bell: *New Task Assigned*
         :briefcase: *Task:* ${raw.title}
-        :bust_in_silhouette: *Assigned By:* ${slackTag} (Manager)
-        :date: *Assigned To:* ${assignedToSlackTag} (TL)
+        :bust_in_silhouette: *Assigned By:* ${slackTag} (Sales)
+        :date: *Assigned To:* ${assignedToSlackTag} (Manager)
         :memo: *Details:* Please review feasibility and assign to a developer accordingly.
         :link: *View Task:* <${dashboardUrl}|Open Dashboard>
         CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_SUNIL}>,<@${process.env.SLACK_ID_VISHAL}>
