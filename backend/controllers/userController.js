@@ -33,12 +33,12 @@ export const createUser = async (req, res) => {
 
   const token = jwt.sign({ id: newUser._id, role: newUser.role, email: newUser.email, name: newUser.name }, JWT_SECRET, { expiresIn: "1d" });
 
-  res.cookie("TMSAuthToken", token, {
-    httpOnly: true,       // JS cannot access
-    sameSite: "lax",
-    secure: false,   // CSRF protection
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
-  });
+  // res.cookie("TMSAuthToken", token, {
+  //   httpOnly: true,       // JS cannot access
+  //   sameSite: "lax",
+  //   secure: false,   // CSRF protection
+  //   maxAge: 24 * 60 * 60 * 1000, // 1 day
+  // });
 
   await newUser.save();
   res.status(201).json({ message: "User registered successfully" });

@@ -52,7 +52,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onCr
     if (!response.ok) {
       throw new Error(data.message || "Failed to create user");
     }
-    localStorage.setItem("token", data.token);
+    localStorage.setItem("TMSAuthToken", data.token);
 
     console.log("User created:", data);
 
@@ -61,6 +61,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onCr
 
     // Close the modal
     onClose();
+    window.location.reload();
   } catch (error) {
     console.error("Error creating user:", error);
     alert("Failed to create user. Please try again.");

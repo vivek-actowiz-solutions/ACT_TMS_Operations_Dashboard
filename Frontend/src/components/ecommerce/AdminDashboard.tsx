@@ -27,6 +27,7 @@ const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     fetch(`${apiUrl}/users/all`)
+   
       .then(res => res.json())
       .then(data => setUsers(data))
       .catch(err => console.error(err));

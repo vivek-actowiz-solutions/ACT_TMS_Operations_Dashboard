@@ -683,16 +683,7 @@ const TaskPage: React.FC = () => {
       </div>
 
 
-      {/* {(role === "Admin" || role === "Manager" || role === "TL") && (
-        <div className="my-5 text-xl flex items-center font-semibold">
-          <FaThumbtack className="inline-block mr-2 text-blue-600" />
-          <p>Pinned Previous Tasks:-</p>
-          <a href="https://docs.google.com/spreadsheets/d/1aueJRZmmT49KjgqDFEeuXUEKNO-fcLGQ8AEyiRQUPtE/edit?gid=615270440#gid=615270440" target="_blank"
-            rel="noopener noreferrer"><FaFileExcel className="inline-block mb-1 ml-2 text-green-600" size={25} /> <span className="text-[13px] font-medium underline text-blue-600">Click Here to View</span></a>
-
-        </div>
-
-      )} */}
+      
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 flex-wrap">
         <div className="flex flex-col sm:flex-row gap-2 flex-1 w-full">

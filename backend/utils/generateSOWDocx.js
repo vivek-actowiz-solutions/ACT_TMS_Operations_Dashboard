@@ -66,10 +66,11 @@ const isRPM = freqArray.includes("RPM");
 
 const formattedFreq = freqArray.map(f => {
   if (f === "RPM") {
-    return `Request-Per-Minute (RPM: ${task.rpm})`; 
+    return `Request-Per-Minute (RPM: ${task.RPM})`; 
   }
   return f;
 });
+
 
 
   // 📄 Create DOCX document

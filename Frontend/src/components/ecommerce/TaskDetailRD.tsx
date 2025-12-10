@@ -69,13 +69,16 @@ const TaskDetail: React.FC = () => {
   const domainParam = searchParams.get("domain");
   const [task, setTask] = useState<Task | null>(null);
   const apiUrl = import.meta.env.VITE_API_URL as string;
-  const SOW=import.meta.env.VITE_SOW as string;
+  const SOW = import.meta.env.VITE_SOW as string;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
+  const [showDescModal, setShowDescModal] = useState(false);
+
   const { user } = useAuth();   // <-- this gives user object (name, role, email etc.)
-const role = user?.role || "";  
-const userName = user?.name  || ""; 
+  const role = user?.role || "";
+  const userName = user?.name || "";
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -93,7 +96,7 @@ const userName = user?.name  || "";
       } finally {
         setLoading(false);
       }
-    }; 
+    };
     fetchTask();
   }, [id, apiUrl]);
 
@@ -153,19 +156,14 @@ const userName = user?.name  || "";
   const showSubmissionSection =
     domainObj && domainObj.status?.toLowerCase() === "submitted";
 
-    const developerList = domainObj?.developers?.map(d => d.name.toLowerCase()) || [];
+  const capitalize = (str) => {
+    if (!str || typeof str !== "string") return str;
+    return str.toUpperCase();
+  };
 
-   
 
-const canSubmit =
-  domainObj &&
-  domainObj.status?.toLowerCase() !== "submitted" &&
-  domainObj.status?.toLowerCase() !== "terminated" &&
-  developerList.length > 0 &&
-  (
-    ["Admin", "TL", "Manager"].includes(role) || 
-    developerList.includes(userName.toLowerCase())
-  );
+
+
 
 
   return (
@@ -174,11 +172,11 @@ const canSubmit =
         items={[
           { title: "Home", path: "/TMS-operations/" },
           { title: "Tasks", path: "/TMS-operations/tasks" },
-          {title: "Feasible Tasks", path: "/TMS-operations/tasks-rd"},
+          { title: "Feasible Tasks", path: "/TMS-operations/tasks-rd" },
           { title: task.projectCode },
         ]}
       />
-      
+
 
       <div className="min-h-screen bg-gradient-to-br  py-10 px-4">
         <div className="max-w-7xl mx-auto space-y-8">
@@ -237,11 +235,29 @@ const canSubmit =
                     <div className="mt-6 bg-slate-50 border border-slate-200 rounded-lg p-5">
                       <div className="flex items-center gap-2 mb-3">
                         <FileText size={20} />
-                        <h3 className="text-xs font-semibold text-gray-800 uppercase tracking-wide">
+                        <h3 className="text-xs font-semibold text-gray-800  tracking-wide">
                           Description
                         </h3>
                       </div>
-                      <p className="text-gray-700 leading-relaxed text-sm">{task.description}</p>
+
+                      {/* Description Preview */}
+                      <p
+                        className={`text-gray-700 leading-relaxed text-sm whitespace-pre-line ${isDescExpanded ? "" : "line-clamp-2"
+                          }`}
+                      >
+                        {task.description}
+                      </p>
+
+                      {/* Read More / Read Less */}
+                      {task.description.split("\n").length > 2 ||
+                        task.description.length > 160 ? (
+                        <button
+                          onClick={() => setShowDescModal(true)}
+                          className="text-blue-600 text-sm font-semibold mt-2 underline hover:text-blue-800"
+                        >
+                          Read More
+                        </button>
+                      ) : null}
                     </div>
                   )}
 
@@ -301,10 +317,10 @@ const canSubmit =
                 {/* 🟨 RIGHT SECTION (Delivery & Platform) */}
                 <div className="bg-white shadow-sm rounded-xl border border-gray-200 p-5">
                   <InfoCard
-                      label="Sample File Format"
-                      value={task.oputputFormat || "Not specified"}
-                      icon={<Info size={18} className="text-slate-600" />}
-                    />
+                    label="Sample File Format"
+                    value={capitalize(task.oputputFormat) || "Not specified"}
+                    icon={<Info size={18} className="text-slate-600" />}
+                  />
                   <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 mt-4">
                     <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                       <StickyNote size={18} className="text-slate-600" />
@@ -319,7 +335,8 @@ const canSubmit =
                       {/* Values Row */}
                       <div>
                         <span className="inline-block bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1 rounded-full">
-                          {task.typeOfDelivery || "Not specified"}
+                          {capitalize(task.typeOfDelivery) || "Not specified"}
+
                         </span>
                       </div>
                       <div>
@@ -336,7 +353,8 @@ const canSubmit =
                               return (
                                 <div key={i} className="flex items-center gap-2">
                                   <span className="inline-block bg-sky-100 text-sky-700 text-xs font-semibold px-3 py-1 rounded-full">
-                                    {platform}
+                                    {capitalize(platform)}
+
                                   </span>
                                 </div>
                               );
@@ -345,7 +363,7 @@ const canSubmit =
                           </div>
                         ) : (
                           <span className="text-gray-500 text-sm">
-                            {task.typeOfPlatform || "No domains available"}
+                            {capitalize(task.typeOfPlatform) || "No domains available"}
                           </span>
                         )}
 
@@ -376,7 +394,7 @@ const canSubmit =
                       />
                     )}
 
-                    
+
                   </div>
                 </div>
               </div>
@@ -665,15 +683,15 @@ const canSubmit =
           <Section title="People" icon={<Users size={22} className="text-blue-600" />}>
             <div className="grid md:grid-cols-3 gap-6">
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Assigned By</p>
+                <p className="text-xs text-gray-500  tracking-wide mb-2">Assigned By</p>
                 <p className="text-gray-900 font-medium">{task.assignedBy || "-"}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Assigned To</p>
+                <p className="text-xs text-gray-500  tracking-wide mb-2">Assigned To</p>
                 <p className="text-gray-900 font-medium">{task.assignedTo || "-"}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Developers</p>
+                <p className="text-xs text-gray-500  tracking-wide mb-2">Developers</p>
                 {displayedDomain ? (
                   <div className="flex flex-wrap gap-2">
                     {task.domains?.find((d) => d.name === displayedDomain)?.developers?.length ? (
@@ -696,40 +714,48 @@ const canSubmit =
           </Section>
           {/* Back Button */}
           <div className="flex justify-end mt-4">
-            
-            
+
+
             <div className="flex justify-end gap-3 mt-4">
-  
-  {/* Back Button */}
-  <button
-    onClick={() => navigate("/TMS-operations/tasks-rd")}
-    className="flex items-center gap-2 bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition font-medium"
-  >
-    <ArrowLeft size={18} /> Back
-  </button>
 
-  {/* Submit Button */}
-  {/* {canSubmit && (
-    <button
-      onClick={() =>
-        navigate(
-          `/TMS-operations/submit/${task.id}?domain=${encodeURIComponent(displayedDomain || "")}`
-        )
-      }
-      className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition font-medium"
-    >
-      Submit
-    </button>
-  )} */}
+              {/* Back Button */}
+              <button
+                onClick={() => navigate("/TMS-operations/tasks-rd")}
+                className="flex items-center gap-2 bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition font-medium"
+              >
+                <ArrowLeft size={18} /> Back
+              </button>
 
 
-</div>
+
+
+            </div>
 
 
 
           </div>
         </div>
       </div>
+      {showDescModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[99999]">
+          <div className="bg-white rounded-xl max-w-3xl w-full p-6 shadow-lg">
+            <h3 className="text-lg font-semibold mb-4">Description</h3>
+
+            <div className="max-h-80 overflow-y-auto whitespace-pre-line text-gray-700 text-sm">
+              {task.description}
+            </div>
+
+            <div className="flex justify-end mt-5">
+              <button
+                onClick={() => setShowDescModal(false)}
+                className="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 
@@ -762,7 +788,7 @@ const InfoCard: React.FC<{ label: string; value: string; icon: React.ReactNode; 
     }`}>
     <div className="flex items-center gap-2 mb-2">
       {icon}
-      <p className="text-xs text-gray-600 uppercase tracking-wide font-semibold">{label}</p>
+      <p className="text-xs text-gray-600  tracking-wide font-semibold">{label}</p>
     </div>
     <p className="text-gray-900 font-semibold">{value}</p>
   </div>
@@ -785,7 +811,7 @@ const StatusCard: React.FC<{ label: string; value: string; icon: React.ReactNode
     <div className={`p-4 rounded-lg border ${statusStyles[status]}`}>
       <div className="flex items-center gap-2 mb-2">
         {icon}
-        <p className="text-xs uppercase tracking-wide font-semibold">{label}</p>
+        <p className="text-xs  tracking-wide font-semibold">{label}</p>
       </div>
       <p className="font-bold text-lg">{value}</p>
     </div>
@@ -824,44 +850,12 @@ const TimelineItem: React.FC<{ label: string; value: string }> = ({ label, value
   <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
     <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
     <div className="flex-1">
-      <p className="text-xs text-gray-600 uppercase tracking-wide font-semibold">{label}</p>
+      <p className="text-xs text-gray-600  tracking-wide font-semibold">{label}</p>
       <p className="text-sm text-gray-900 font-medium mt-1">{value}</p>
     </div>
   </div>
 );
 
-// const AttachmentGroup: React.FC<{
-//   label: string;
-//   files?: string[];
-//   urls?: string[];
-//   buildFileUrl: (file: string | undefined) => string;
-// }> = ({ label, files = [], urls = [], buildFileUrl }) => (
-//   <div className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
-//     <p className="text-sm font-semibold text-gray-700 mb-3">{label}</p>
-//     {[...files, ...urls].length > 0 ? (
-//       <div className="space-y-2">
-//         {[...files, ...urls].map((f, idx) => {
-//           const isUrl = f.startsWith("http");
-//           return (
-//             <a
-//               key={idx}
-//               href={isUrl ? f : buildFileUrl(f)}
-//               target="_blank"
-//               rel="noreferrer"
-//               className="flex items-center gap-2 p-2 bg-slate-50 hover:bg-slate-100 rounded border border-slate-200 text-sm text-slate-700 hover:text-slate-900 transition group"
-//             >
-//               {isUrl ? <Globe size={16} /> : <FileText size={16} />}
-//               <span className="flex-1">Version {idx + 1}</span>
-//               {isUrl ? <span className="text-xs text-slate-500">URL</span> : <Download size={14} className="text-slate-400 group-hover:text-slate-600" />}
-//             </a>
-//           );
-//         })}
-//       </div>
-//     ) : (
-//       <p className="text-sm text-gray-500 italic py-2">No files or URLs available</p>
-//     )}
-//   </div>
-// );
 
 const AttachmentGroup: React.FC<{
   label: string;
@@ -914,7 +908,7 @@ const AttachmentGroup: React.FC<{
       </a>
     );
   };
- 
+
   return (
     <div className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
       <p className="text-sm font-semibold text-gray-700 mb-3">{label}</p>

@@ -1875,8 +1875,7 @@ export const reOpenTask = async (req, res) => {
 
     if (!oldTaskData.RPM) oldTaskData.RPM = task.RPM || "-";
 
-    console.log("task.RPM =", task.RPM);
-console.log("oldTaskData.RPM =", oldTaskData.RPM);
+    
 
 
 
