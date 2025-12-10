@@ -276,7 +276,7 @@ const Dashboard: React.FC = () => {
 
 
       {/* Developer Table (Manager only) */}
-      {(userRole === "Admin" || userRole === "Manager" || userRole === "TL") && (
+      {(userRole === "Admin" || userRole === "Manager") && (
         <div className="overflow-x-auto bg-gray-100 rounded-lg shadow p-4">
           <h2 className="text-xl font-semibold mb-4">TL Summary</h2>
 
