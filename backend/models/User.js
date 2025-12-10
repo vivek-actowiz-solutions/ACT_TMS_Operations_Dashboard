@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   originalPassword: { type: String, required: true },
   department: { type: String },
   designation:{type:String},
-  role: { type: String,enum:["Admin", "Sales", "TL","Developer","Manager"] },
+  role: { type: String,enum:["Admin", "Sales", "TL","Developer","Manager","SuperAdmin"] },
   slackId: { type: String, default: null },
   isActive: { type: Boolean, default: true },
   resetPasswordOTP: { type: String },

@@ -31,9 +31,9 @@ export function isUserAdmin() {
     // Common shapes: { role: 'admin' }, { isAdmin: true }, { roles: ['admin', ...] }
     if (payload.isAdmin === true) return true;
     const role = payload.role || payload?.user?.role;
-    if (typeof role === "string" && role.toLowerCase() === "admin") return true;
+    if (typeof role === "string" && role.toLowerCase() ==="superadmin") return true;
     const roles = payload.roles || payload?.user?.roles;
-    if (Array.isArray(roles) && roles.some((r: any) => String(r).toLowerCase() === "admin")) return true;
+    if (Array.isArray(roles) && roles.some((r: any) => String(r).toLowerCase() === "SuperAdmin")) return true;
     return false;
 }
 

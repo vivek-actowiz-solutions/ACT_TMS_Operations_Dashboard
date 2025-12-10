@@ -165,7 +165,7 @@ const TaskPage: React.FC = () => {
       const users = await response.json();
 
       // Filter only Sales
-      const sales = users.filter((u: any) => u.role === "Manager");
+      const sales = users.filter((u: any) => u.role === "Sales");
 
       setSalesList(sales);
     } catch (error) {
@@ -303,7 +303,7 @@ const TaskPage: React.FC = () => {
     { label: "Total ", value: stats.total, icon: <FiClipboard />, bgColor: "bg-blue-50", textColor: "text-gray-500" },
     { label: "Completed ", value: stats.completed, icon: <FiCheckCircle />, bgColor: "bg-green-50", textColor: "text-gray-500" },
     { label: "Pending ", value: stats.pending, icon: <FiClock />, bgColor: "bg-yellow-50", textColor: "text-gray-500" },
-    // { label: "In-Progress ", value: stats.inProgress, icon: <FiPlay />, bgColor: "bg-purple-50", textColor: "text-gray-500" },
+     { label: "In-Progress ", value: stats.inProgress, icon: <FiPlay />, bgColor: "bg-purple-50", textColor: "text-gray-500" },
     { label: "Delayed ", value: stats.delayed, icon: <LuClockAlert />, bgColor: "bg-red-50", textColor: "text-gray-500" },
     { label: "In-R&D", value: stats.inRD, icon: <FiBox />, bgColor: "bg-orange-50", textColor: "text-gray-500" },
     { label: "Reopened", value: stats.Reopened, icon: <GoIssueReopened />, bgColor: "bg-pink-50", textColor: "text-gray-500" },
@@ -650,7 +650,7 @@ const TaskPage: React.FC = () => {
         </div>
 
         {/* Second row: remaining cards (responsive) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {cards.slice(3).map((card, idx) => (
             <div
               key={idx}
@@ -693,7 +693,7 @@ const TaskPage: React.FC = () => {
             className="flex-grow w-full sm:w-64 md:w-80 p-2 rounded-lg border border-gray-300 bg-white text-gray-800"
           />
 
-          {(role === "Admin" || role === "Manager" || role === "TL") && (
+          {(role === "Admin" || role === "Manager" ||  role === "Sales" || role === "SuperAdmin" ) && (
             <select
               value={assignedByFilter}
               onChange={(e) => {
@@ -736,7 +736,7 @@ const TaskPage: React.FC = () => {
 
           {openStatusDropdown && (
             <div className="absolute left-0 right-0 mt-1 bg-white border rounded shadow-lg z-10 p-2 max-h-48 overflow-y-auto">
-              {["pending", "Reopened", "submitted", "delayed", "in-R&D", "Terminated"].map((status) => (
+              {["pending", "Reopened",'in-progress', "submitted", "delayed", "in-R&D", "Terminated"].map((status) => (
                 <label key={status} className="flex items-center gap-2 p-1 cursor-pointer text-sm">
                   <input
                     type="checkbox"
@@ -770,7 +770,7 @@ const TaskPage: React.FC = () => {
             Clear Filters
           </button>
 
-          {(role === "Admin" || role === "Manager") && (
+          {(role === "Admin" || role === "Sales" || role === "SuperAdmin") && (
             <button
               onClick={() => navigate("/TMS-operations/create")}
               className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold w-full sm:w-auto"
@@ -779,7 +779,7 @@ const TaskPage: React.FC = () => {
             </button>
           )}
 
-          {(role === "Admin" || role === "Manager") && (
+          {(role === "Admin" || role === "Sales" || role === "SuperAdmin") && (
             <button
               onClick={() => setShowPOCModal(true)}
               className="bg-[#3C01AF] hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-semibold w-full sm:w-auto"
@@ -837,11 +837,11 @@ const TaskPage: React.FC = () => {
                 assignedBy: row.task.assignedBy?.name || row.task.assignedBy || "-",
                 assignedTo: row.task.assignedTo?.name || row.task.assignedTo || "-",
                 feasible: row.task.feasible,
-
+                
                 assignedDate: formatDate(row.task.taskAssignedDate),
                 completionDate: formatDate(row.task.completeDate),
 
-
+developers: row.developers || [],
                 status: row.domainStatus,
                 task: row.task,
                 domainName: row.domainName,
@@ -995,6 +995,8 @@ renderCell: (params) => (
                     </Tooltip>
                   ),
                 },
+
+                //D
                 // ✅ Feasible column
                 {
                   field: "feasible",
@@ -1055,6 +1057,35 @@ renderCell: (params) => (
                       <span>{params.value}</span>
                     </Tooltip>
                   ),},
+
+
+                  {
+                  field: "developers",
+                  headerName: "Team Leads",
+                  width: 130,
+                  sortable: false,
+                  renderCell: (params) => {
+                    const devs = params.row.developers || [];
+
+                    return (
+                      <div
+                        className={`flex flex-wrap w-full ${devs.length === 1
+                          ? "justify-center items-center text-center pt-4"   // center for 1 name
+                          : "justify-start"                             // normal for multiple
+                          }`}
+                      >
+                        {devs.map((dev, index) => (
+                          <span
+                            key={index}
+                            className="px-1 py-[2px] text-xs font-medium"
+                          >
+                            {dev}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  },
+                },
 
                 
                 {
@@ -1187,8 +1218,8 @@ renderCell: (params) => (
                         </ActionIcon>
 
                         {/* EDIT */}
-                        {(role === "Admin" || role === "Manager" || role === "TL") &&
-  ["submitted"].includes(params.row.status?.trim().toLowerCase()) && (
+                        {(role === "Admin" || role === "Manager" || role === "SuperAdmin") &&
+  (
 
                             <ActionIcon
                               title="Edit Submission"
@@ -1205,10 +1236,10 @@ renderCell: (params) => (
                           )}
 
                         {/* HISTORY */}
-                        {(role === "Admin" || role === "Manager") && (
+                        {(role === "SuperAdmin") && (
                           <ActionIcon
                             title="View History"
-                            color="#9333ea"
+                            color="#9333ea"         
                             hoverColor="#7e22ce"
                             onClick={() => {
                               setSelectedTask({
@@ -1223,7 +1254,7 @@ renderCell: (params) => (
                         )}
 
                         {/* REOPEN */}
-                        {(role === "Admin" || role === "Manager") &&
+                        {(role === "Admin" || role === "Sales" || role === "SuperAdmin") &&
                           params.row.status?.trim().toLowerCase() === "submitted" &&
                           params.row.reopenCount === 0 && (
                             <ActionIcon
@@ -1237,7 +1268,7 @@ renderCell: (params) => (
                           )}
 
                         {/* TERMINATE */}
-                        {(role === "Admin" || role === "Manager") &&
+                        {(role === "Admin" || role === "Manager" || role === "SuperAdmin") &&
                           params.row.status?.trim().toLowerCase() !== "terminated" &&
                           params.row.status?.trim().toLowerCase() !== "submitted" && (
                             <ActionIcon

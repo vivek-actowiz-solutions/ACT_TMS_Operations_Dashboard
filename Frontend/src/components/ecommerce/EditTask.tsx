@@ -80,7 +80,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
   }, []);
 
   // Filtered user options
-  const developerOptions = users.filter((u) => u.role === "Developer" || u.role === "TL");
+  const developerOptions = users.filter((u) =>  u.role === "TL");
 
 
   const normalizeUserId = (user: any) => {
@@ -480,11 +480,24 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
       />
       {/* --------------------- TABS HEADER --------------------- */}
       <div className="flex gap-4 border-b mb-6">
-        
+        <button
+          type="button"
+          className={`px-4 py-2 border-b-2 ${activeTab === "task"
+              ? "border-[#3C01AF] text-[#3C01AF] font-bold"
+              : "border-transparent text-gray-600"
+            }`}
+          onClick={() => setActiveTab("task")}
+        >
+          {role === "Manager" || role === "TL"
+            ? "Add Developer"
+            : role === "Sales"
+              ? "Edit Domain"
+              : "Edit Task"}   {/* Default for Admin or others */}
+        </button>
 
 
         {/* Show Submit Tab only if the selected domain = submitted */}
-        {(role === "Admin" ||  role === "TL" || role === "Manager") &&
+        {(role === "Admin" ||  role === "Manager"  || role === "SuperAdmin") &&
           task.domains.some(
             (d) =>
               decodeURIComponent(domainFromUrl || "") === d.name &&
@@ -504,7 +517,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
 
       </div>
 
-      {/* {activeTab === "task" && (
+      {activeTab === "task" && (
         <>
           <div className="min-h-screen w-full flex justify-center py-10 px-4 ">
             <div className="w-full max-w-6xl bg-white    border-gray-200  p-8 ">
@@ -794,7 +807,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
 
           </div>
         </>
-      )} */}
+      )}
      
         <div className="mt-6">
           {task.domains.map((d) => (

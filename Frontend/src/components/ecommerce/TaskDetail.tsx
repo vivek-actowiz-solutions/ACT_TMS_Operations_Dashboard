@@ -698,7 +698,7 @@ const TaskDetail: React.FC = () => {
 
           {/* People */}
           <Section title="People" icon={<Users size={22} className="text-blue-600" />}>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
               <div>
                 <p className="text-xs text-gray-500  tracking-wide mb-2">Assigned By</p>
                 <p className="text-gray-900 font-medium">{task.assignedBy || "-"}</p>
@@ -707,8 +707,8 @@ const TaskDetail: React.FC = () => {
                 <p className="text-xs text-gray-500  tracking-wide mb-2">Assigned To</p>
                 <p className="text-gray-900 font-medium">{task.assignedTo || "-"}</p>
               </div>
-              {/* <div>
-                <p className="text-xs text-gray-500  tracking-wide mb-2">Developers</p>
+              <div>
+                <p className="text-xs text-gray-500  tracking-wide mb-2">TL</p>
                 {displayedDomain ? (
                   <div className="flex flex-wrap gap-2">
                     {task.domains?.find((d) => d.name === displayedDomain)?.developers?.length ? (
@@ -726,7 +726,7 @@ const TaskDetail: React.FC = () => {
                 ) : (
                   <p className="text-gray-500 text-sm">No domain selected</p>
                 )}
-              </div> */}
+              </div>
             </div>
           </Section>
           {/* Back Button */}

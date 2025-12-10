@@ -202,7 +202,7 @@ export const createTask = async (req, res) => {
       frequency: raw.frequency,
       description: raw.description,
       RPM: raw.RPM,
-      
+
     },
       {},
       "create"
@@ -260,10 +260,12 @@ export const createTask = async (req, res) => {
         :date: *Assigned To:* ${assignedToSlackTag} (TL)
         :memo: *Details:* Please review feasibility and assign to a developer accordingly.
         :link: *View Task:* <${dashboardUrl}|Open Dashboard>
-        CC: <@${process.env.SLACK_RND_MANAGER_ID}>, <@${process.env.SLACK_SALES_MANAGER_ID}>
+        CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_SUNIL}>,<@${process.env.SLACK_ID_VISHAL}>
       `;
 
-    await sendSlackMessage(process.env.SALES_RD_CHANNEL_TEST, slackMessage);
+    await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
+
+
 
     const obj = task.toObject();
     obj.developers = decodeDevelopers(obj.developers || {});
@@ -276,264 +278,263 @@ export const createTask = async (req, res) => {
 
 };
 
-// UPDATE TASK
-// export const updateTask = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const body = cleanBody(req.body);
-
-//     //console.log("req.body", req.body);
-
-//     const urlFields = ["sowUrls", "inputUrls", "outputUrls", "clientSampleSchemaUrls"];
-
-//     // Parse stringified arrays (from FormData)
-//     urlFields.forEach((field) => {
-//       if (body[field] !== undefined) body[field] = safeParseArray(body[field]);
-//     });
-
-//     const task = await Task.findById(id);
-//     if (!task) return res.status(404).json({ error: "Task not found" });
-
-//     const before = JSON.parse(JSON.stringify(task.toObject()));
-
-
-//     // ✅ Update other basic fields
-
-//     const fieldsToUpdate = [
-//       "title",
-//       "assignedBy",
-//       "assignedTo",
-//       "description",
-//       "sampleFileRequired",
-//       "requiredValumeOfSampleFile",
-//       "complexity",
-//       "status",
-//       "typeOfDelivery",
-//       "typeOfPlatform",
-//     ];
-
-//     fieldsToUpdate.forEach((f) => {
-//       if (body[f] !== undefined) {
-//         if (f === "sampleFileRequired") task[f] = body[f] === "true";
-//         else if (f === "requiredValumeOfSampleFile") task[f] = Number(body[f]);
-//         else task[f] = body[f];
-//       }
-//     });
+//
+export const updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const body = cleanBody(req.body);
+
+    //console.log("req.body", req.body);
+
+    const urlFields = ["sowUrls", "inputUrls", "outputUrls", "clientSampleSchemaUrls"];
+
+    // Parse stringified arrays (from FormData)
+    urlFields.forEach((field) => {
+      if (body[field] !== undefined) body[field] = safeParseArray(body[field]);
+    });
+
+    const task = await Task.findById(id);
+    if (!task) return res.status(404).json({ error: "Task not found" });
+
+    const before = JSON.parse(JSON.stringify(task.toObject()));
+
+
+    // ✅ Update other basic fields
+
+    const fieldsToUpdate = [
+      "title",
+      "assignedBy",
+      "assignedTo",
+      "description",
+      "sampleFileRequired",
+      "requiredValumeOfSampleFile",
+      "complexity",
+      "status",
+      "typeOfDelivery",
+      "typeOfPlatform",
+    ];
+
+    fieldsToUpdate.forEach((f) => {
+      if (body[f] !== undefined) {
+        if (f === "sampleFileRequired") task[f] = body[f] === "true";
+        else if (f === "requiredValumeOfSampleFile") task[f] = Number(body[f]);
+        else task[f] = body[f];
+      }
+    });
 
 
-
+
 
-//     let incomingDomains = [];
-//     if (body.domains) {
-//       try {
-//         // Parse incoming domains (from a stringified array/JSON if sent via FormData)
-//         incomingDomains =
-//           typeof body.domains === "string" ? JSON.parse(body.domains) : body.domains;
-//       } catch (e) {
-//         console.error("Failed to parse incoming domains:", e);
-//       }
-//     }
+    let incomingDomains = [];
+    if (body.domains) {
+      try {
+        // Parse incoming domains (from a stringified array/JSON if sent via FormData)
+        incomingDomains =
+          typeof body.domains === "string" ? JSON.parse(body.domains) : body.domains;
+      } catch (e) {
+        console.error("Failed to parse incoming domains:", e);
+      }
+    }
 
-//     // Create a map of existing domains for quick lookup
-//     const existingDomainsMap = new Map(
-//       task.domains.map((d) => [d.name, d])
-//     );
+    // Create a map of existing domains for quick lookup
+    const existingDomainsMap = new Map(
+      task.domains.map((d) => [d.name, d])
+    );
 
-//     const finalDomains = [];
+    const finalDomains = [];
 
-//     incomingDomains.forEach((incomingDomain) => {
-//       const existingDomain = existingDomainsMap.get(incomingDomain.name);
+    incomingDomains.forEach((incomingDomain) => {
+      const existingDomain = existingDomainsMap.get(incomingDomain.name);
 
-//       if (existingDomain) {
+      if (existingDomain) {
 
-//         existingDomain.typeOfPlatform = incomingDomain.typeOfPlatform || existingDomain.typeOfPlatform;
-//         existingDomain.domainRemarks =
-//           incomingDomain.domainRemarks || existingDomain.domainRemarks || "";
+        existingDomain.typeOfPlatform = incomingDomain.typeOfPlatform || existingDomain.typeOfPlatform;
+        existingDomain.domainRemarks =
+          incomingDomain.domainRemarks || existingDomain.domainRemarks || "";
 
-//         finalDomains.push(existingDomain);
-//       } else {
+        finalDomains.push(existingDomain);
+      } else {
 
-//         finalDomains.push({
-//           name: incomingDomain.name,
-//           status: "pending",
-//           typeOfPlatform: incomingDomain.typeOfPlatform || "",
-//           domainRemarks: incomingDomain.domainRemarks || "",
-//           developers: [],
-//           submission: {
-//             outputFiles: [],
-//             outputUrls: []
-//           },
-//         });
-//       }
-//     });
-//     task.domains = finalDomains;
-//     task.markModified("domains");
+        finalDomains.push({
+          name: incomingDomain.name,
+          status: "pending",
+          typeOfPlatform: incomingDomain.typeOfPlatform || "",
+          domainRemarks: incomingDomain.domainRemarks || "",
+          developers: [],
+          submission: {
+            outputFiles: [],
+            outputUrls: []
+          },
+        });
+      }
+    });
+    task.domains = finalDomains;
+    task.markModified("domains");
 
-//     if (body.developers) {
-//       const devObj =
-//         typeof body.developers === "string"
-//           ? JSON.parse(body.developers)
-//           : body.developers;
+    if (body.developers) {
+      const devObj =
+        typeof body.developers === "string"
+          ? JSON.parse(body.developers)
+          : body.developers;
 
-//       const newAssignedDevs = new Set();
+      const newAssignedDevs = new Set();
 
-//       for (const domain of task.domains) {
-//         const existingDevs = new Set((domain.developers || []).map(d => String(d)));
+      for (const domain of task.domains) {
+        const existingDevs = new Set((domain.developers || []).map(d => String(d)));
 
-//         const devsForDomain = devObj[domain.name] || [];
-//         const uniqueDevs = [];
+        const devsForDomain = devObj[domain.name] || [];
+        const uniqueDevs = [];
 
-//         for (const dev of devsForDomain) {
-//           const devId = typeof dev === "object" ? dev._id : dev;
+        for (const dev of devsForDomain) {
+          const devId = typeof dev === "object" ? dev._id : dev;
 
-//           if (mongoose.Types.ObjectId.isValid(devId)) {
-//             uniqueDevs.push(devId);
+          if (mongoose.Types.ObjectId.isValid(devId)) {
+            uniqueDevs.push(devId);
 
-//             if (!existingDevs.has(String(devId))) {
-//               newAssignedDevs.add(devId); // mark as newly added
-//             }
-//           }
-//         }
+            if (!existingDevs.has(String(devId))) {
+              newAssignedDevs.add(devId); // mark as newly added
+            }
+          }
+        }
 
-//         domain.developers = uniqueDevs;
-//         domain.status =
-//           domain.status === "submitted"
-//             ? "submitted"
-//             : uniqueDevs.length > 0
-//               ? "in-progress"
-//               : "pending";
-//       }
+        domain.developers = uniqueDevs;
+        domain.status =
+          domain.status === "submitted"
+            ? "submitted"
+            : uniqueDevs.length > 0
+              ? "in-progress"
+              : "pending";
+      }
 
-//       task.markModified("domains");
+      task.markModified("domains");
 
-//       if (newAssignedDevs.size > 0) {
-//         req.newAssignedDevs = Array.from(newAssignedDevs);
-//       }
-//     }
+      if (newAssignedDevs.size > 0) {
+        req.newAssignedDevs = Array.from(newAssignedDevs);
+      }
+    }
 
-//     const after = JSON.parse(JSON.stringify(task.toObject()));
+    const after = JSON.parse(JSON.stringify(task.toObject()));
 
 
-//     // ✅ Convert current state and a fresh copy from DB to plain objects for comparison
-//     const originalTask = await Task.findById(id).lean();
+    // ✅ Convert current state and a fresh copy from DB to plain objects for comparison
+    const originalTask = await Task.findById(id).lean();
 
 
 
-//     // 🧠 Compare objects to check if *anything* changed
-//     const hasChanges = JSON.stringify(task.toObject()) !== JSON.stringify(originalTask);
+    // 🧠 Compare objects to check if *anything* changed
+    const hasChanges = JSON.stringify(task.toObject()) !== JSON.stringify(originalTask);
 
 
 
-//     function domainChanged(before, after) {
-//       if (!before || !after) return true;
+    function domainChanged(before, after) {
+      if (!before || !after) return true;
 
-//       if (before.typeOfPlatform !== after.typeOfPlatform) return true;
-//       if (before.domainRemarks !== after.domainRemarks) return true;
-//       if (before.status !== after.status) return true;
+      if (before.typeOfPlatform !== after.typeOfPlatform) return true;
+      if (before.domainRemarks !== after.domainRemarks) return true;
+      if (before.status !== after.status) return true;
 
-//       if (JSON.stringify(before.developers) !== JSON.stringify(after.developers)) return true;
-//       if (JSON.stringify(before.submission) !== JSON.stringify(after.submission)) return true;
+      if (JSON.stringify(before.developers) !== JSON.stringify(after.developers)) return true;
+      if (JSON.stringify(before.submission) !== JSON.stringify(after.submission)) return true;
 
-//       return false;
-//     }
+      return false;
+    }
 
-//     let changedDomains = [];
+    let changedDomains = [];
 
-//     for (const d of incomingDomains) {
-//       const beforeDomain = before.domains.find(b => b.name === d.name);
-//       const afterDomain = after.domains.find(a => a.name === d.name);
+    for (const d of incomingDomains) {
+      const beforeDomain = before.domains.find(b => b.name === d.name);
+      const afterDomain = after.domains.find(a => a.name === d.name);
 
-//       if (domainChanged(beforeDomain, afterDomain)) {
-//         changedDomains.push(d.name);
-//       }
-//     }
+      if (domainChanged(beforeDomain, afterDomain)) {
+        changedDomains.push(d.name);
+      }
+    }
 
-//     const originalDomainNames = before.domains.map(d => d.name);
-//     const incomingDomainNames = incomingDomains.map(d => d.name);
+    const originalDomainNames = before.domains.map(d => d.name);
+    const incomingDomainNames = incomingDomains.map(d => d.name);
 
-//     const deletedDomains = originalDomainNames.filter(
-//       name => !incomingDomainNames.includes(name)
-//     );
+    const deletedDomains = originalDomainNames.filter(
+      name => !incomingDomainNames.includes(name)
+    );
 
-//     changedDomains.push(...deletedDomains);
+    changedDomains.push(...deletedDomains);
 
 
 
-//     if (changedDomains.length > 0) {
-//       await task.save();
+    if (changedDomains.length > 0) {
+      await task.save();
 
-//       for (const domain of changedDomains) {
-//         await ActivityLog.create({
-//           taskId: task._id,
-//           domainName: domain,
-//           action: deletedDomains.includes(domain) ? "Domain Deleted" : "Task Updated",
-//           changedBy: req.user?.name || "Unknown User",
-//           role: req.user?.role || "Unknown Role",
-//           timestamp: new Date(),
-//         });
-//       }
+      for (const domain of changedDomains) {
+        await ActivityLog.create({
+          taskId: task._id,
+          domainName: domain,
+          action: deletedDomains.includes(domain) ? "Domain Deleted" : "Task Updated",
+          changedBy: req.user?.name || "Unknown User",
+          role: req.user?.role || "Unknown Role",
+          timestamp: new Date(),
+        });
+      }
 
-//       console.log("✔ Logs created for:", changedDomains);
-//     } else {
-//       console.log("ℹ No domain changes — no logs created");
-//     }
+      console.log("✔ Logs created for:", changedDomains);
+    } else {
+      console.log("ℹ No domain changes — no logs created");
+    }
 
-//     try {
-//       const populatedTask = await Task.findById(id)
-//         .populate("domains.developers", "name email slackId")
-//         .lean();
+    try {
+      const populatedTask = await Task.findById(id)
+        .populate("domains.developers", "name email slackId")
+        .lean();
 
-//       const assignedDevs = [];
-//       populatedTask.domains.forEach((d) => {
-//         if (Array.isArray(d.developers) && d.developers.length > 0) {
-//           assignedDevs.push(...d.developers);
-//         }
-//       });
+      const assignedDevs = [];
+      populatedTask.domains.forEach((d) => {
+        if (Array.isArray(d.developers) && d.developers.length > 0) {
+          assignedDevs.push(...d.developers);
+        }
+      });
 
-//       // ✅ Only notify if NEW devs assigned
+      // ✅ Only notify if NEW devs assigned
 
-//       if (req.newAssignedDevs && req.newAssignedDevs.length > 0) {
-//         const assignedBy = await User.findById(populatedTask.assignedTo).lean();
-//         const slackTag_AssignedBy = assignedBy?.slackId ? `<@${assignedBy.slackId}>` : assignedBy?.email;
+      if (req.newAssignedDevs && req.newAssignedDevs.length > 0) {
+        const assignedBy = await User.findById(populatedTask.assignedTo).lean();
+        const slackTag_AssignedBy = assignedBy?.slackId ? `<@${assignedBy.slackId}>` : assignedBy?.email;
 
-//         // ✅ Get NEW developer users
-//         const newDevs = await User.find({ _id: { $in: req.newAssignedDevs } }).lean();
-//         const slackTag_Devs = newDevs
-//           .map(d => d.slackId ? `<@${d.slackId}>` : d.email)
-//           .join(", ");
+        // ✅ Get NEW developer users
+        const newDevs = await User.find({ _id: { $in: req.newAssignedDevs } }).lean();
+        const slackTag_Devs = newDevs
+          .map(d => d.slackId ? `<@${d.slackId}>` : d.email)
+          .join(", ");
 
-//         const taskUrl = `${process.env.FRONTEND_URL}/tasks`;
+        const taskUrl = `${process.env.FRONTEND_URL}/tasks`;
 
 
 
-//         const slackMessage = `
-// :bell: *New Task Assigned to ${slackTag_Devs}*
-//      ${space}:briefcase: *Task Name:* ${populatedTask.title || populatedTask.projectCode}
-//      ${space}:bust_in_silhouette: *Assigned By:* ${slackTag_AssignedBy} (R&D ATL)
-//      ${space}:date: *Assigned To:* ${slackTag_Devs} (Developer)
-//      ${space}:paperclip: *Details:* Please proceed with the assigned feasibility check and submit in the dashboard.
-//      ${space}:link: *View Task:* <${taskUrl}|Open Dashboard>
-// CC: <@${process.env.SLACK_RND_MANAGER_ID}>,<@${process.env.SLACK_RND_TL_ID}>
-// `;
-//         await sendSlackMessage(process.env.RD_DEVELOPER_CHANNEL_TEST, slackMessage);
-//       }
+        const slackMessage = `
+:bell: *New Task Assigned to ${slackTag_Devs}*
+     ${space}:briefcase: *Task Name:* ${populatedTask.title || populatedTask.projectCode}
+     ${space}:bust_in_silhouette: *Assigned By:* ${slackTag_AssignedBy} (Manager)
+     ${space}:date: *Assigned To:* ${slackTag_Devs} (TL)
+     ${space}:paperclip: *Details:* Please proceed with the assigned feasibility check and submit in the dashboard.
+     ${space}:link: *View Task:* <${taskUrl}|Open Dashboard>
+CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
+`;
+        await sendSlackMessage(process.env.OP_CHANNEL, slackMessage);
+      }
 
 
-//     } catch (err) {
-//       console.error("⚠️ Slack Notification Error:", err.message);
-//     }
+    } catch (err) {
+      console.error("⚠️ Slack Notification Error:", err.message);
+    }
 
-//     res.json({ message: "✅ Task updated successfully", task });
-//   } catch (err) {
-//     console.error("UpdateTask Error:", err);
-//     res
-//       .status(500)
-//       .json({ error: err.message || "Server error while updating task" });
-//   }
-// };
+    res.json({ message: "✅ Task updated successfully", task });
+  } catch (err) {
+    console.error("UpdateTask Error:", err);
+    res
+      .status(500)
+      .json({ error: err.message || "Server error while updating task" });
+  }
+};
 
 // SUBMIT TASK
-
 export const submitTask = async (req, res) => {
 
   try {
@@ -820,11 +821,11 @@ export const submitTask = async (req, res) => {
 ${space}:briefcase: *Task:*  ${task.title || task.projectCode}
 ${space}:jigsaw: *Domain Details:*
 ${domainInfoLines}
-${space}:bust_in_silhouette: *Assigned By:* <@${assigner?.slackId || ''}> (Manager)
+${space}:bust_in_silhouette: *Assigned By:* <@${assigner?.slackId || ''}> (Sales)
 ${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (TL)
 ${space}:paperclip: *Details:* Sample data and feasibility report have been uploaded. Please review and confirm.
 ${space}:bar_chart: *View Task:*  <${taskUrl}|Open Dashboard>
-CC: <@${process.env.SLACK_RND_MANAGER_ID}>,<@${process.env.SLACK_SALES_MANAGER_ID}>
+CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_SUNIL}>,<@${process.env.SLACK_ID_SUNIL}>
 `;
 
 
@@ -836,23 +837,23 @@ CC: <@${process.env.SLACK_RND_MANAGER_ID}>,<@${process.env.SLACK_SALES_MANAGER_I
      ${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (Developer)
      ${space}:paperclip: *Details:* Sample data and feasibility report have been uploaded. Please review and confirm.
      ${space}:bar_chart: *View Task:*  <${taskUrl}|Open Dashboard>
-CC: <@${process.env.SLACK_RND_MANAGER_ID}>,<@${process.env.SLACK_RND_TL_ID}>
+CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>
 `
 
       // ✅ Send to 2 channels
       try {
         if (allDomainsSubmitted) {
-          await sendSlackMessage(process.env.SALES_RD_CHANNEL_TEST, slackMsg);
+          await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMsg);
         }
       } catch (e) {
         console.error("Slack 1 failed:", e.message);
       }
 
-      // try {
-      //   await sendSlackMessage(process.env.RD_DEVELOPER_CHANNEL_TEST, slackMsg2);
-      // } catch (e) {
-      //   console.error("Slack 2 failed:", e.message);
-      // }
+      try {
+        await sendSlackMessage(process.env.OP_CHANNEL, slackMsg2);
+      } catch (e) {
+        console.error("Slack 2 failed:", e.message);
+      }
 
 
     } catch (err) {
@@ -940,16 +941,16 @@ export const editDomainSubmission = async (req, res) => {
     });
     //console.log('ChangeBy',req.user?.name);
 
-   
 
-    
+
+
 
     // 9. slack message
-     const userInfo = await User.findById(req.user.id).select("slackId name");
+    const userInfo = await User.findById(req.user.id).select("slackId name");
     const editedBySlack = userInfo?.slackId ? `<@${userInfo.slackId}>` : userInfo?.name;
 
     //console.log("editedBySlack", editedBySlack);
-    
+
     const taskUrl = `${process.env.FRONTEND_URL}/TMS-operations/tasks`;
 
     const slackMessage = `
@@ -959,11 +960,11 @@ export const editDomainSubmission = async (req, res) => {
       ${space}:bust_in_silhouette: *Edited By:* ${editedBySlack}
       ${space}:paperclip: *Details:* Sample data and feasibility report have been edited. Please review and confirm.
       :link: *View Task:* <${taskUrl}|Open Dashboard>
-      CC: <@${process.env.SLACK_RND_MANAGER_ID}>,<@${process.env.SLACK_RND_TL_ID}>
+      CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL},<@${process.env.SLACK_ID_SUNIL}>>
     `;
 
 
-    await sendSlackMessage(process.env.SALES_RD_CHANNEL_TEST, slackMessage);
+    await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
 
 
     res.json({
@@ -1019,7 +1020,11 @@ export const getTask = async (req, res) => {
 
     /* ---------------- Match before lookups ---------------- */
 
-    if (role === "TL" && userId) {
+     if (role === "TL" && userId) {
+      match["domains.developers"] = new mongoose.Types.ObjectId(userId);
+    }
+
+    if (role === "Manager" && userId) {
       match["assignedTo"] = new mongoose.Types.ObjectId(userId);
     }
 
@@ -1457,7 +1462,7 @@ export const getTaskDomain = async (req, res) => {
 export const getDomainStats = async (req, res) => {
   try {
     // 🔐 Token validation
-   let token = req.cookies?.TMSAuthToken;
+    let token = req.cookies?.TMSAuthToken;
 
     if (!token)
       return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -1474,13 +1479,19 @@ export const getDomainStats = async (req, res) => {
     // 🎯 Match condition (restrict Developer to their own domains)
     const matchStage = {};
     if (role === "TL") {
+      matchStage["domains.developers"] = new mongoose.Types.ObjectId(userId);
+    }
+
+     if (role === "Manager") {
       matchStage["assignedTo"] = new mongoose.Types.ObjectId(userId);
     }
+
+
 
     // ⚡ MongoDB aggregation for fast domain-level stats
     const stats = await Task.aggregate([
       { $unwind: "$domains" },
-      ...(role === "TL" ? [{ $match: matchStage }] : []),
+      ...(role === "TL" || role === "Manager" ? [{ $match: matchStage }] : []),
 
       {
         $group: {
@@ -1788,10 +1799,10 @@ ${space}:bust_in_silhouette: *Sales Person:* <@${assigner?.slackId || ''}> (Mana
 ${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (TL)
 ${space}:memo: *Reason:* ${reason}
 ${space}:bar_chart: *View Task:*  <${taskUrl}|Open Dashboard>
-CC: <@${process.env.SLACK_RND_MANAGER_ID}>,<@${process.env.SLACK_SALES_MANAGER_ID}>
+CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_SUNIL}>,<@${process.env.SLACK_ID_SUNIL}>
 `;
 
-      await sendSlackMessage(process.env.SALES_RD_CHANNEL_TEST, slackMsg);
+      await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMsg);
     } catch (err) {
       console.error("⚠️ Slack notify error:", err.message);
     }
@@ -1837,7 +1848,7 @@ export const reOpenTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    
+
 
     const task = await Task.findById(id).select(
       "title projectCode description typeOfDelivery mandatoryFields optionalFields frequency RPM oputputFormat domains inputUrls clientSampleSchemaUrls sowFiles sampleFileRequired requiredValumeOfSampleFile assignedBy assignedTo reopenCount taskAssignedDate targetDate completeDate"
@@ -1875,7 +1886,7 @@ export const reOpenTask = async (req, res) => {
 
     if (!oldTaskData.RPM) oldTaskData.RPM = task.RPM || "-";
 
-    
+
 
 
 
@@ -1979,7 +1990,7 @@ export const reOpenTask = async (req, res) => {
     let oldSowFiles = [];
     let newSowFile = null;
 
-    
+
 
     // ------------------------------------------
     // DOMAIN CHANGE DETECTION (CRITICAL LOGIC)
@@ -2003,8 +2014,8 @@ export const reOpenTask = async (req, res) => {
         domainRemarks: d.domainRemarks || "",
       }));
 
-   const hasDomainChanged =
-  JSON.stringify(oldDomainsForCompare) !== JSON.stringify(newDomains);
+    const hasDomainChanged =
+      JSON.stringify(oldDomainsForCompare) !== JSON.stringify(newDomains);
 
 
     //console.log("DOMAIN CHANGED?", hasDomainChanged);
@@ -2029,18 +2040,18 @@ export const reOpenTask = async (req, res) => {
       task.markModified("domains");
 
       // Add to changedFields so SOW is generated
-     changedFields.domains = newDomains.map(d => ({
-  name: d.name,
-  typeOfPlatform: d.typeOfPlatform,
-  domainRemarks: d.domainRemarks || ""
-}));
+      changedFields.domains = newDomains.map(d => ({
+        name: d.name,
+        typeOfPlatform: d.typeOfPlatform,
+        domainRemarks: d.domainRemarks || ""
+      }));
 
     } else {
       //console.log("➡ Domains unchanged → NOT updating domain status");
     }
 
-// const savedTask = await Task.findById(id);
-// console.log(savedTask.domains);
+    // const savedTask = await Task.findById(id);
+    // console.log(savedTask.domains);
 
     let changedDomainList = [];
 
@@ -2088,9 +2099,9 @@ export const reOpenTask = async (req, res) => {
       oldSowFiles = [...(task.sowFiles || [])];
 
       // ensure RPM exists in mergedTaskData
-if (!oldTaskData.RPM && task.RPM !== undefined) {
-  oldTaskData.RPM = task.RPM;
-}
+      if (!oldTaskData.RPM && task.RPM !== undefined) {
+        oldTaskData.RPM = task.RPM;
+      }
 
       const mergedTaskData = oldTaskData;
 
@@ -2112,7 +2123,7 @@ if (!oldTaskData.RPM && task.RPM !== undefined) {
       task.reopenCount = (task.reopenCount || 0) + 1;
     }
 
-if (Object.keys(changedFields).length > 0) {
+    if (Object.keys(changedFields).length > 0) {
       task.previousDomain.push({
         oldValue: JSON.parse(JSON.stringify(task.domains)),
         changedAt: new Date(),
@@ -2125,6 +2136,7 @@ if (Object.keys(changedFields).length > 0) {
       task.domains.forEach((d) => {
         d.completeDate = null;
         d.submission = [];
+        d.developers = [];
         d.status = "Reopened";
       });
 
@@ -2184,12 +2196,12 @@ ${space}:bust_in_silhouette: Assigned By: ${assignedByName}(Manager)
 ${space}:date:Assigned To: ${assignedToName} (TL)
 ${space}:memo: Details: The task has been reopened due to required updates. Please review the changes and proceed accordingly.
 ${space}:link: <${dashboardUrl} |Open Dashboard>
-CC: <@${process.env.SLACK_RND_MANAGER_ID}>, <@${process.env.SLACK_SALES_MANAGER_ID}>
+CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_SUNIL}>,<@${process.env.SLACK_ID_SUNIL}>
 `
 
     // send slack message whene files are uploaded
     if (newSowFile) {
-      await sendSlackMessage(process.env.SALES_RD_CHANNEL_TEST, slackMessage);
+      await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
     }
 
     return res.json({
@@ -2263,11 +2275,11 @@ ${space}:jigsaw: *Domain:* \`${domain.name}\`
 ${space}:memo: *Reason:* ${terminatedReason}
 ${space}:memo: *Details:* This task is now terminated and no further updates are allowed.
 ${space}:link: *View Task:* <${process.env.FRONTEND_URL}/TMS-operations/tasks|Open Dashboard>
-CC: <@${process.env.SLACK_RND_MANAGER_ID}>, <@${process.env.SLACK_SALES_MANAGER_ID}>
+CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_SUNIL}>,<@${process.env.SLACK_ID_SUNIL}>
 `;
 
 
-    await sendSlackMessage(process.env.SALES_RD_CHANNEL_TEST, slackMessage);
+    await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
 
     return res.json({
       message: "Domain terminated successfully",
@@ -2554,18 +2566,18 @@ export const getTaskRD = async (req, res) => {
       match["domains.developers"] = new mongoose.Types.ObjectId(userId);
     }
 
-   // Status filter
-if (status) {
-  const statusArray = status.split(",").map(s => s.trim());
-  match["domains"] = {
-    $not: { $elemMatch: { status: { $nin: statusArray } } }
-  };
-} else {
-  // default → only submitted
-  match["domains"] = {
-    $not: { $elemMatch: { status: { $nin: ["submitted"] } } }
-  };
-}
+    // Status filter
+    if (status) {
+      const statusArray = status.split(",").map(s => s.trim());
+      match["domains"] = {
+        $not: { $elemMatch: { status: { $nin: statusArray } } }
+      };
+    } else {
+      // default → only submitted
+      match["domains"] = {
+        $not: { $elemMatch: { status: { $nin: ["submitted"] } } }
+      };
+    }
 
 
 

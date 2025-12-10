@@ -736,7 +736,7 @@ const CreateTaskUI: React.FC = () => {
 
         // Filter by role AND active status
         const activeUsers = data.filter(
-          (u: any) => (u.role === "TL") && u.isActive
+          (u: any) => (u.role === "Manager") && u.isActive
         );
 
         setAssignedToOptions(activeUsers);

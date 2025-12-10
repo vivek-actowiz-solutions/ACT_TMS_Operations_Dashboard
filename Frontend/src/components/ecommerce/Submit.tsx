@@ -507,7 +507,7 @@ const SubmitTaskUI: React.FC<SubmitTaskProps> = ({ taskData }) => {
             <p className="text-gray-600">Fill the details and submit the task</p>
           </div>
 
-          {/* Top task overview - redesigned as a card
+          {/* Top task overview - redesigned as a card */}
           {taskDetails && (
             <div className="bg-white border border-blue-200 rounded-2xl shadow-md shadow-blue-100 p-6 mb-6">
               <div className="flex items-center gap-3 mb-4">
@@ -526,7 +526,7 @@ const SubmitTaskUI: React.FC<SubmitTaskProps> = ({ taskData }) => {
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="px-4 py-3 text-gray-700 font-medium">Platform</th>
-                      <th className="px-4 py-3 text-gray-700 font-medium">Developers</th>
+                      <th className="px-4 py-3 text-gray-700 font-medium">TL</th>
                       <th className="px-4 py-3 text-gray-700 font-medium">Submission Status</th>
                     </tr>
                   </thead>
@@ -551,7 +551,7 @@ const SubmitTaskUI: React.FC<SubmitTaskProps> = ({ taskData }) => {
                 </table>
               </div>
             </div>
-          )} */}
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {sections.map((section) => (

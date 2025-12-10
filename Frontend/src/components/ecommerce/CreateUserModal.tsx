@@ -135,7 +135,9 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onCr
           <option value="Admin">Admin</option>
           <option value="TL">Team Lead</option>
            <option value="Manager">Manager</option>
-          <option value="Developer">Developer</option>
+          {/* <option value="Developer">Developer</option> */}
+          <option value="Sales">Sales</option>
+          <option value="SuperAdmin">Super Admin</option>
         </select>
 
         <input
