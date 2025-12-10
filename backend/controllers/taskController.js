@@ -2124,7 +2124,7 @@ if (Object.keys(changedFields).length > 0) {
 
       task.domains.forEach((d) => {
         d.completeDate = null;
-        
+        d.submission = [];
         d.status = "Reopened";
       });
 
