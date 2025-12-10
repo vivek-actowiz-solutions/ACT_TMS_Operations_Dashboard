@@ -667,7 +667,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
                             <div className="flex justify-end gap-3">
 
                              
-                              {(role === "Sales" || role === "Admin") && (
+                              {(role === "Sales" || role === "Admin" || role === "SuperAdmin") && (
                                 <button
                                   type="button"
                                   onClick={() => handleDomainEditStart(d)}
@@ -679,7 +679,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
                               )}
 
                               
-                              {(role === "Sales" || role === "Admin") && (
+                              {(role === "Sales" || role === "Admin" || role === "SuperAdmin") && (
                                 <button
                                   type="button"
                                   onClick={() => handleDomainRemove(d.name)}
@@ -696,7 +696,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
 
                           
 
-                          {(role === "TL" || role === "Manager" || role === "Admin") && (
+                          {(role === "TL" || role === "Manager" || role === "Admin" || role === "SuperAdmin") && (
                             <div className="flex flex-col gap-2">
                               <CreatableSelect
                                 isClearable
@@ -738,11 +738,10 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
                     </div>
                   ))}
 
-                  
-                  {(role === "Sales" || role === "Admin") && (
+                  {(role === "Sales" || role === "Admin" || role === "SuperAdmin") && (
                     <div className="flex flex-wrap gap-3 mb-4 items-end">
                       
-                      <input
+                      <input  
                         type="text"
                         value={domainInput}
                         onChange={(e) => {

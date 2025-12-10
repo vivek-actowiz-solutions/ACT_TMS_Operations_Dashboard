@@ -105,7 +105,9 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
           <option value="Admin">Admin</option>
           <option value="TL">TL</option>
           <option value={"Manager"}>Manager</option>
-          <option value="Developer">Developer</option>
+          {/* <option value="Developer">Developer</option> */}
+          <option value="Sales">Sales</option>
+          <option value="SuperAdmin">Super Admin</option>
         </select>
         <input
           name="slackId"
