@@ -5,30 +5,24 @@ import { useNavigate } from "react-router";
 import { format } from "date-fns";
 import { useAuth } from "../../hooks/useAuth";
 import { jwtDecode } from "jwt-decode";
-import { FiEye, FiEdit2, FiRotateCw } from "react-icons/fi";
-import { GrCompliance } from "react-icons/gr"; // View, Edit, Submit
-import { MdDeleteForever } from "react-icons/md";
-import TopPopupPortal from "../TopPopupPortal";
+import { FiEye } from "react-icons/fi";
+
 import "react-toastify/dist/ReactToastify.css";
-import { FiClipboard, FiClock, FiCheckCircle, FiPlay, FiBox } from "react-icons/fi";
-import { GoIssueReopened } from "react-icons/go";
-import { LuClockAlert } from "react-icons/lu";
-import { MdDeleteOutline } from "react-icons/md";
-import { FaThumbtack } from "react-icons/fa";
-import { FaFileExcel } from "react-icons/fa";
-import { MdReplay } from "react-icons/md";
+import { FiCheckCircle } from "react-icons/fi";
+
 import { DataGrid } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 import { Popover, Typography } from "@mui/material";
-import HistoryModal from "./HistoryModal";
+
 import { createPortal } from "react-dom";
 import { toast, ToastContainer } from "react-toastify";
-import GeneratePOCModal from "./GeneratePOC";
-import { FaChevronDown } from "react-icons/fa6";
+
 import { useRef } from "react";
-import { RiIndeterminateCircleFill } from "react-icons/ri";
+
 
 import { ArrowLeft } from "lucide-react";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
 
 
 
@@ -296,14 +290,9 @@ const TaskPage: React.FC = () => {
   }, []);
 
   const cards = [
-    //{ label: "Total ", value: stats.total, icon: <FiClipboard />, bgColor: "bg-blue-50", textColor: "text-gray-500" },
+
     { label: "Completed ", value: stats.completed, icon: <FiCheckCircle />, bgColor: "bg-green-50", textColor: "text-gray-500" },
-    // { label: "Pending ", value: stats.pending, icon: <FiClock />, bgColor: "bg-yellow-50", textColor: "text-gray-500" },
-    // { label: "In-Progress ", value: stats.inProgress, icon: <FiPlay />, bgColor: "bg-purple-50", textColor: "text-gray-500" },
-    // { label: "Delayed ", value: stats.delayed, icon: <LuClockAlert />, bgColor: "bg-red-50", textColor: "text-gray-500" },
-    // { label: "In-R&D", value: stats.inRD, icon: <FiBox />, bgColor: "bg-orange-50", textColor: "text-gray-500" },
-    // { label: "Reopened", value: stats.Reopened, icon: <GoIssueReopened />, bgColor: "bg-pink-50", textColor: "text-gray-500" },
-    // { label: "Terminated", value: stats.Terminated || 0, icon: <MdDeleteOutline />, bgColor: "bg-gray-50", textColor: "text-gray-500" },
+
   ];
 
   if (token) {
@@ -683,7 +672,7 @@ const TaskPage: React.FC = () => {
       </div>
 
 
-      
+
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 flex-wrap">
         <div className="flex flex-col sm:flex-row gap-2 flex-1 w-full">
@@ -718,49 +707,7 @@ const TaskPage: React.FC = () => {
           )}
         </div>
 
-        {/* <div className="relative w-full sm:w-48" ref={dropdownRef}>
-          <div
-            className="border rounded-lg px-3 py-3 bg-white flex items-center justify-between cursor-pointer"
-            onClick={() => setOpenStatusDropdown(!openStatusDropdown)}
-          >
-            <span className="text-sm text-gray-700 font-semibold">
-              {selectedStatuses.length === 0
-                ? "Select Status"
-                : selectedStatuses.join(", ")}
-            </span>
 
-            <svg
-              className={`w-4 h-4 transform transition ${openStatusDropdown ? "rotate-180" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-
-          {openStatusDropdown && (
-            <div className="absolute left-0 right-0 mt-1 bg-white border rounded shadow-lg z-10 p-2 max-h-48 overflow-y-auto">
-              {["pending", "in-progress", "Reopened", "submitted", "delayed", "in-R&D", "Terminated"].map((status) => (
-                <label key={status} className="flex items-center gap-2 p-1 cursor-pointer text-sm">
-                  <input
-                    type="checkbox"
-                    checked={selectedStatuses.includes(status)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedStatuses([...selectedStatuses, status]);
-                      } else {
-                        setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
-                      }
-                    }}
-                  />
-                  {statusDisplayMap[status]}
-                </label>
-              ))}
-            </div>
-          )}
-        </div> */}
 
         <div className="flex flex-wrap gap-2 w-full md:w-auto items-center">
           <button
@@ -776,23 +723,7 @@ const TaskPage: React.FC = () => {
             Clear Filters
           </button>
 
-          {/* {(role === "Admin"  || role === "Manager") && (
-      <button
-        onClick={() => navigate("/create")}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold w-full sm:w-auto"
-      >
-        + Create Task
-      </button>
-    )}
 
-    {(role === "Admin" || role === "Manager" ) && (
-      <button
-        onClick={() => setShowPOCModal(true)}
-        className="bg-[#3C01AF] hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-semibold w-full sm:w-auto"
-      >
-        💡 Generate POC File
-      </button>
-    )} */}
         </div>
       </div>
       {tableloading ? <>  <div className="flex justify-center items-center min-h-screen">
@@ -843,10 +774,46 @@ const TaskPage: React.FC = () => {
               }))}
               columns={[
                 // ✅ No. column
-                { field: "srNo", headerName: "No.", width: 70 },
+                {
+                  field: "srNo", headerName: "No.", width: 70,
+                  renderCell: (params) => (
+                    <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: "#1e293b",
+                          color: "white",
+                          fontSize: "12px",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                        },
+                      },
+                      arrow: { sx: { color: "#1e293b" } },
+                    }}>
+                      <span>{params.value}</span>
+                    </Tooltip>
+                  ),
+                },
 
                 // ✅ Project Code column
-                { field: "projectCode", headerName: "Project Code", width: 100 },
+                {
+                  field: "projectCode", headerName: "Project Code", width: 100,
+                  renderCell: (params) => (
+                    <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: "#1e293b",
+                          color: "white",
+                          fontSize: "12px",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                        },
+                      },
+                      arrow: { sx: { color: "#1e293b" } },
+                    }}>
+                      <span>{params.value}</span>
+                    </Tooltip>
+                  ),
+                },
 
 
                 // ✅ Platform column with clickable URL
@@ -891,13 +858,47 @@ const TaskPage: React.FC = () => {
                 }
                 ,
                 // ✅ Project column
-                { field: "project", headerName: "Project", width: 180 },
+                {
+                  field: "project", headerName: "Project", width: 180,
+                  renderCell: (params) => (
+                    <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: "#1e293b",
+                          color: "white",
+                          fontSize: "12px",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                        },
+                      },
+                      arrow: { sx: { color: "#1e293b" } },
+                    }}>
+                      <span>{params.value}</span>
+                    </Tooltip>
+                  ),
+                },
 
                 // ✅ Assigned By column
                 {
                   field: "assignedBy",
                   headerName: "Assigned By",
                   width: 130,
+                  renderCell: (params) => (
+                    <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: "#1e293b",
+                          color: "white",
+                          fontSize: "12px",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                        },
+                      },
+                      arrow: { sx: { color: "#1e293b" } },
+                    }}>
+                      <span>{params.value}</span>
+                    </Tooltip>
+                  ),
 
                 },
                 // ✅ Feasible column
@@ -926,10 +927,46 @@ const TaskPage: React.FC = () => {
                   },
                 },
                 // ✅ Assigned Date column
-                { field: "assignedDate", headerName: "Assigned Date", width: 130, },
+                {
+                  field: "assignedDate", headerName: "Assigned Date", width: 130,
+                  renderCell: (params) => (
+                    <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: "#1e293b",
+                          color: "white",
+                          fontSize: "12px",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                        },
+                      },
+                      arrow: { sx: { color: "#1e293b" } },
+                    }}>
+                      <span>{params.value}</span>
+                    </Tooltip>
+                  ),
+                },
 
                 // ✅ Completion Date column
-                { field: "completionDate", headerName: "Completion Date", width: 130, },
+                {
+                  field: "completionDate", headerName: "Completion Date", width: 130,
+                  renderCell: (params) => (
+                    <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: "#1e293b",
+                          color: "white",
+                          fontSize: "12px",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                        },
+                      },
+                      arrow: { sx: { color: "#1e293b" } },
+                    }}>
+                      <span>{params.value}</span>
+                    </Tooltip>
+                  ),
+                },
 
                 // ✅ Developers column
                 {
@@ -962,47 +999,40 @@ const TaskPage: React.FC = () => {
                 ,
 
                 // ✅ Status column
-                {
-                  field: "status",
-                  headerName: "Status",
-                  width: 130,
-                  renderCell: (params) => (
-                    <span
-                      // onClick={() => {
-                      //   if (params.row.status === "submitted") return;
-                      //   if (params.row.status === "Terminated") return;
-                      //   if (["TL", "Manager", "Admin"].includes(role)) {
-                      //     const domainObj =
-                      //       params.row.task?.domains?.find(
-                      //         (d) => d.name === params.row.domainName
-                      //       ) || params.row.task?.domains?.[0];
-                      //     const domainId =
-                      //       typeof domainObj?._id === "object"
-                      //         ? domainObj._id.$oid ?? ""
-                      //         : domainObj?._id ?? "";
-                      //     openStatusModal(params.row.task, {
-                      //       id: domainId,
-                      //       name: domainObj?.name || "Unknown",
-                      //       status:
-                      //         domainObj?.status ||
-                      //         params.row.domainStatus ||
-                      //         "Pending",
-                      //     });
-                      //   }
-                      // }}
-                      className={`px-2 py-1 rounded-full text-xs font-semibold cursor-pointer ${getStatusClass(
-                        params.row.status
-                      )}`}
-                      title={
-                        ["TL", "Manager", "Admin"].includes(role)
-                          ? "Click to change status"
-                          : ""
-                      }
-                    >
-                      {formatStatus(params.row.status)}
-                    </span>
-                  ),
-                },
+               {
+  field: "status",
+  headerName: "Status",
+  width: 130,
+  renderCell: (params) => (
+    <Tooltip
+      title={
+        ["TL", "Manager", "Admin"].includes(role)
+          ? "Click to change status"
+          : "Status"
+      }
+      arrow placement="top" componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: "#1e293b",
+                          color: "white",
+                          fontSize: "12px",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                        },
+                      },
+                      arrow: { sx: { color: "#1e293b" } },
+                    }}
+    >
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-semibold cursor-pointer ${getStatusClass(
+          params.row.status
+        )}`}
+      >
+        {formatStatus(params.row.status)}
+      </span>
+    </Tooltip>
+  ),
+},
                 // ✅ Actions column
                 {
                   field: "actions",
@@ -1011,140 +1041,33 @@ const TaskPage: React.FC = () => {
                   sortable: false,
                   renderCell: (params) => (
                     <div className="flex items-center pt-2 gap-2 flex-wrap w-full">
-                      <FiEye
-                        onClick={(e) => {
-                          e.stopPropagation(); // prevent row click issues
-
-                          const url = `/TMS-operations/tasks-rd/${params.row.task._id}${params.row.domainName
-                            ? `?domain=${encodeURIComponent(params.row.domainName)}`
-                            : ""
-                            }`;
-
-                          window.open(url, "_blank"); // 🔥 opens in new tab
-                        }}
-                        className="cursor-pointer text-blue-600 hover:text-blue-800"
-                        title="View"
-                        size={18}
-                      />
-
-                      {/* {(role === "Admin" ||
-                        role === "TL" ||
-                        role === "Manager") &&
-
-                        params.row.status?.trim().toLowerCase() !== "terminated" &&
-                        (
-                          <FiEdit2
-                            onClick={() => navigate(
-                              `/edit/${params.row.task._id}?domain=${encodeURIComponent(
-                                params.row.domainName
-                              )}`
-                            )}
-                            className="cursor-pointer text-yellow-500 hover:text-yellow-600"
-                            title="Edit"
+                      <Tooltip title="View Task" arrow placement="top" componentsProps={{
+                        tooltip: {
+                          sx: {
+                            backgroundColor: "#1e293b",
+                            color: "white",
+                            fontSize: "12px",
+                            padding: "6px 10px",
+                            borderRadius: "6px",
+                          },
+                        },
+                        arrow: { sx: { color: "#1e293b" } },
+                      }}>
+                        <span>
+                          <FiEye
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const url = `/TMS-operations/tasks-rd/${params.row.task._id}${params.row.domainName ? `?domain=${encodeURIComponent(params.row.domainName)}` : ""
+                                }`;
+                              window.open(url, "_blank");
+                            }}
+                            className="cursor-pointer text-blue-600 hover:text-blue-800"
                             size={18}
                           />
-                        )} */}
-                      {/* {(
-                        ["Admin", "TL"].includes(role) ||
-                        (role === "Developer" &&
-                          params.row.developers?.some(
-                            (dev: string) =>
-                              dev?.toLowerCase()?.trim() === userName?.toLowerCase()?.trim()
-                          ))
-                      ) &&
-                        params.row.status?.trim().toLowerCase() !== "submitted" &&
-                        params.row.status?.trim().toLowerCase() !== "terminated" &&
-                        (
-                          <GrCompliance
-                            onClick={() => {
-                              const devs = params.row.developers || [];
+                        </span>
+                      </Tooltip>
 
 
-
-                              if (devs.length === 0) {
-                                setShowAssignDevPopup(true);   // your existing popup logic
-                                return;
-                              }
-
-                              navigate(
-                                `/submit/${params.row.task._id}${params.row.domainName
-                                  ? `?domain=${encodeURIComponent(params.row.domainName)}`
-                                  : ""
-                                }`
-                              );
-                            }}
-
-                            // 🔥 If no dev assigned = grey color + disabled cursor
-                            className={`
-    ${(params.row.developers || []).length === 0
-                                ? "text-gray-400 cursor-not-allowed"
-                                : "text-green-600 hover:text-green-700 cursor-pointer"
-                              }
-  `}
-
-                            title={
-                              (params.row.developers || []).length === 0
-                                ? "Assign a developer to enable submission"
-                                : "Submit"
-                            }
-
-                            size={18}
-                          />
-
-                        )} */}
-                      {/* {(role === "Admin" || role === "Manager") &&
-                        <FiRotateCw
-                          onClick={() => {
-                            const fullUrl = params.row.domainName; // full domain URL
-                            setSelectedTask({
-                              task: params.row.task,
-                              domainName: encodeURIComponent(fullUrl)
-                            });
-                            setShowHistory(true);
-                          }}
-                          className="cursor-pointer text-purple-600 hover:text-purple-700"
-                          title="View History"
-                          size={18}
-                        />
-                      } */}
-                      {/* {(role === "Admin" || role === "Manager") &&
-                        params.row.status?.trim().toLowerCase() === "submitted" &&
-                        params.row.reopenCount === 0 &&
-                        (
-                          <MdReplay
-                            onClick={() => navigate(`/tasks/${params.row.task._id}/reopen`)}
-                            className="cursor-pointer text-red-600 hover:text-red-700"
-                            title="Reopen Task"
-                            size={18}
-                          />
-                        )} */}
-                      {/* {(role === "Admin" || role === "Manager") &&
-                        params.row.status?.trim().toLowerCase() !== "terminated" &&
-                        params.row.status?.trim().toLowerCase() !== "submitted" &&
-                        (
-                          <MdDeleteForever
-                            onClick={() => {
-                              if (window.confirm("Are you sure you want to terminate this domain?"))
-                              handleTerminateDomain(params.row.task._id, params.row.domainName);
-                            }}
-                            className="cursor-pointer text-red-600 hover:text-red-800"
-                            title="Terminate Domain"
-                            size={20}
-                          />
-                          <RiIndeterminateCircleFill
-                            onClick={() => {
-                              setPopupData({
-                                id: params.row.task._id,
-                                domain: params.row.domainName,
-                              });
-                              setShowPopup(true);
-                            }}
-                            className="cursor-pointer text-red-600 hover:text-red-800"
-                            title="Terminate Domain"
-                            size={20}
-                          />
-
-                        )} */}
                     </div>
                   ),
                 },
@@ -1282,144 +1205,7 @@ const TaskPage: React.FC = () => {
         </div>
       </>}
 
-      {statusModalOpen && currentTask && currentDomain && currentDomain.status.toLowerCase() !== 'submitted' &&
-        (
-          <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-30">
-            <div className="bg-white rounded-lg p-6 w-96">
-              <h2 className="text-lg font-semibold mb-4">Update Status</h2>
 
-              <div className="mb-4">
-                <label className="block mb-1 font-medium">New Status</label>
-
-                {/* The status is already set to 'in-R&D' in openStatusModal */}
-                <h3 className="w-full p-2 border rounded bg-gray-100 text-gray-800 font-semibold">
-                  in-R&D
-                </h3>
-
-              </div>
-
-              <div className="mb-4">
-                <label className="block mb-1 font-medium">Reason</label>
-                <textarea
-                  value={statusReason}
-                  onChange={(e) => setStatusReason(e.target.value)}
-                  className="w-full p-2 border rounded"
-                  placeholder="Enter reason for status change"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-1 font-medium">Upload File</label>
-                <input
-                  type="file"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  className="border rounded p-1 w-full"
-                />
-              </div>
-              <span className="flex items-center justify-center text-gray-500">OR</span>
-              <div className="mb-4">
-                <label className="block mb-1 font-medium">Upload Url</label>
-                <input
-                  type="text"
-                  placeholder="Enter the URL"
-                  onChange={(e) => setUrl(e.target.value)}
-                  className="border rounded p-1 w-full"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={handleStatusUpdate}
-                  disabled={loading}
-                  className={`px-4 py-2 rounded text-white font-medium transition ${loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
-                    }`}
-                >
-                  {loading ? "Updating..." : "Update"}
-                </button>
-                <button
-                  onClick={closeStatusModal}
-                  className="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      {showAssignDevPopup && (
-        <div className="fixed inset-0  bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-30">
-          <div className="bg-white rounded-lg p-6 w-80 text-center shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">Cannot Submit</h2>
-            <p className="mb-4">Please assign at least one developer before submitting this task.</p>
-            <button
-              onClick={() => setShowAssignDevPopup(false)}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showHistory && (
-        <HistoryModal
-          open={showHistory}
-          onClose={() => setShowHistory(false)}
-          task={selectedTask?.task}
-          domainName={selectedTask?.domainName}
-        />
-      )}
-
-      {showPOCModal && (
-        <GeneratePOCModal
-          onClose={() => setShowPOCModal(false)}
-          onSelect={(taskId: string) => {
-            setShowPOCModal(false);
-            navigate(`/TMS-operations/poc/create/${taskId}`);
-          }}
-        />
-      )}
-      {showPopup && (
-        <TopPopupPortal>
-          <div
-            style={{
-              position: "fixed",
-              top: "20px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              zIndex: 999999,
-            }}
-            className="bg-white border border-gray-300 shadow-2xl rounded-lg 
-               px-6 py-9 w-[400px] h-[200px] animate-slideDown "
-          >
-            <p className="text-gray-800 font-medium text-center text-xl">
-              Are you sure you want to terminate this domain?
-            </p>
-
-            <div className="flex justify-center gap-4 mt-4">
-              <button
-                className="px-4 py-1 bg-[#3C01AF] text-white rounded hover:bg-purple-700"
-                onClick={() => {
-                  handleTerminateDomain(popupData.id, popupData.domain);
-                  setShowPopup(false);
-                }}
-              >
-                Yes
-              </button>
-
-              <button
-                className="px-4 py-1 bg-gray-300 rounded hover:bg-gray-400"
-                onClick={() => setShowPopup(false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </TopPopupPortal>
-
-      )}
     </>
   );
 };
