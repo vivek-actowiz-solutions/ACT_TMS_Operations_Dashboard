@@ -1480,10 +1480,8 @@ const ReopenTask: React.FC = () => {
 
                     <div className="md:col-span-2">
                       <label className="block text-gray-700 font-medium mb-2">Description <span className="text-red-500">*</span></label>
-                      <textarea name="description" value={task.description} onChange={handleChange} className="w-full border rounded-lg p-3 h-28" maxLength={200}/>
-                      <div className="text-right text-sm text-gray-500 mt-1">
-                        {task.description.length}/200 characters
-                      </div>
+                      <textarea name="description" value={task.description} onChange={handleChange} className="w-full border rounded-lg p-3 h-28" />
+                      
                       {renderError("description")}
                     </div>
                   </div>

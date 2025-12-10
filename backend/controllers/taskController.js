@@ -201,7 +201,7 @@ export const createTask = async (req, res) => {
       clientSampleSchemaUrls: raw.clientSampleSchemaUrls,
       frequency: raw.frequency,
       description: raw.description,
-      rpm: raw.RPM,
+      RPM: raw.RPM,
       
     },
       {},
@@ -2113,14 +2113,23 @@ if (!oldTaskData.RPM && task.RPM !== undefined) {
     }
 
 if (Object.keys(changedFields).length > 0) {
-  //console.log("🔄 Updating ALL domain statuses to Reopened due to ANY change");
+      task.previousDomain.push({
+        oldValue: JSON.parse(JSON.stringify(task.domains)),
+        changedAt: new Date(),
+      });
+    }
 
-  task.domains.forEach((d) => {
-    d.status = "Reopened";
-  });
+    if (Object.keys(changedFields).length > 0) {
 
-  task.markModified("domains");
-}
+
+      task.domains.forEach((d) => {
+        d.completeDate = null;
+        d.developers = [];
+        d.status = "Reopened";
+      });
+
+      task.markModified("domains");
+    }
 
 
     // 4️⃣ Save task

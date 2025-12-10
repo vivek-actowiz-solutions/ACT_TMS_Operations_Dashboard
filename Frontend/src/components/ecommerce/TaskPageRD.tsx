@@ -1037,10 +1037,10 @@ const TaskPage: React.FC = () => {
                 {
                   field: "actions",
                   headerName: "Actions",
-                  flex: 1,
+                  width: 100,
                   sortable: false,
                   renderCell: (params) => (
-                    <div className="flex items-center pt-2 gap-2 flex-wrap w-full">
+                    <div className="flex items-center pt-4 gap-2 flex-wrap w-full justify-center">
                       <Tooltip title="View Task" arrow placement="top" componentsProps={{
                         tooltip: {
                           sx: {

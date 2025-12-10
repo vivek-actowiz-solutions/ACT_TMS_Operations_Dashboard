@@ -873,7 +873,7 @@ const TaskPage: React.FC = () => {
                 },
 
                 // ✅ Project Code column
-                { field: "projectCode", headerName: "Project Code", width: 150,renderCell: (params) => (
+                { field: "projectCode", headerName: "Project Code", width: 100,renderCell: (params) => (
                     <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
                       tooltip: {
                         sx: {
@@ -933,7 +933,7 @@ const TaskPage: React.FC = () => {
                 }
                 ,
                 // ✅ Project column
-                { field: "project", headerName: "Project", width: 100,renderCell: (params) => (
+                { field: "project", headerName: "Project", width: 150,renderCell: (params) => (
                     <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
                       tooltip: {
                         sx: {
@@ -999,7 +999,7 @@ renderCell: (params) => (
                 {
                   field: "feasible",
                   headerName: "Feasible",
-                  width: 61,
+                  width: 100,
                   renderCell: (params) => {
                     const val = params.row.feasible;
 
@@ -1056,78 +1056,7 @@ renderCell: (params) => (
                     </Tooltip>
                   ),},
 
-                // ✅ Developers column
-                // {
-                //   field: "developers",
-                //   headerName: "Developers",
-                //   width: 130,
-                //   sortable: false,
-                //   renderCell: (params) => {
-                //     const devs = params.row.developers || [];
-
-                //     return (
-                //       <div
-                //         className={`flex flex-wrap w-full ${devs.length === 1
-                //             ? "justify-center items-center text-center pt-4"   // center for 1 name
-                //             : "justify-start"                             // normal for multiple
-                //           }`}
-                //       >
-                //         {devs.map((dev, index) => (
-                //           <span
-                //             key={index}
-                //             className="px-1 py-[2px] text-xs font-medium"
-                //           >
-                //             {dev}
-                //           </span>
-                //         ))}
-                //       </div>
-                //     );
-                //   },
-                // }
-                ,
-
-                // ✅ Status column
-                // {
-                //   field: "status",
-                //   headerName: "Status",
-                //   width: 130,
-                //   renderCell: (params) => (
-                //     <span
-                //       onClick={() => {
-                //         if (params.row.status === "submitted") return;
-                //         if (params.row.status === "Terminated") return;
-                //         if (["TL", "Manager", "Admin"].includes(role)) {
-                //           const domainObj =
-                //             params.row.task?.domains?.find(
-                //               (d) => d.name === params.row.domainName
-                //             ) || params.row.task?.domains?.[0];
-                //           const domainId =
-                //             typeof domainObj?._id === "object"
-                //               ? domainObj._id.$oid ?? ""
-                //               : domainObj?._id ?? "";
-                //           openStatusModal(params.row.task, {
-                //             id: domainId,
-                //             name: domainObj?.name || "Unknown",
-                //             status:
-                //               domainObj?.status ||
-                //               params.row.domainStatus ||
-                //               "Pending",
-                //           });
-                //         }
-                //       }}
-                //       className={`px-2 py-1 rounded-full text-xs font-semibold cursor-pointer ${getStatusClass(
-                //         params.row.status
-                //       )}`}
-                //       title={
-                //         ["TL", "Manager", "Admin"].includes(role)
-                //           ? "Click to change status"
-                //           : ""
-                //       }
-                //     >
-                //       {formatStatus(params.row.status)}
-                //     </span>
-                //   ),
-                // },
+                
                 {
   field: "status",
   headerName: "Status",
@@ -1185,324 +1114,7 @@ renderCell: (params) => (
     );
   },
 },
-                // ✅ Actions column
-                //                 {
-                //                   field: "actions",
-                //                   headerName: "Actions",
-                //                   width: 140,
-                //                   sortable: false,
-                //                   renderCell: (params) => (
-                //                     <div className="flex items-center pt-2 gap-2 flex-wrap w-full">
-                //                       {/* <FiEye
-                //                         onClick={(e) => {
-                //                           e.stopPropagation(); // prevent row click issues
-
-                //                           const url = `/TMS-operations/tasks/${params.row.task._id}${params.row.domainName
-                //                             ? `?domain=${encodeURIComponent(params.row.domainName)}`
-                //                             : ""
-                //                             }`;
-
-                //                           window.open(url, "_blank"); // 🔥 opens in new tab
-                //                         }}
-                //                         className="cursor-pointer text-blue-600 hover:text-blue-800"
-                //                         title="View"
-                //                         size={18}
-                //                       /> */}
-                //                       <Tooltip
-                //   title="View"
-                //   placement="top" 
-                //   arrow
-                //   componentsProps={{
-                //     tooltip: {
-                //       sx: {
-                //         backgroundColor: "#1e293b",   // dark blue
-                //         color: "#fff",
-                //         fontSize: "12px",
-                //         padding: "6px 10px",
-                //         borderRadius: "6px",
-                //       },
-                //     },
-                //     arrow: {
-                //       sx: {
-                //         color: "#1e293b",
-                //       },
-                //     },
-                //   }}
-                // >
-
-                //   <FiEye
-                //     onClick={(e) => {
-                //       e.stopPropagation();
-
-                //       const url = `/TMS-operations/tasks/${params.row.task._id}${
-                //         params.row.domainName
-                //           ? `?domain=${encodeURIComponent(params.row.domainName)}`
-                //           : ""
-                //       }`;
-
-                //       window.open(url, "_blank");
-                //     }}
-                //     className="cursor-pointer text-blue-600 hover:text-blue-800"
-                //     size={18}
-                //   />
-                // </Tooltip>
-
-
-                //                       {(role === "Admin" ||
-                //                         role === "TL" ||
-                //                         role === "Manager") &&
-
-                //                         params.row.status?.trim().toLowerCase() !== "terminated" &&
-                //                         params.row.status?.trim().toLowerCase() == "submitted"&&
-                //                         (
-                //                           <FiEdit2
-                //                             onClick={() => navigate(
-                //                               `/TMS-operations/edit/${params.row.task._id}?domain=${encodeURIComponent(
-                //                                 params.row.domainName
-                //                               )}`
-                //                             )}
-                //                             className="cursor-pointer text-yellow-500 hover:text-yellow-600"
-                //                             title="Edit"
-                //                             size={18}
-                //                           />
-                //                         )}
-                //                       {/* {(
-                //                         ["Admin", "TL"].includes(role) ||
-                //                         (role === "Developer" &&
-                //                           params.row.developers?.some(
-                //                             (dev: string) =>
-                //                               dev?.toLowerCase()?.trim() === userName?.toLowerCase()?.trim()
-                //                           ))
-                //                       ) &&
-                //                         params.row.status?.trim().toLowerCase() !== "submitted" &&
-                //                         params.row.status?.trim().toLowerCase() !== "terminated" &&
-                //                         (
-                //                           <GrCompliance
-                //                             onClick={() => {
-                //                               const devs = params.row.developers || [];
-
-
-
-                //                               if (devs.length === 0) {
-                //                                 setShowAssignDevPopup(true);   // your existing popup logic
-                //                                 return;
-                //                               }
-
-                //                               navigate(
-                //                                 `/TMS-operations/submit/${params.row.task._id}${params.row.domainName
-                //                                   ? `?domain=${encodeURIComponent(params.row.domainName)}`
-                //                                   : ""
-                //                                 }`
-                //                               );
-                //                             }}
-
-                //                             // 🔥 If no dev assigned = grey color + disabled cursor
-                //                             className={`
-                //     ${(params.row.developers || []).length === 0
-                //                                 ? "text-gray-400 cursor-not-allowed"
-                //                                 : "text-green-600 hover:text-green-700 cursor-pointer"
-                //                               }
-                //   `}
-
-                //                             title={
-                //                               (params.row.developers || []).length === 0
-                //                                 ? "Assign a developer to enable submission"
-                //                                 : "Submit"
-                //                             }
-
-                //                             size={18}
-                //                           />
-
-                //                         )} */}
-                //                       {(role === "Admin" || role === "Manager") &&
-                //                         <FiRotateCw
-                //                           onClick={() => {
-                //                             const fullUrl = params.row.domainName; // full domain URL
-                //                             setSelectedTask({
-                //                               task: params.row.task,
-                //                               domainName: encodeURIComponent(fullUrl)
-                //                             });
-                //                             setShowHistory(true);
-                //                           }}
-                //                           className="cursor-pointer text-purple-600 hover:text-purple-700"
-                //                           title="View History"
-                //                           size={18}
-                //                         />
-                //                       }
-                //                       {(role === "Admin" || role === "Manager") &&
-                //                         params.row.status?.trim().toLowerCase() === "submitted" &&
-                //                         params.row.reopenCount === 0 &&
-                //                         (
-                //                           <MdReplay
-                //                             onClick={() => navigate(`/TMS-operations/tasks/${params.row.task._id}/reopen`)}
-                //                             className="cursor-pointer text-red-600 hover:text-red-700"
-                //                             title="Reopen Task"
-                //                             size={18}
-                //                           />
-                //                         )}
-                //                       {(role === "Admin" || role === "Manager") &&
-                //                         params.row.status?.trim().toLowerCase() !== "terminated" &&
-                //                         params.row.status?.trim().toLowerCase() !== "submitted" &&
-                //                         (
-
-                //                           <RiIndeterminateCircleFill
-                //                             onClick={() => {
-                //                               setPopupData({
-                //                                 id: params.row.task._id,
-                //                                 domain: params.row.domainName,
-                //                               });
-                //                               setShowPopup(true);
-                //                             }}
-                //                             className="cursor-pointer text-red-600 hover:text-red-800"
-                //                             title="Terminate Domain"
-                //                             size={20}
-                //                           />
-
-                //                         )}
-                //                     </div>
-                //                   ),
-                //                 },
-                //             {
-                //               field: "actions",
-                //               headerName: "Actions",
-                //               width: 170,
-                //               sortable: false,
-                //               disableClickEventBubbling: true,
-                //               renderCell: (params) => {
-                //                 const ActionIcon = ({ title, color, hoverColor, onClick, children }) => (
-                //                   <Tooltip
-                //                     title={title}
-                //                     placement="top"
-                //                     arrow
-                //                     disableInteractive
-                //                      disableFocusListener      
-                // disableTouchListener
-                //                     componentsProps={{
-                //                       tooltip: {
-                //                         sx: {
-                //                           backgroundColor: "#1e293b",
-                //                           color: "#fff",
-                //                           fontSize: "12px",
-                //                           padding: "6px 10px",
-                //                           borderRadius: "6px",
-                //                         },
-                //                       },
-                //                       arrow: { sx: { color: "#1e293b" } },
-                //                     }}
-                //                   >
-                //                     <IconButton
-                //                       title={title}
-                //                       size="small"
-                //                       onClick={(e) => {
-                //                         e.stopPropagation();
-                //                         e.defaultMuiDataGridPreventSelection = true;
-                //                         onClick && onClick(e);
-                //                       }}
-                //                       sx={{
-                //                         color,
-                //                         padding: "4px",
-                //                         "&:hover": {
-                //                           color: hoverColor,
-                //                           backgroundColor: "transparent",
-                //                         },
-                //                       }}
-                //                     >
-                //                       {children}
-                //                     </IconButton>
-                //                   </Tooltip>
-
-                //                 );
-
-
-                //                 const domainName = params.row.domainName;
-                //                 const taskId = params.row.task._id;
-
-                //                 return (
-                //                   <div className="flex items-center gap-1">
-
-                //                     {/* 🔵 VIEW */}
-                //                     <ActionIcon
-                //                       title="View"
-                //                       color="#2563eb"
-                //                       hoverColor="#1e40af"
-                //                       onClick={(e) => {
-                //                         e.stopPropagation();
-                //                         const url = `/TMS-operations/tasks/${taskId}${domainName ? `?domain=${encodeURIComponent(domainName)}` : ""
-                //                           }`;
-                //                         window.open(url, "_blank");
-                //                       }}
-                //                     >
-                //                       <FiEye size={18} />
-                //                     </ActionIcon>
-
-                //                     {/* ✏️ EDIT (only when submitted and allowed role) */}
-                //                     {(role === "Admin" || role === "Manager" || role === "TL") &&
-                //                       params.row.status?.trim().toLowerCase() === "submitted" &&
-                //                       params.row.reopenCount === 0 && (
-                //                         <ActionIcon
-                //                           title="Edit Submission"
-                //                           color="#ca8a04"
-                //                           hoverColor="#a16207"
-                //                           onClick={() =>
-                //                             navigate(`/TMS-operations/edit/${taskId}?domain=${encodeURIComponent(domainName)}`)
-                //                           }
-                //                         >
-                //                           <FiEdit2 size={18} />
-                //                         </ActionIcon>
-                //                       )}
-
-                //                     {/* 🔁 VIEW HISTORY */}
-                //                     {(role === "Admin" || role === "Manager") && (
-                //                       <ActionIcon
-                //                         title="View History"
-                //                         color="#9333ea"
-                //                         hoverColor="#7e22ce"
-                //                         onClick={() => {
-                //                           setSelectedTask({
-                //                             task: params.row.task,
-                //                             domainName: encodeURIComponent(domainName),
-                //                           });
-                //                           setShowHistory(true);
-                //                         }}
-                //                       >
-                //                         <FiRotateCw size={18} />
-                //                       </ActionIcon>
-                //                     )}
-
-                //                     {/* 🔄 REOPEN TASK */}
-                //                     {(role === "Admin" || role === "Manager") &&
-                //                       params.row.status?.trim().toLowerCase() === "submitted" &&
-                //                       params.row.reopenCount === 0 && (
-                //                         <ActionIcon
-                //                           title="Reopen Task"
-                //                           color="#dc2626"
-                //                           hoverColor="#b91c1c"
-                //                           onClick={() => navigate(`/TMS-operations/tasks/${taskId}/reopen`)}
-                //                         >
-                //                           <MdReplay size={18} />
-                //                         </ActionIcon>
-                //                       )}
-
-                //                     {/* ⛔ TERMINATE */}
-                //                     {(role === "Admin" || role === "Manager") &&
-                //                       params.row.status?.trim().toLowerCase() !== "terminated" &&
-                //                       params.row.status?.trim().toLowerCase() !== "submitted" && (
-                //                         <ActionIcon
-                //                           title="Terminate Task"
-                //                           color="#b91c1c"
-                //                           hoverColor="#7f1d1d"
-                //                           onClick={() => {
-                //                             setPopupData({ id: taskId, domain: domainName });
-                //                             setShowPopup(true);
-                //                           }}
-                //                         >
-                //                           <RiIndeterminateCircleFill size={20} />
-                //                         </ActionIcon>
-                //                       )}
-                //                   </div>
-                //                 );
-                //               },
-                //             }
+                
                 {
                   field: "actions",
                   headerName: "Actions",
@@ -1558,7 +1170,7 @@ renderCell: (params) => (
                     );
 
                     return (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 pt-2">
 
                         {/* VIEW */}
                         <ActionIcon
