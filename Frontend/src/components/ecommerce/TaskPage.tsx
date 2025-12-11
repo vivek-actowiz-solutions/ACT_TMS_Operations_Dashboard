@@ -303,7 +303,7 @@ const TaskPage: React.FC = () => {
     { label: "Total ", value: stats.total, icon: <FiClipboard />, bgColor: "bg-blue-50", textColor: "text-gray-500" },
     { label: "Completed ", value: stats.completed, icon: <FiCheckCircle />, bgColor: "bg-green-50", textColor: "text-gray-500" },
     { label: "Pending ", value: stats.pending, icon: <FiClock />, bgColor: "bg-yellow-50", textColor: "text-gray-500" },
-     { label: "In-Progress ", value: stats.inProgress, icon: <FiPlay />, bgColor: "bg-purple-50", textColor: "text-gray-500" },
+    { label: "In-Progress ", value: stats.inProgress, icon: <FiPlay />, bgColor: "bg-purple-50", textColor: "text-gray-500" },
     { label: "Delayed ", value: stats.delayed, icon: <LuClockAlert />, bgColor: "bg-red-50", textColor: "text-gray-500" },
     { label: "In-R&D", value: stats.inRD, icon: <FiBox />, bgColor: "bg-orange-50", textColor: "text-gray-500" },
     { label: "Reopened", value: stats.Reopened, icon: <GoIssueReopened />, bgColor: "bg-pink-50", textColor: "text-gray-500" },
@@ -693,7 +693,7 @@ const TaskPage: React.FC = () => {
             className="flex-grow w-full sm:w-64 md:w-80 p-2 rounded-lg border border-gray-300 bg-white text-gray-800"
           />
 
-          {(role === "Admin" || role === "Manager" ||  role === "Sales" || role === "SuperAdmin" ) && (
+          {(role === "Admin" || role === "Manager" || role === "Sales" || role === "SuperAdmin") && (
             <select
               value={assignedByFilter}
               onChange={(e) => {
@@ -736,7 +736,7 @@ const TaskPage: React.FC = () => {
 
           {openStatusDropdown && (
             <div className="absolute left-0 right-0 mt-1 bg-white border rounded shadow-lg z-10 p-2 max-h-48 overflow-y-auto">
-              {["pending", "Reopened",'in-progress', "submitted", "delayed", "in-R&D", "Terminated"].map((status) => (
+              {["pending", "Reopened", 'in-progress', "submitted", "delayed", "in-R&D", "Terminated"].map((status) => (
                 <label key={status} className="flex items-center gap-2 p-1 cursor-pointer text-sm">
                   <input
                     type="checkbox"
@@ -837,11 +837,11 @@ const TaskPage: React.FC = () => {
                 assignedBy: row.task.assignedBy?.name || row.task.assignedBy || "-",
                 assignedTo: row.task.assignedTo?.name || row.task.assignedTo || "-",
                 feasible: row.task.feasible,
-                
+
                 assignedDate: formatDate(row.task.taskAssignedDate),
                 completionDate: formatDate(row.task.completeDate),
 
-developers: row.developers || [],
+                developers: row.developers || [],
                 status: row.domainStatus,
                 task: row.task,
                 domainName: row.domainName,
@@ -873,7 +873,8 @@ developers: row.developers || [],
                 },
 
                 // ✅ Project Code column
-                { field: "projectCode", headerName: "Project Code", width: 100,renderCell: (params) => (
+                {
+                  field: "projectCode", headerName: "Project Code", width: 100, renderCell: (params) => (
                     <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
                       tooltip: {
                         sx: {
@@ -888,7 +889,8 @@ developers: row.developers || [],
                     }}>
                       <span>{params.value}</span>
                     </Tooltip>
-                  ), },
+                  ),
+                },
 
 
                 // ✅ Platform column with clickable URL
@@ -933,7 +935,8 @@ developers: row.developers || [],
                 }
                 ,
                 // ✅ Project column
-                { field: "project", headerName: "Project", width: 150,renderCell: (params) => (
+                {
+                  field: "project", headerName: "Project", width: 150, renderCell: (params) => (
                     <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
                       tooltip: {
                         sx: {
@@ -948,14 +951,15 @@ developers: row.developers || [],
                     }}>
                       <span>{params.value}</span>
                     </Tooltip>
-                  ), },
+                  ),
+                },
 
                 // ✅ Assigned By column
                 {
                   field: "assignedBy",
                   headerName: "Assigned By",
                   width: 150,
-renderCell: (params) => (
+                  renderCell: (params) => (
                     <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
                       tooltip: {
                         sx: {
@@ -1023,7 +1027,8 @@ renderCell: (params) => (
                   },
                 },
                 // ✅ Assigned Date column
-                { field: "assignedDate", headerName: "Assigned Date", width: 140, renderCell: (params) => (
+                {
+                  field: "assignedDate", headerName: "Assigned Date", width: 140, renderCell: (params) => (
                     <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
                       tooltip: {
                         sx: {
@@ -1038,10 +1043,12 @@ renderCell: (params) => (
                     }}>
                       <span>{params.value}</span>
                     </Tooltip>
-                  ),},
+                  ),
+                },
 
                 // ✅ Completion Date column
-                { field: "completionDate", headerName: "Completion Date", width: 140, renderCell: (params) => (
+                {
+                  field: "completionDate", headerName: "Completion Date", width: 140, renderCell: (params) => (
                     <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
                       tooltip: {
                         sx: {
@@ -1056,10 +1063,11 @@ renderCell: (params) => (
                     }}>
                       <span>{params.value}</span>
                     </Tooltip>
-                  ),},
+                  ),
+                },
 
 
-                  {
+                {
                   field: "developers",
                   headerName: "Team Leads",
                   width: 130,
@@ -1087,65 +1095,66 @@ renderCell: (params) => (
                   },
                 },
 
-                
+
                 {
-  field: "status",
-  headerName: "Status",
-  width: 130,
-  renderCell: (params) => {
-    const status = params.row.status;
-    const isEditable = ["TL", "Manager", "Admin"].includes(role);
-    const tooltipTitle = isEditable
-      ? "Click to change status"
-      : status || "-";
+                  field: "status",
+                  headerName: "Status",
+                  width: 130,
+                  renderCell: (params) => {
+                    const status = params.row.status;
+                    const isEditable = ["Manager", "Admin", "SuperAdmin"].includes(role);
+                    const tooltipTitle = isEditable
+                      ? "Click to change status"
+                      : status || "-";
 
-    return (
-      <Tooltip title={tooltipTitle} arrow  placement="top"  componentsProps={{
-                      tooltip: {
-                        sx: {
-                          backgroundColor: "#1e293b",
-                          color: "white",
-                          fontSize: "12px",
-                          padding: "6px 10px",
-                          borderRadius: "6px",
+                    return (
+                      <Tooltip title={tooltipTitle} arrow placement="top" componentsProps={{
+                        tooltip: {
+                          sx: {
+                            backgroundColor: "#1e293b",
+                            color: "white",
+                            fontSize: "12px",
+                            padding: "6px 10px",
+                            borderRadius: "6px",
+                          },
                         },
-                      },
-                      arrow: { sx: { color: "#1e293b" } },}}>
-        <span
-          onClick={() => {
-            if (status === "submitted" || status === "Terminated") return;
-            if (isEditable) {
-              const domainObj =
-                params.row.task?.domains?.find(
-                  (d) => d.name === params.row.domainName
-                ) || params.row.task?.domains?.[0];
+                        arrow: { sx: { color: "#1e293b" } },
+                      }}>
+                        <span
+                          onClick={() => {
+                            if (status === "submitted" || status === "Terminated") return;
+                            if (isEditable) {
+                              const domainObj =
+                                params.row.task?.domains?.find(
+                                  (d) => d.name === params.row.domainName
+                                ) || params.row.task?.domains?.[0];
 
-              const domainId =
-                typeof domainObj?._id === "object"
-                  ? domainObj._id.$oid ?? ""
-                  : domainObj?._id ?? "";
+                              const domainId =
+                                typeof domainObj?._id === "object"
+                                  ? domainObj._id.$oid ?? ""
+                                  : domainObj?._id ?? "";
 
-              openStatusModal(params.row.task, {
-                id: domainId,
-                name: domainObj?.name || "Unknown",
-                status:
-                  domainObj?.status ||
-                  params.row.domainStatus ||
-                  "Pending",
-              });
-            }
-          }}
-          className={`px-2 py-1 rounded-full text-xs font-semibold cursor-pointer ${getStatusClass(
-            status
-          )}`}
-        >
-          {formatStatus(status)}
-        </span>
-      </Tooltip>
-    );
-  },
-},
-                
+                              openStatusModal(params.row.task, {
+                                id: domainId,
+                                name: domainObj?.name || "Unknown",
+                                status:
+                                  domainObj?.status ||
+                                  params.row.domainStatus ||
+                                  "Pending",
+                              });
+                            }
+                          }}
+                          className={`px-2 py-1 rounded-full text-xs font-semibold cursor-pointer ${getStatusClass(
+                            status
+                          )}`}
+                        >
+                          {formatStatus(status)}
+                        </span>
+                      </Tooltip>
+                    );
+                  },
+                },
+
                 {
                   field: "actions",
                   headerName: "Actions",
@@ -1219,7 +1228,7 @@ renderCell: (params) => (
 
                         {/* EDIT */}
                         {(role === "Admin" || role === "Manager" || role === "SuperAdmin") &&
-  (
+                          (
 
                             <ActionIcon
                               title="Edit Submission"
@@ -1239,7 +1248,7 @@ renderCell: (params) => (
                         {(role === "SuperAdmin") && (
                           <ActionIcon
                             title="View History"
-                            color="#9333ea"         
+                            color="#9333ea"
                             hoverColor="#7e22ce"
                             onClick={() => {
                               setSelectedTask({

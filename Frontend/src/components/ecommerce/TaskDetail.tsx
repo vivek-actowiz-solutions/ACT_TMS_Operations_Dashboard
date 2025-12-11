@@ -159,10 +159,19 @@ const TaskDetail: React.FC = () => {
   
 
 
+   const developerList = domainObj?.developers?.map(d => d.name.toLowerCase()) || [];
+
+
+
   const canSubmit =
     domainObj &&
     domainObj.status?.toLowerCase() !== "submitted" &&
-    domainObj.status?.toLowerCase() !== "terminated" 
+    domainObj.status?.toLowerCase() !== "terminated" &&
+    developerList.length > 0 &&
+    (
+      ["Admin", "Manager","SuperAdmin"].includes(role) ||
+      developerList.includes(userName.toLowerCase())
+    );
     
 
     const capitalize = (str) => {

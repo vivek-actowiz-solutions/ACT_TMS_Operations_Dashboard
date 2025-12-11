@@ -1645,7 +1645,6 @@ export const getDevelopersDomainStatus = async (req, res) => {
   }
 };
 
-
 // export const getTLUsers = async (req, res) => {
 //   try {
 //     // Get TL users
@@ -1725,7 +1724,6 @@ export const getTLUsers = async (req, res) => {
   }
 };
 
-
 export const updateTaskDomainStatus = async (req, res) => {
   try {
     const { taskId, domainName, status, reason, url } = req.body;
@@ -1795,8 +1793,8 @@ export const updateTaskDomainStatus = async (req, res) => {
 :🧩: *Task Move  IN-R&D:*
 ${space}:briefcase: *Task:*  ${task.title || task.projectCode}
 ${space}:jigsaw: *Domain:* ${DomainName}
-${space}:bust_in_silhouette: *Sales Person:* <@${assigner?.slackId || ''}> (Manager)
-${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (TL)
+${space}:bust_in_silhouette: *Sales Person:* <@${assigner?.slackId || ''}> (Sales)
+${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (Manager)
 ${space}:memo: *Reason:* ${reason}
 ${space}:bar_chart: *View Task:*  <${taskUrl}|Open Dashboard>
 CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_SUNIL}>,<@${process.env.SLACK_ID_SUNIL}>
@@ -2023,32 +2021,32 @@ export const reOpenTask = async (req, res) => {
     // ------------------------------------------
     // UPDATE DOMAIN ONLY IF CHANGED
     // ------------------------------------------
-    if (hasDomainChanged) {
-      //console.log("➡ Updating domain status to Reopened");
+    // if (hasDomainChanged) {
+    //   //console.log("➡ Updating domain status to Reopened");
 
-      if (!Array.isArray(task.previousDomain)) task.previousDomain = [];
+    //   if (!Array.isArray(task.previousDomain)) task.previousDomain = [];
 
-      task.previousDomain.push({
-        oldValue: JSON.parse(JSON.stringify(task.domains)),
-        changedAt: new Date(),
-      });
+    //   task.previousDomain.push({
+    //     oldValue: JSON.parse(JSON.stringify(task.domains)),
+    //     changedAt: new Date(),
+    //   });
 
-      task.domains = newDomains.map((d) => ({
-        ...d,
-        status: "Reopened",
-      }));
-      task.markModified("domains");
+    //   task.domains = newDomains.map((d) => ({
+    //     ...d,
+    //     status: "Reopened",
+    //   }));
+    //   task.markModified("domains");
 
-      // Add to changedFields so SOW is generated
-      changedFields.domains = newDomains.map(d => ({
-        name: d.name,
-        typeOfPlatform: d.typeOfPlatform,
-        domainRemarks: d.domainRemarks || ""
-      }));
+    //   // Add to changedFields so SOW is generated
+    //   changedFields.domains = newDomains.map(d => ({
+    //     name: d.name,
+    //     typeOfPlatform: d.typeOfPlatform,
+    //     domainRemarks: d.domainRemarks || ""
+    //   }));
 
-    } else {
-      //console.log("➡ Domains unchanged → NOT updating domain status");
-    }
+    // } else {
+    //   //console.log("➡ Domains unchanged → NOT updating domain status");
+    // }
 
     // const savedTask = await Task.findById(id);
     // console.log(savedTask.domains);
@@ -2124,6 +2122,9 @@ export const reOpenTask = async (req, res) => {
     }
 
     if (Object.keys(changedFields).length > 0) {
+      if (!Array.isArray(task.previousDomain)) {
+    task.previousDomain = [];
+  }
       task.previousDomain.push({
         oldValue: JSON.parse(JSON.stringify(task.domains)),
         changedAt: new Date(),
@@ -2369,8 +2370,6 @@ export const getAllUsersTaskCreatedStats = async (req, res) => {
     });
   }
 };
-
-
 
 // export const getTaskRD = async (req, res) => {
 //   try {
