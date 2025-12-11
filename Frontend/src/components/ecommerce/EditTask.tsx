@@ -738,6 +738,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
                     </div>
                   ))}
 
+
                   {(role === "Sales" || role === "Admin" || role === "SuperAdmin") && (
                     <div className="flex flex-wrap gap-3 mb-4 items-end">
                       
@@ -807,28 +808,24 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
           </div>
         </>
       )}
+
      
-        <div className="mt-6">
-          {task.domains.map((d) => (
-            <div key={d.name} className="...">
-
-              {/* Your domain UI */}
-
-              {/* FINAL CONDITIONAL RENDERING */}
-              {decodeURIComponent(domainFromUrl || "") === d.name &&
-                d.status === "submitted" && (
-                  <div className="mt-4">
-                    {(role === "TL" || role === "Manager" || role === "Admin") && (
-                      <EditSubmit />
-                    )}
-                  </div>
-                )}
+        {activeTab === "submit" && (
+  <div className="mt-6">
+    {task.domains.map((d) => (
+      <div key={d.name}>
+        {decodeURIComponent(domainFromUrl || "") === d.name &&
+          d.status === "submitted" && (
+            <div className="mt-4">
+              {(role === "TL" || role === "Manager" || role === "Admin" || role === "SuperAdmin") && (
+                <EditSubmit />
+              )}
             </div>
-          ))}
-        </div>
-      
-
-
+          )}
+      </div>
+    ))}
+  </div>
+)}
 
     </>
   );

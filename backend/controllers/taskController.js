@@ -13,6 +13,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { generateSOWDocxFromTemplate } from "../utils/generateSOWDocx.js";
 import POC from "../models/POC.js";
+import { log } from "console";
 
 dotenv.config();
 
@@ -244,20 +245,22 @@ export const createTask = async (req, res) => {
 
     /* ------------------ Slack Notification ------------------ */
     const assignedUser = await User.findById(assignedByUserId).lean();
-    const slackTag = assignedUser?.slackId ? `<@${assignedUser.slackId}>` : "";
-    const assignedToUser = await User.findById(raw.assignedTo).lean();
-    const assignedToSlackTag =
-      assignedToUser?.slackId
-        ? `<@${assignedToUser.slackId}>`
-        : assignedToUser?.email;
+     const slackTag = assignedUser?.slackId ? `<@${assignedUser.slackId}>` : "";
+   // const assignedToUser = await User.findById(raw.assignedTo).lean();
+    // const assignedToSlackTag =
+    //   assignedToUser?.slackId
+    //     ? `<@${assignedToUser.slackId}>`
+    //     : assignedToUser?.email;
 
     const dashboardUrl = `${process.env.FRONTEND_URL}/tasks`;
+
+    const admin=`<@${process.env.SLACK_ID_VISHAL}>`
 
     const slackMessage = `
         :bell: *New Task Assigned*
         :briefcase: *Task:* ${raw.title}
         :bust_in_silhouette: *Assigned By:* ${slackTag} (Sales)
-        :date: *Assigned To:* ${assignedToSlackTag} (Manager)
+        :date: *Assigned To:* ${admin} (Manager)
         :memo: *Details:* Please review feasibility and assign to a developer accordingly.
         :link: *View Task:* <${dashboardUrl}|Open Dashboard>
         CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
@@ -1521,6 +1524,9 @@ export const getDomainStats = async (req, res) => {
           },
           Terminated: {
             $sum: { $cond: [{ $eq: ["$domains.status", "Terminated"] }, 1, 0] },
+          },
+          YetToAssign: {
+            $sum: { $cond: [{ $eq: ["$domains.status", "YetToAssign"] }, 1, 0] },
           }
         },
       },
@@ -1537,6 +1543,7 @@ export const getDomainStats = async (req, res) => {
           deployed: 1,
           Reopened: 1,
           Terminated: 1,
+          YetToAssign: 1
         },
       },
     ]);
@@ -1551,7 +1558,8 @@ export const getDomainStats = async (req, res) => {
       submitted: 0,
       deployed: 0,
       Reopened: 0,
-      Terminated: 0
+      Terminated: 0,
+      YetToAssign: 0
     };
 
     res.status(200).json({
@@ -2125,6 +2133,7 @@ export const reOpenTask = async (req, res) => {
     if (Object.keys(changedFields).length > 0) {
       if (!Array.isArray(task.previousDomain)) {
         task.previousDomain = [];
+        task.assignedTo=null
       }
       task.previousDomain.push({
         oldValue: JSON.parse(JSON.stringify(task.domains)),
@@ -2139,6 +2148,7 @@ export const reOpenTask = async (req, res) => {
         d.completeDate = null;
         d.submission = [];
         d.developers = [];
+        
         d.status = "Reopened";
       });
 
@@ -2882,5 +2892,129 @@ export const getDomainStatsRD = async (req, res) => {
       message: "Failed to fetch domain stats",
       error: err.message,
     });
+  }
+};
+
+
+export const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({
+      assignedTo: { $in: [null, undefined] }
+    })
+      .populate("assignedTo", "name email role")
+      .populate("assignedBy", "name email role");
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+
+
+
+// export const assignTask = async (req, res) => {
+//   console.log("Assigning task...",req.body);
+  
+//   try {
+//     const { id } = req.params;
+//     const { assignedTo } = req.body;
+
+//     if (!assignedTo)
+//       return res.status(400).json({ message: "assignedTo is required" });
+
+//     const task = await Task.findById(id);
+//     if (!task) return res.status(404).json({ message: "Task not found" });
+
+//     task.assignedTo = assignedTo;
+
+//     if (task.domains && Array.isArray(task.domains)) {
+//       task.domains = task.domains.map((domain) => ({
+//         ...domain,
+//         status: "pending",
+//       }));
+//     }
+    
+//     await task.save();
+
+
+
+//     const dashboardUrl = `${process.env.FRONTEND_URL}/tasks`;
+
+
+
+  
+
+//     const AssignedBySlack= 
+//     const AssignedToSlack= 
+
+//     const slackMessage = `
+//         :bell: *New Task Assigned*
+//         :briefcase: *Task:* ${raw.title}
+//         :bust_in_silhouette: *Assigned By:* ${AssignedBySlack} 
+//         :date: *Assigned To:* ${AssignedToSlack} 
+//         :memo: *Details:* Please review feasibility and assign to a TL accordingly.
+//         :link: *View Task:* <${dashboardUrl}|Open Dashboard>
+//         CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
+//       `;
+
+//     await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
+
+//     res.json({ message: "Task assigned successfully", task });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+
+export const assignTask = async (req, res) => {
+  console.log("Assigning task...", req.body);
+
+  try {
+    const { id } = req.params;
+    const { assignedTo } = req.body;
+
+    if (!assignedTo)
+      return res.status(400).json({ message: "assignedTo is required" });
+
+    const task = await Task.findById(id);
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    task.assignedTo = assignedTo;
+
+    if (task.domains && Array.isArray(task.domains)) {
+      task.domains = task.domains.map((domain) => ({
+        ...domain,
+        status: "pending",
+      }));
+    }
+
+    await task.save();
+
+    const dashboardUrl = `${process.env.FRONTEND_URL}/tasks`;
+
+    // Get Slack ID of current logged-in user
+    const currentUser = await User.findById(req.user.id); // assuming req.user.id is set from JWT
+    const AssignedBySlack = currentUser?.slackId || "";
+
+    // Get Slack ID of assignedTo user from DB
+    const assignedToUser = await User.findById(assignedTo);
+    const AssignedToSlack = assignedToUser?.slackId || "";
+
+    const slackMessage = `
+        :bell: *New Task Assigned*
+        :briefcase: *Task:* ${task.title}
+        :bust_in_silhouette: *Assigned By:* <@${AssignedBySlack}> 
+        :date: *Assigned To:* <@${AssignedToSlack}> 
+        :memo: *Details:* Please review feasibility and assign to a TL accordingly.
+        :link: *View Task:* <${dashboardUrl}|Open Dashboard>
+        CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>, <@${process.env.SLACK_ID_SUNIL}>
+      `;
+
+    await sendSlackMessage(process.env.OP_CHANNEL, slackMessage);
+
+    res.json({ message: "Task assigned successfully", task });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

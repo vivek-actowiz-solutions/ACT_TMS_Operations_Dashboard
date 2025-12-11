@@ -443,6 +443,7 @@ import { useNavigate } from "react-router";
 import { FiClipboard, FiClock, FiCheckCircle,  FiPlay, FiBox,FiAlertTriangle } from "react-icons/fi";
 import { GoIssueReopened } from "react-icons/go";
 import { LuClockAlert } from "react-icons/lu";
+import { MdAssignmentInd } from "react-icons/md";
 
 interface DomainStats {
   total: number;
@@ -453,6 +454,7 @@ interface DomainStats {
   submitted: number;
   Reopened: number
   Terminated: number
+  YetToAssign?: number;
 }
 
 interface Stats {
@@ -464,6 +466,7 @@ interface Stats {
   inRD: number;
   Reopened: number
   Terminated: number
+  YetToAssign?: number;
 } 
 
 interface DeveloperTask {
@@ -475,6 +478,7 @@ interface DeveloperTask {
   delayed: number;
   Reopened: number;
   Terminated: number;
+  YetToAssign?: number;
 }
 
 const Dashboard: React.FC = () => {
@@ -487,7 +491,8 @@ const Dashboard: React.FC = () => {
     inProgress: 0,
     inRD: 0,
     Reopened: 0,
-    Terminated: 0
+    Terminated: 0,
+    YetToAssign: 0
   });
   const [developers, setDevelopers] = useState<DeveloperTask[]>([]);
   //console.log("nkodvm", developers)
@@ -498,7 +503,7 @@ const Dashboard: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const [creatorSortBy, setCreatorSortBy] = useState<
-  "name" | "total" | "pending" | "in-progress" | "in-R&D" | "submitted" | "delayed" | "Reopened" | "Terminated" | "none"
+  "name" | "total" | "pending" | "in-progress" | "in-R&D" | "submitted" | "delayed" | "Reopened" | "Terminated" | "YetToAssign"|"none"
 >("none");
 
 const [creatorSortOrder, setCreatorSortOrder] = useState<"asc" | "desc">("desc");
@@ -541,6 +546,7 @@ const [taskCreatorsLoading, setTaskCreatorsLoading] = useState<boolean>(false);
         completed = 0;
         let Reopened = 0;
         let Terminated = 0;
+        let YetToAssign = 0;
 
       Object.values(data).forEach((d) => {
         total += d.total || 0;
@@ -551,9 +557,10 @@ const [taskCreatorsLoading, setTaskCreatorsLoading] = useState<boolean>(false);
         completed += d.submitted || 0;
         Reopened += d.Reopened || 0;
         Terminated += d.Terminated || 0;
+        YetToAssign += d.YetToAssign || 0;
       });
 
-      setStats({ total, pending, inProgress, delayed, inRD, completed ,Reopened, Terminated });
+      setStats({ total, pending, inProgress, delayed, inRD, completed ,Reopened, Terminated, YetToAssign});
     } catch (err) {
       console.error("Stats fetch error:", err);
     }finally {
@@ -643,6 +650,7 @@ const [taskCreatorsLoading, setTaskCreatorsLoading] = useState<boolean>(false);
     { label: "In-R&D", value: stats.inRD, icon: <FiBox />, bgColor: "bg-orange-50", textColor: "text-gray-500" },
     { label: "Reopened", value: stats.Reopened, icon: <GoIssueReopened />, bgColor: "bg-pink-50", textColor: "text-gray-500" },
     { label: "Terminated", value: stats.Terminated, icon: <FiAlertTriangle />, bgColor: "bg-gray-50", textColor: "text-gray-500" },
+    { label: "Yet To Assign", value: stats.YetToAssign, icon: <MdAssignmentInd />, bgColor: "bg-cyan-50", textColor: "text-gray-500" },
   ];
 
   const sortedDevelopers = [...developers].sort((a, b) => {
@@ -679,8 +687,8 @@ const [taskCreatorsLoading, setTaskCreatorsLoading] = useState<boolean>(false);
       <div className="mb-5 text-black w-full">
 
         {/* First row: 3 cards (responsive) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-          {cards.slice(0, 3).map((card, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          {cards.slice(0, 4).map((card, idx) => (
             <div
               key={idx}
               className={`${card.bgColor} rounded-lg p-4 text-center shadow hover:shadow-lg transition text-black flex flex-col items-center justify-center`}
@@ -696,7 +704,7 @@ const [taskCreatorsLoading, setTaskCreatorsLoading] = useState<boolean>(false);
 
         {/* Second row: remaining cards (responsive) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {cards.slice(3).map((card, idx) => (
+          {cards.slice(4).map((card, idx) => (
             <div
               key={idx}
               className={`${card.bgColor} rounded-lg p-4 text-center shadow hover:shadow-lg transition text-black flex flex-col items-center justify-center`}

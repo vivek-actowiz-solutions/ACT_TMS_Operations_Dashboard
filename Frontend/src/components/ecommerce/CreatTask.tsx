@@ -1,7 +1,3 @@
-
-
-
-
 // import React, { useState, useEffect } from "react";
 // import { useNavigate } from "react-router";
 // import "react-datepicker/dist/react-datepicker.css";
@@ -678,7 +674,7 @@ const CreateTaskUI: React.FC = () => {
 
   const [task, setTask] = useState<TaskType>({
     title: "",
-    assignedTo: "",
+    //assignedTo: "",
     description: "",
     sampleFileRequired: false,
     requiredValumeOfSampleFile: undefined,
@@ -811,7 +807,7 @@ const CreateTaskUI: React.FC = () => {
       newErrors.title = "Title cannot contain special characters";
     }
 
-    if (!task.assignedTo) newErrors.assignedTo = "Assigned To is required";
+    // if (!task.assignedTo) newErrors.assignedTo = "Assigned To is required";
     if (!task.description.trim()) newErrors.description = "Description is required";
     if (!task.typeOfDelivery) newErrors.typeOfDelivery = "Type of Delivery is required";
     if (!task.mandatoryFields) newErrors.mandatoryFields = "Mandatory fields are required";
@@ -891,7 +887,7 @@ const CreateTaskUI: React.FC = () => {
 
   return (
     <>
-      <PageBreadcrumb items={[{ title: "Home", path: "/TMS-R&D/" }, { title: "Tasks", path: "/TMS-R&D/tasks" }, { title: "Create Task" }]} />
+      <PageBreadcrumb items={[{ title: "Home", path: "/TMS-operations/" }, { title: "Tasks", path: "/TMS-operations/tasks" }, { title: "Create Task" }]} />
       <div className="min-h-screen w-full bg-white flex justify-center py-10 px-4">
         <div className="w-full max-w-6xl  p-8 rounded-2xl  ">
           <ToastContainer
@@ -945,13 +941,13 @@ const CreateTaskUI: React.FC = () => {
 
 
                 {section.id === 1 && (
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-1 gap-4">
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Task Name <span className="text-red-500">*</span></label>
                       <input type="text" name="title" value={task.title} onChange={handleChange} className="w-full border rounded-lg p-3" maxLength={50} />
                       {renderError("title")}
                     </div>
-                    <div>
+                    {/* <div>
                       <label className="block text-gray-700 font-medium mb-2">Assigned To <span className="text-red-500">*</span></label>
                       <select name="assignedTo" value={task.assignedTo} onChange={handleChange} className="w-full border rounded-lg p-3">
                         <option value="" hidden>Select Assignee</option>
@@ -960,7 +956,7 @@ const CreateTaskUI: React.FC = () => {
                         ))}
                       </select>
                       {renderError("assignedTo")}
-                    </div>
+                    </div> */}
                     <div className="md:col-span-2">
                       <label className="block text-gray-700 font-medium mb-2">
                         Description <span className="text-red-500">*</span>

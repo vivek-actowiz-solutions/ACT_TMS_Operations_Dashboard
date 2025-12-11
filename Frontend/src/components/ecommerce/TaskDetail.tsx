@@ -178,15 +178,15 @@ const TaskDetail: React.FC = () => {
   if (!str || typeof str !== "string") return str;
   return str.toUpperCase();
 };
-
-
+ 
+//const isFeasible = submission.feasible === true || submission.feasible === "true";
 
   return (
     <>
       <PageBreadcrumb
         items={[
-          { title: "Home", path: "/TMS-R&D/" },
-          { title: "Tasks", path: "/TMS-R&D/tasks" },
+          { title: "Home", path: "/TMS-operations/" },
+          { title: "Tasks", path: "/TMS-operations/tasks" },
           { title: task.projectCode },
         ]}
       />
@@ -441,25 +441,31 @@ const TaskDetail: React.FC = () => {
 
               <div className="p-6 space-y-6">
                 {/* Overview Cards */}
-                <div className="grid md:grid-cols-3 gap-4">
+                <div className={`grid gap-4 ${submission.feasible === "true" ? "md:grid-cols-3" : "md:grid-cols-1"}`}>
+
                   <StatusCard
                     label="Feasibility"
                     value={submission.feasible == "true" ? "Feasible" : "Not Feasible"}
                     icon={submission.feasible == "true" ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
                     status={submission.feasible == "true" ? "success" : "error"}
                   />
-                  <StatusCard
-                    label="Complexity"
-                    value={submission.complexity || "Not specified"}
-                    icon={<Code size={20} />}
-                    status="info"
-                  />
-                  <StatusCard
-                    label="Method"
-                    value={submission.method || "Not specified"}
-                    icon={<Server size={20} />}
-                    status="neutral"
-                  />
+                  {submission.feasible === "true" && (
+                    <>
+                      <StatusCard
+                        label="Complexity"
+                        value={submission.complexity || "Not specified"}
+                        icon={<Code size={20} />}
+                        status="info"
+                      />
+                      <StatusCard
+                        label="Method"
+                        value={submission.method || "Not specified"}
+                        icon={<Server size={20} />}
+                        status="neutral"
+                      />
+                    </>
+                  )}
+
                 </div>
                 <div className="grid md:grid-cols-1 gap-6">
                   <SubmissionCard title="Output Sample Documents" icon={<Download size={20} className="text-emerald-600" />}>
@@ -526,7 +532,8 @@ const TaskDetail: React.FC = () => {
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="grid lg:grid-cols-2 gap-6">
+                <div className={`grid gap-6 ${submission.feasible === "true" ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}>
+
                   {/* Basic Information */}
                   <SubmissionCard title="Basic Information" icon={<Info size={20} className="text-sky-600" />}>
                     <div className="space-y-4">
@@ -539,7 +546,11 @@ const TaskDetail: React.FC = () => {
                             : submission.country || "-"
                         }
                       />
-                      <DetailRow label="Approx Volume" value={submission.approxVolume || "-"} />
+                      {submission.feasible === "true" && (
+                        <>
+                          <DetailRow label="Approx Volume" value={submission.approxVolume || "-"} />
+                        </>
+                      )}
                       {submission.method === "third-party-api" && (
                         <DetailRow label="API Name" value={submission.apiName || "-"} />
                       )}
@@ -547,70 +558,73 @@ const TaskDetail: React.FC = () => {
                   </SubmissionCard>
 
                   {/* Authentication & Security */}
-                  <SubmissionCard
-                    title="Authentication & Security"
-                    icon={<Lock size={20} className="text-amber-600" />}
-                  >
-                    <div className="space-y-4">
-                      {/* User Login */}
-                      <DetailRow
-                        label="User Login Required"
-                        value={
-                          <span
-                            className={`px-2 py-1 rounded text-xs font-semibold ${submission.userLogin === "true" || submission.userLogin === true
-                              ? "bg-sky-100 text-sky-700"
-                              : "bg-gray-100 text-gray-600"
-                              }`}
-                          >
-                            {submission.userLogin === "true" || submission.userLogin === true
-                              ? "Yes"
-                              : "No"}
-                          </span>
-                        }
-                      />
-
-                      {/* Only show login details if userLogin is true */}
-                      {(submission.userLogin === "true" || submission.userLogin === true) && (
-                        <>
-                          <DetailRow label="Login Type" value={submission.loginType || "-"} />
-                          <DetailRow label="Credentials" value={submission.credentials || "-"} />
-                        </>
-                      )}
-
-                      {/* Proxy Section */}
-                      <DetailRow
-                        label="Proxy Required"
-                        value={
-                          <span
-                            className={`px-2 py-1 rounded text-xs font-semibold ${submission.proxyUsed === "true" || submission.proxyUsed === true
-                              ? "bg-sky-100 text-sky-700"
-                              : "bg-gray-100 text-gray-600"
-                              }`}
-                          >
-                            {submission.proxyUsed === "true" || submission.proxyUsed === true
-                              ? "Yes"
-                              : "No"}
-                          </span>
-                        }
-                      />
-
-                      {/* Only show proxy details if proxyUsed is true */}
-                      {(submission.proxyUsed === "true" || submission.proxyUsed === true) && (
-                        <>
-                          <DetailRow label="Proxy Name" value={submission.proxyName || "-"} />
+                  {submission.feasible === "true" && (
+                    <>
+                      <SubmissionCard
+                        title="Authentication & Security"
+                        icon={<Lock size={20} className="text-amber-600" />}
+                      >
+                        <div className="space-y-4">
+                          {/* User Login */}
                           <DetailRow
-                            label="Per Request Credit"
-                            value={submission.perRequestCredit?.toString() || "-"}
+                            label="User Login Required"
+                            value={
+                              <span
+                                className={`px-2 py-1 rounded text-xs font-semibold ${submission.userLogin === "true" || submission.userLogin === true
+                                  ? "bg-sky-100 text-sky-700"
+                                  : "bg-gray-100 text-gray-600"
+                                  }`}
+                              >
+                                {submission.userLogin === "true" || submission.userLogin === true
+                                  ? "Yes"
+                                  : "No"}
+                              </span>
+                            }
                           />
-                          <DetailRow
-                            label="Total Requests"
-                            value={submission.totalRequest?.toString() || "-"}
-                          />
-                        </>
-                      )}
-                    </div>
-                  </SubmissionCard>
 
+                          {/* Only show login details if userLogin is true */}
+                          {(submission.userLogin === "true" || submission.userLogin === true) && (
+                            <>
+                              <DetailRow label="Login Type" value={submission.loginType || "-"} />
+                              <DetailRow label="Credentials" value={submission.credentials || "-"} />
+                            </>
+                          )}
+
+                          {/* Proxy Section */}
+                          <DetailRow
+                            label="Proxy Required"
+                            value={
+                              <span
+                                className={`px-2 py-1 rounded text-xs font-semibold ${submission.proxyUsed === "true" || submission.proxyUsed === true
+                                  ? "bg-sky-100 text-sky-700"
+                                  : "bg-gray-100 text-gray-600"
+                                  }`}
+                              >
+                                {submission.proxyUsed === "true" || submission.proxyUsed === true
+                                  ? "Yes"
+                                  : "No"}
+                              </span>
+                            }
+                          />
+
+                          {/* Only show proxy details if proxyUsed is true */}
+                          {(submission.proxyUsed === "true" || submission.proxyUsed === true) && (
+                            <>
+                              <DetailRow label="Proxy Name" value={submission.proxyName || "-"} />
+                              <DetailRow
+                                label="Per Request Credit"
+                                value={submission.perRequestCredit?.toString() || "-"}
+                              />
+                              <DetailRow
+                                label="Total Requests"
+                                value={submission.totalRequest?.toString() || "-"}
+                              />
+                            </>
+                          )}
+                        </div>
+                      </SubmissionCard>
+                    </>
+                  )}
 
 
                 </div>

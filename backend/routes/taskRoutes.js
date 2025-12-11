@@ -26,7 +26,9 @@ updateTask,
   getSingleTaskRD,
   testDB2,
   getDomainStatsRD,
-  getTLUsers
+  getTLUsers,
+  getAllTasks,
+  assignTask
 
 } from "../controllers/taskController.js";
 
@@ -42,6 +44,9 @@ router.post("/tasks", authorize(['Admin', 'Manager','Sales','SuperAdmin']), uplo
   { name: "inputFile", maxCount: 10 },
   { name: "clientSampleSchemaFiles", maxCount: 20 },
 ]), createTask);
+
+router.get("/tasks/getAllTasks", authorize(['Admin', 'Manager','Sales','SuperAdmin']), getAllTasks);
+router.post("/tasks/assign/:id", authorize(['Admin', 'Manager','Sales','SuperAdmin']), assignTask);
 
 router.get("/tasks/list", authorize(['Admin', 'Manager','Sales','SuperAdmin']), getTaskList);
 

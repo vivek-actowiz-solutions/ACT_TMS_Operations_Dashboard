@@ -163,7 +163,7 @@ const TaskDetail: React.FC = () => {
 
 
 
-
+//const isFeasible = submission.feasible === true || submission.feasible === "true";
 
 
   return (
@@ -405,225 +405,239 @@ const TaskDetail: React.FC = () => {
 
           {/* Submission Section */}
           {submission && showSubmissionSection && (
-            <div className="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-200">
-                <div className="flex items-center gap-3">
-                  <FileText size={24} className="text-slate-700" />
-                  <h2 className="text-2xl font-bold text-gray-900">Submission Details</h2>
-                </div>
-              </div>
-
-              <div className="p-6 space-y-6">
-                {/* Overview Cards */}
-                <div className="grid md:grid-cols-3 gap-4">
-                  <StatusCard
-                    label="Feasibility"
-                    value={submission.feasible == "true" ? "Feasible" : "Not Feasible"}
-                    icon={submission.feasible == "true" ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
-                    status={submission.feasible == "true" ? "success" : "error"}
-                  />
-                  <StatusCard
-                    label="Complexity"
-                    value={submission.complexity || "Not specified"}
-                    icon={<Code size={20} />}
-                    status="info"
-                  />
-                  <StatusCard
-                    label="Method"
-                    value={submission.method || "Not specified"}
-                    icon={<Server size={20} />}
-                    status="neutral"
-                  />
-                </div>
-                <div className="grid md:grid-cols-1 gap-6">
-                  <SubmissionCard title="Output Sample Documents" icon={<Download size={20} className="text-emerald-600" />}>
-                    <div className="space-y-3">
-
-                      {/* Combine both arrays safely */}
-                      {(() => {
-                        const files = submission.outputFiles || [];
-                        const urls = submission.outputUrls || [];
-
-                        const combined = [
-                          ...files.map((file) => ({ type: "file", value: file })),
-                          ...urls.map((url) => ({ type: "url", value: url })),
-                        ];
-
-                        if (combined.length === 0) {
-                          return (
-                            <p className="text-sm text-gray-500 italic py-4 text-center">
-                              No Output Provided
-                            </p>
-                          );
-                        }
-
-                        return combined.map((item, idx) => {
-                          const isFile = item.type === "file";
-
-                          const link = isFile
-                            ? buildFileUrl(item.value)
-                            : item.value.startsWith("http")
-                              ? item.value
-                              : `https://${item.value}`;
-
-                          return (
-                            <a
-                              key={idx}
-                              href={link}
-                              target="_blank"
-                              rel="noreferrer"
-                              className={`flex items-center gap-3 p-3 rounded-lg border transition group
-              ${isFile ? "bg-slate-50 hover:bg-slate-100 border-slate-200"
-                                  : "bg-blue-50 hover:bg-blue-100 border-blue-200"}`}
-                            >
-                              {isFile ? (
-                                <FileText size={18} className="text-slate-600" />
-                              ) : (
-                                <Globe size={18} className="text-blue-600" />
-                              )}
-
-                              <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">
-                                Version {idx + 1}
-                              </span>
-
-                              {isFile ? (
-                                <Download size={14} className="ml-auto text-slate-400 group-hover:text-slate-600" />
-                              ) : (
-                                <ArrowLeft size={14} className="ml-auto text-blue-400 group-hover:text-blue-600 rotate-180" />
-                              )}
-                            </a>
-                          );
-                        });
-                      })()}
-                    </div>
-                  </SubmissionCard>
-                </div>
-
-                {/* Main Content Grid */}
-                <div className="grid lg:grid-cols-2 gap-6">
-                  {/* Basic Information */}
-                  <SubmissionCard title="Basic Information" icon={<Info size={20} className="text-sky-600" />}>
-                    <div className="space-y-4">
-                      <DetailRow label="Platform" value={displayedDomain || "-"} />
-                      <DetailRow
-                        label="Country"
-                        value={
-                          Array.isArray(submission.country)
-                            ? submission.country.join(", ")
-                            : submission.country || "-"
-                        }
-                      />
-                      <DetailRow label="Approx Volume" value={submission.approxVolume || "-"} />
-                      {submission.method === "third-party-api" && (
-                        <DetailRow label="API Name" value={submission.apiName || "-"} />
-                      )}
-                    </div>
-                  </SubmissionCard>
-
-                  {/* Authentication & Security */}
-                  <SubmissionCard
-                    title="Authentication & Security"
-                    icon={<Lock size={20} className="text-amber-600" />}
-                  >
-                    <div className="space-y-4">
-                      {/* User Login */}
-                      <DetailRow
-                        label="User Login Required"
-                        value={
-                          <span
-                            className={`px-2 py-1 rounded text-xs font-semibold ${submission.userLogin === "true" || submission.userLogin === true
-                              ? "bg-sky-100 text-sky-700"
-                              : "bg-gray-100 text-gray-600"
-                              }`}
-                          >
-                            {submission.userLogin === "true" || submission.userLogin === true
-                              ? "Yes"
-                              : "No"}
-                          </span>
-                        }
-                      />
-
-                      {/* Only show login details if userLogin is true */}
-                      {(submission.userLogin === "true" || submission.userLogin === true) && (
-                        <>
-                          <DetailRow label="Login Type" value={submission.loginType || "-"} />
-                          <DetailRow label="Credentials" value={submission.credentials || "-"} />
-                        </>
-                      )}
-
-                      {/* Proxy Section */}
-                      <DetailRow
-                        label="Proxy Required"
-                        value={
-                          <span
-                            className={`px-2 py-1 rounded text-xs font-semibold ${submission.proxyUsed === "true" || submission.proxyUsed === true
-                              ? "bg-sky-100 text-sky-700"
-                              : "bg-gray-100 text-gray-600"
-                              }`}
-                          >
-                            {submission.proxyUsed === "true" || submission.proxyUsed === true
-                              ? "Yes"
-                              : "No"}
-                          </span>
-                        }
-                      />
-
-                      {/* Only show proxy details if proxyUsed is true */}
-                      {(submission.proxyUsed === "true" || submission.proxyUsed === true) && (
-                        <>
-                          <DetailRow label="Proxy Name" value={submission.proxyName || "-"} />
-                          <DetailRow
-                            label="Per Request Credit"
-                            value={submission.perRequestCredit?.toString() || "-"}
-                          />
-                          <DetailRow
-                            label="Total Requests"
-                            value={submission.totalRequest?.toString() || "-"}
-                          />
-                        </>
-                      )}
-                    </div>
-                  </SubmissionCard>
-
-
-
-                </div>
-
-                {/* Technical Details */}
-                {submission.githubLink && (
-                  <div className="bg-slate-50 rounded-lg border border-slate-200 p-5">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                      <Code size={18} className="text-slate-600" />
-                      GitHub Repository
-                    </h3>
-                    <a
-                      href={submission.githubLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 hover:text-sky-800 underline"
-                    >
-
-
-                      view Repository
-                    </a>
-                  </div>
-                )}
-
-                {/* Remarks */}
-                {submission.remark && (
-                  <div className="bg-amber-50 rounded-lg border border-amber-200 p-5">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                      <Info size={18} className="text-amber-600" />
-                      Remarks
-                    </h3>
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {submission.remark}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+                      <div className="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+                        <div className="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-200">
+                          <div className="flex items-center gap-3">
+                            <FileText size={24} className="text-slate-700" />
+                            <h2 className="text-2xl font-bold text-gray-900">Submission Details</h2>
+                          </div>
+                        </div>
+          
+                        <div className="p-6 space-y-6">
+                          {/* Overview Cards */}
+                          <div className={`grid gap-4 ${submission.feasible === "true" ? "md:grid-cols-3" : "md:grid-cols-1"}`}>
+          
+                            <StatusCard
+                              label="Feasibility"
+                              value={submission.feasible == "true" ? "Feasible" : "Not Feasible"}
+                              icon={submission.feasible == "true" ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
+                              status={submission.feasible == "true" ? "success" : "error"}
+                            />
+                            {submission.feasible === "true" && (
+                              <>
+                                <StatusCard
+                                  label="Complexity"
+                                  value={submission.complexity || "Not specified"}
+                                  icon={<Code size={20} />}
+                                  status="info"
+                                />
+                                <StatusCard
+                                  label="Method"
+                                  value={submission.method || "Not specified"}
+                                  icon={<Server size={20} />}
+                                  status="neutral"
+                                />
+                              </>
+                            )}
+          
+                          </div>
+                          <div className="grid md:grid-cols-1 gap-6">
+                            <SubmissionCard title="Output Sample Documents" icon={<Download size={20} className="text-emerald-600" />}>
+                              <div className="space-y-3">
+          
+                                {/* Combine both arrays safely */}
+                                {(() => {
+                                  const files = submission.outputFiles || [];
+                                  const urls = submission.outputUrls || [];
+          
+                                  const combined = [
+                                    ...files.map((file) => ({ type: "file", value: file })),
+                                    ...urls.map((url) => ({ type: "url", value: url })),
+                                  ];
+          
+                                  if (combined.length === 0) {
+                                    return (
+                                      <p className="text-sm text-gray-500 italic py-4 text-center">
+                                        No Output Provided
+                                      </p>
+                                    );
+                                  }
+          
+                                  return combined.map((item, idx) => {
+                                    const isFile = item.type === "file";
+          
+                                    const link = isFile
+                                      ? buildFileUrl(item.value)
+                                      : item.value.startsWith("http")
+                                        ? item.value
+                                        : `https://${item.value}`;
+          
+                                    return (
+                                      <a
+                                        key={idx}
+                                        href={link}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className={`flex items-center gap-3 p-3 rounded-lg border transition group
+                        ${isFile ? "bg-slate-50 hover:bg-slate-100 border-slate-200"
+                                            : "bg-blue-50 hover:bg-blue-100 border-blue-200"}`}
+                                      >
+                                        {isFile ? (
+                                          <FileText size={18} className="text-slate-600" />
+                                        ) : (
+                                          <Globe size={18} className="text-blue-600" />
+                                        )}
+          
+                                        <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">
+                                          Version {idx + 1}
+                                        </span>
+          
+                                        {isFile ? (
+                                          <Download size={14} className="ml-auto text-slate-400 group-hover:text-slate-600" />
+                                        ) : (
+                                          <ArrowLeft size={14} className="ml-auto text-blue-400 group-hover:text-blue-600 rotate-180" />
+                                        )}
+                                      </a>
+                                    );
+                                  });
+                                })()}
+                              </div>
+                            </SubmissionCard>
+                          </div>
+          
+                          {/* Main Content Grid */}
+                          <div className={`grid gap-6 ${submission.feasible === "true" ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}>
+          
+                            {/* Basic Information */}
+                            <SubmissionCard title="Basic Information" icon={<Info size={20} className="text-sky-600" />}>
+                              <div className="space-y-4">
+                                <DetailRow label="Platform" value={displayedDomain || "-"} />
+                                <DetailRow
+                                  label="Country"
+                                  value={
+                                    Array.isArray(submission.country)
+                                      ? submission.country.join(", ")
+                                      : submission.country || "-"
+                                  }
+                                />
+                                {submission.feasible === "true" && (
+                                  <>
+                                    <DetailRow label="Approx Volume" value={submission.approxVolume || "-"} />
+                                  </>
+                                )}
+                                {submission.method === "third-party-api" && (
+                                  <DetailRow label="API Name" value={submission.apiName || "-"} />
+                                )}
+                              </div>
+                            </SubmissionCard>
+          
+                            {/* Authentication & Security */}
+                            {submission.feasible === "true" && (
+                              <>
+                                <SubmissionCard
+                                  title="Authentication & Security"
+                                  icon={<Lock size={20} className="text-amber-600" />}
+                                >
+                                  <div className="space-y-4">
+                                    {/* User Login */}
+                                    <DetailRow
+                                      label="User Login Required"
+                                      value={
+                                        <span
+                                          className={`px-2 py-1 rounded text-xs font-semibold ${submission.userLogin === "true" || submission.userLogin === true
+                                            ? "bg-sky-100 text-sky-700"
+                                            : "bg-gray-100 text-gray-600"
+                                            }`}
+                                        >
+                                          {submission.userLogin === "true" || submission.userLogin === true
+                                            ? "Yes"
+                                            : "No"}
+                                        </span>
+                                      }
+                                    />
+          
+                                    {/* Only show login details if userLogin is true */}
+                                    {(submission.userLogin === "true" || submission.userLogin === true) && (
+                                      <>
+                                        <DetailRow label="Login Type" value={submission.loginType || "-"} />
+                                        <DetailRow label="Credentials" value={submission.credentials || "-"} />
+                                      </>
+                                    )}
+          
+                                    {/* Proxy Section */}
+                                    <DetailRow
+                                      label="Proxy Required"
+                                      value={
+                                        <span
+                                          className={`px-2 py-1 rounded text-xs font-semibold ${submission.proxyUsed === "true" || submission.proxyUsed === true
+                                            ? "bg-sky-100 text-sky-700"
+                                            : "bg-gray-100 text-gray-600"
+                                            }`}
+                                        >
+                                          {submission.proxyUsed === "true" || submission.proxyUsed === true
+                                            ? "Yes"
+                                            : "No"}
+                                        </span>
+                                      }
+                                    />
+          
+                                    {/* Only show proxy details if proxyUsed is true */}
+                                    {(submission.proxyUsed === "true" || submission.proxyUsed === true) && (
+                                      <>
+                                        <DetailRow label="Proxy Name" value={submission.proxyName || "-"} />
+                                        <DetailRow
+                                          label="Per Request Credit"
+                                          value={submission.perRequestCredit?.toString() || "-"}
+                                        />
+                                        <DetailRow
+                                          label="Total Requests"
+                                          value={submission.totalRequest?.toString() || "-"}
+                                        />
+                                      </>
+                                    )}
+                                  </div>
+                                </SubmissionCard>
+                              </>
+                            )}
+          
+          
+                          </div>
+          
+                          {/* Technical Details */}
+                          {submission.githubLink && (
+                            <div className="bg-slate-50 rounded-lg border border-slate-200 p-5">
+                              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                <Code size={18} className="text-slate-600" />
+                                GitHub Repository
+                              </h3>
+                              <a
+                                href={submission.githubLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 hover:text-sky-800 underline"
+                              >
+          
+          
+                                view Repository
+                              </a>
+                            </div>
+                          )}
+          
+                          {/* Remarks */}
+                          {submission.remark && (
+                            <div className="bg-amber-50 rounded-lg border border-amber-200 p-5">
+                              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                <Info size={18} className="text-amber-600" />
+                                Remarks
+                              </h3>
+                              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                                {submission.remark}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
 
           <div className="grid grid-cols-1 gap-6">

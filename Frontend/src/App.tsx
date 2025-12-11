@@ -20,6 +20,7 @@ import GeneratePOC from "./components/ecommerce/GeneratePOC";
 
 import TaskDetailRD from "./components/ecommerce/TaskDetailRD";
 import TaskPageRD from "./components/ecommerce/TaskPageRD";
+import AssignTasksPage from "./components/ecommerce/AssignTasksPage";
 
 export default function App() {
   return (
@@ -43,6 +44,8 @@ export default function App() {
               <Route path="/TMS-operations/tasks/:id/reopen" element={<ReopenTask />} />
               <Route path="/TMS-operations/poc/create/:taskId" element={<POC />} />
               <Route path="/TMS-operations/generate-poc" element={<GeneratePOC />} />
+              <Route path="/TMS-operations/assign-tasks" element={<AssignTasksPage />} />
+
 
               {/* Routes for RD tasks */}
               <Route index path="/TMS-operations/tasks-rd" element={<TaskPageRD />} />

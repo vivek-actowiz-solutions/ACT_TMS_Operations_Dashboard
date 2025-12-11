@@ -29,6 +29,9 @@ import { useRef } from "react";
 import { RiIndeterminateCircleFill } from "react-icons/ri";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
+import { MdAssignmentInd } from "react-icons/md";
+
+import { Link } from "react-router";
 
 
 
@@ -43,6 +46,7 @@ interface Stats {
   inRD: number;
   Reopened: number;
   Terminated?: number;
+  YetToAssign?: number
 }
 
 interface Domain {
@@ -88,6 +92,7 @@ interface DomainStats {
   submitted: number;
   Reopened: number;
   Terminated: number;
+  YetToAssign?: number
 }
 
 const TaskPage: React.FC = () => {
@@ -124,6 +129,7 @@ const TaskPage: React.FC = () => {
     inRD: 0,
     Reopened: 0,
     Terminated: 0,
+    YetToAssign: 0
   });
 
   const [userRole, setUserRole] = useState<string>("");
@@ -261,6 +267,7 @@ const TaskPage: React.FC = () => {
         completed = 0;
       let Reopened = 0;
       let Terminated = 0;
+      let YetToAssign = 0;
 
       Object.values(data).forEach((d) => {
         total += d.total || 0;
@@ -271,9 +278,10 @@ const TaskPage: React.FC = () => {
         completed += d.submitted || 0;
         Reopened += d.Reopened || 0;
         Terminated += d.Terminated || 0;
+        YetToAssign += d.YetToAssign || 0;
       });
 
-      setStats({ total, pending, inProgress, delayed, inRD, completed, Reopened, Terminated });
+      setStats({ total, pending, inProgress, delayed, inRD, completed, Reopened, Terminated, YetToAssign });
     } catch (err) {
       console.error("Stats fetch error:", err);
     } finally {
@@ -308,6 +316,7 @@ const TaskPage: React.FC = () => {
     { label: "In-R&D", value: stats.inRD, icon: <FiBox />, bgColor: "bg-orange-50", textColor: "text-gray-500" },
     { label: "Reopened", value: stats.Reopened, icon: <GoIssueReopened />, bgColor: "bg-pink-50", textColor: "text-gray-500" },
     { label: "Terminated", value: stats.Terminated || 0, icon: <MdDeleteOutline />, bgColor: "bg-gray-50", textColor: "text-gray-500" },
+    { label: "Yet To Assign", value: stats.YetToAssign || 0, icon: <MdAssignmentInd />, bgColor: "bg-cyan-50", textColor: "text-gray-500" },
   ];
 
   if (token) {
@@ -326,6 +335,7 @@ const TaskPage: React.FC = () => {
     "In-R&D",
     "Reopened",
     "Terminated",
+    "YetToAssign"
   ];
   const statusDisplayMap = {
     "pending": "Pending",
@@ -335,6 +345,7 @@ const TaskPage: React.FC = () => {
     "in-R&D": "In-R&D",
     "Reopened": "Reopened",
     "Terminated": "Terminated",
+    "YetToAssign": "YetToAssign"
   };
 
 
@@ -430,6 +441,8 @@ const TaskPage: React.FC = () => {
         return "bg-pink-100 text-pink-800";
       case "Terminated":
         return "bg-gray-200 text-gray-800";
+      case "YetToAssign":
+        return "bg-gray-200 text-gray-900";
       default:
         return "bg-orange-100 text-orange-800";
     }
@@ -443,6 +456,7 @@ const TaskPage: React.FC = () => {
 
   const formatStatus = (status?: string) => {
     if (!status) return "-";
+    if (status === "YetToAssign") return "Yet To Assign";
     return status
       .split(/[-\s]/) // split by hyphen or space
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
@@ -634,8 +648,8 @@ const TaskPage: React.FC = () => {
       <div className="mb-5 text-black w-full">
 
         {/* First row: 3 cards (responsive) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-          {cards.slice(0, 3).map((card, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          {cards.slice(0, 4).map((card, idx) => (
             <div
               key={idx}
               className={`${card.bgColor} rounded-lg p-4 text-center shadow hover:shadow-lg transition text-black flex flex-col items-center justify-center`}
@@ -651,7 +665,7 @@ const TaskPage: React.FC = () => {
 
         {/* Second row: remaining cards (responsive) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {cards.slice(3).map((card, idx) => (
+          {cards.slice(4).map((card, idx) => (
             <div
               key={idx}
               className={`${card.bgColor} rounded-lg p-4 text-center shadow hover:shadow-lg transition text-black flex flex-col items-center justify-center`}
@@ -679,7 +693,7 @@ const TaskPage: React.FC = () => {
 
       )} */}
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 flex-wrap">
+      {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 flex-wrap">
         <div className="flex flex-col sm:flex-row gap-2 flex-1 w-full">
           <input
             type="text"
@@ -692,7 +706,6 @@ const TaskPage: React.FC = () => {
             autoFocus
             className="flex-grow w-full sm:w-64 md:w-80 p-2 rounded-lg border border-gray-300 bg-white text-gray-800"
           />
-
           {(role === "Admin" || role === "Manager" || role === "Sales" || role === "SuperAdmin") && (
             <select
               value={assignedByFilter}
@@ -736,7 +749,7 @@ const TaskPage: React.FC = () => {
 
           {openStatusDropdown && (
             <div className="absolute left-0 right-0 mt-1 bg-white border rounded shadow-lg z-10 p-2 max-h-48 overflow-y-auto">
-              {["pending", "Reopened", 'in-progress', "submitted", "delayed", "in-R&D", "Terminated"].map((status) => (
+              {["pending", "Reopened", 'in-progress', "submitted", "delayed", "in-R&D", "Terminated", "YetToAssign"].map((status) => (
                 <label key={status} className="flex items-center gap-2 p-1 cursor-pointer text-sm">
                   <input
                     type="checkbox"
@@ -769,7 +782,12 @@ const TaskPage: React.FC = () => {
           >
             Clear Filters
           </button>
-
+          <Link
+            to="/TMS-operations/assign-tasks"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg"
+          >
+            📋 Assign Tasks
+          </Link>
           {(role === "Admin" || role === "Sales" || role === "SuperAdmin") && (
             <button
               onClick={() => navigate("/TMS-operations/create")}
@@ -797,7 +815,132 @@ const TaskPage: React.FC = () => {
             </button>
           </div>
         </div>
+      </div> */}
+      <div className="flex flex-col gap-4 mb-6">
+        {/* -------------------- First Row: Search + Filters -------------------- */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-start gap-4 flex-wrap">
+          <input
+            type="text"
+            placeholder="Search by project, code, or developer"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              setPage(1);
+            }}
+            autoFocus
+            className="flex-grow w-full sm:w-64 md:w-80 p-2 rounded-lg border border-gray-300 bg-white text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
+
+          {(role === "Admin" || role === "Manager" || role === "Sales" || role === "SuperAdmin") && (
+            <select
+              value={assignedByFilter}
+              onChange={(e) => {
+                setAssignedByFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full sm:w-48 p-2 rounded-lg border border-gray-300 bg-white text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            >
+              <option value="" hidden>Assigned By</option>
+              {salesList.map((user) => (
+                <option key={user._id} value={user.name}>{user.name}</option>
+              ))}
+            </select>
+          )}
+
+          {/* Status Dropdown */}
+          <div className="relative w-full sm:w-48 mt-2 md:mt-0" ref={dropdownRef}>
+            <div
+              className="border rounded-lg px-3 py-3 bg-white flex items-center justify-between cursor-pointer shadow-sm hover:border-indigo-500"
+              onClick={() => setOpenStatusDropdown(!openStatusDropdown)}
+            >
+              <span className="text-sm text-gray-700 font-semibold">
+                {selectedStatuses.length === 0 ? "Select Status" : selectedStatuses.join(", ")}
+              </span>
+              <svg
+                className={`w-4 h-4 transform transition ${openStatusDropdown ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
+            {openStatusDropdown && (
+              <div className="absolute left-0 right-0 mt-1 bg-white border rounded shadow-lg z-10 p-2 max-h-48 overflow-y-auto">
+                {["pending", "Reopened", 'in-progress', "submitted", "delayed", "in-R&D", "Terminated", "YetToAssign"].map((status) => (
+                  <label key={status} className="flex items-center gap-2 p-1 cursor-pointer text-sm hover:bg-gray-100 rounded">
+                    <input
+                      type="checkbox"
+                      checked={selectedStatuses.includes(status)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedStatuses([...selectedStatuses, status]);
+                        } else {
+                          setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
+                        }
+                      }}
+                    />
+                    {statusDisplayMap[status]}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* -------------------- Second Row: Buttons -------------------- */}
+        <div className="flex flex-wrap justify-end gap-2 w-full">
+          <button
+            onClick={() => {
+              setSearchText("");
+              setSelectedStatuses([]);
+              setAssignedByFilter("");
+              setPage(1);
+              setOpenStatusDropdown(false);
+            }}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto shadow"
+          >
+            Clear Filters
+          </button>
+          {(role === "Admin" || role === "SuperAdmin") && (
+            <Link
+              to="/TMS-operations/assign-tasks"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow"
+            >
+              📋 Assign Tasks
+            </Link>
+          )}
+
+
+          {(role === "Admin" || role === "Sales" || role === "SuperAdmin") && (
+            <button
+              onClick={() => navigate("/TMS-operations/create")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold w-full sm:w-auto shadow"
+            >
+              + Create Task
+            </button>
+          )}
+
+          {(role === "Admin" || role === "Sales" || role === "SuperAdmin") && (
+            <button
+              onClick={() => setShowPOCModal(true)}
+              className="bg-[#3C01AF] hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-semibold w-full sm:w-auto shadow"
+            >
+              💡 SOW For Production
+            </button>
+          )}
+
+          <button
+            onClick={() => navigate("/TMS-operations/tasks-rd")}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold w-full sm:w-auto shadow"
+          >
+            Feasible
+          </button>
+        </div>
       </div>
+
       {tableloading ? <>  <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600 border-solid"></div>
       </div></> : <>
