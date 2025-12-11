@@ -260,7 +260,7 @@ export const createTask = async (req, res) => {
         :date: *Assigned To:* ${assignedToSlackTag} (Manager)
         :memo: *Details:* Please review feasibility and assign to a developer accordingly.
         :link: *View Task:* <${dashboardUrl}|Open Dashboard>
-        CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_PRADEEP}>,<@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
+        CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
       `;
 
     await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
@@ -515,7 +515,8 @@ export const updateTask = async (req, res) => {
      ${space}:date: *Assigned To:* ${slackTag_Devs} (TL)
      ${space}:paperclip: *Details:* Please proceed with the assigned feasibility check and submit in the dashboard.
      ${space}:link: *View Task:* <${taskUrl}|Open Dashboard>
-CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_PRADEEP}>,<@${process.env.SLACK_ID_SUNIL}>
+CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>
+
 `;
         await sendSlackMessage(process.env.OP_CHANNEL, slackMessage);
       }
@@ -825,7 +826,7 @@ ${space}:bust_in_silhouette: *Assigned By:* <@${assigner?.slackId || ''}> (Sales
 ${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (TL)
 ${space}:paperclip: *Details:* Sample data and feasibility report have been uploaded. Please review and confirm.
 ${space}:bar_chart: *View Task:*  <${taskUrl}|Open Dashboard>
-CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_PRADEEP}>,<@${process.env.SLACK_ID_SUNIL}>
+CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
 `;
 
 
@@ -960,7 +961,7 @@ export const editDomainSubmission = async (req, res) => {
       ${space}:bust_in_silhouette: *Edited By:* ${editedBySlack}
       ${space}:paperclip: *Details:* Sample data and feasibility report have been edited. Please review and confirm.
       :link: *View Task:* <${taskUrl}|Open Dashboard>
-      CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL},<@${process.env.SLACK_ID_PRADEEP}>,<@${process.env.SLACK_ID_SUNIL}>
+      CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL},<@${process.env.SLACK_ID_SUNIL}>
     `;
 
 
@@ -1797,7 +1798,7 @@ ${space}:bust_in_silhouette: *Sales Person:* <@${assigner?.slackId || ''}> (Sale
 ${space}:female-technologist: *Submitted By:* <@${dev?.slackId || ''}> (Manager)
 ${space}:memo: *Reason:* ${reason}
 ${space}:bar_chart: *View Task:*  <${taskUrl}|Open Dashboard>
-CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_PRADEEP}>,<@${process.env.SLACK_ID_SUNIL}>
+CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
 `;
 
       await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMsg);
@@ -2197,7 +2198,7 @@ ${space}:bust_in_silhouette: Assigned By: ${assignedByName}(Sales)
 ${space}:date:Assigned To: ${assignedToName} (Manager)
 ${space}:memo: Details: The task has been reopened due to required updates. Please review the changes and proceed accordingly.
 ${space}:link: <${dashboardUrl} |Open Dashboard>
-CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_PRADEEP}>,<@${process.env.SLACK_ID_SUNIL}>
+CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
 `
 
     // send slack message whene files are uploaded
@@ -2276,7 +2277,7 @@ ${space}:jigsaw: *Domain:* \`${domain.name}\`
 ${space}:memo: *Reason:* ${terminatedReason}
 ${space}:memo: *Details:* This task is now terminated and no further updates are allowed.
 ${space}:link: *View Task:* <${process.env.FRONTEND_URL}/TMS-operations/tasks|Open Dashboard>
-CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_PRADEEP}>,<@${process.env.SLACK_ID_SUNIL}>
+CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
 `;
 
 

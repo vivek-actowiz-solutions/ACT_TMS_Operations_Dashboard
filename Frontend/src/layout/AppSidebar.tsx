@@ -108,6 +108,7 @@ const AppSidebar: React.FC = () => {
 
 const role = user?.role;
 
+
 // Admin + SuperAdmin allowed
 const isPrivileged =  role === "SuperAdmin";
 

@@ -624,8 +624,6 @@ const [taskCreatorsLoading, setTaskCreatorsLoading] = useState<boolean>(false);
         await fetchStats(token);
         await fetchDevelopers(token);
         await fetchTaskCreators(token);
-
-        // if (payload.role === "Manager") fetchDevelopers(token);
       } catch (err) {
         console.error("Invalid token", err);
         navigate("/TMS-operations/login");
