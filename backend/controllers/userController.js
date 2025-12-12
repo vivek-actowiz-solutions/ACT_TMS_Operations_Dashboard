@@ -10,6 +10,11 @@ import { UserDB2 } from "../models/UserDB2.js";
 export const createUser = async (req, res) => {
   const { name, email, password, department, designation, role, slackId, reportingTo} = req.body;
 
+  if (req.body.reportingTo === "") {
+  req.body.reportingTo = null;
+}
+
+
   if (!name || !email || !password) {
     return res.status(400).json({ message: "Name, email, and password are required." });
   }

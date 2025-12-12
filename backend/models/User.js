@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
   reportingTo: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: "User", 
-    default: null 
+     default: null,
+  set: v => (v === "" ? null : v),
   },
   slackId: { type: String, default: null },
   isActive: { type: Boolean, default: true },
