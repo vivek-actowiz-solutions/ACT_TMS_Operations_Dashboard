@@ -7,6 +7,7 @@ import {
   TextRun,
   AlignmentType,
   ExternalHyperlink,
+
   VerticalPositionAlign,
   HorizontalPositionAlign,
 } from "docx";
@@ -59,17 +60,17 @@ export const generateSOWDocxFromTemplate = async (task,
   };
 
   const freqArray = task.frequency
-  ? task.frequency.split(",").map(f => f.trim())
-  : [];
+    ? task.frequency.split(",").map(f => f.trim())
+    : [];
 
-const isRPM = freqArray.includes("RPM");
+  const isRPM = freqArray.includes("RPM");
 
-const formattedFreq = freqArray.map(f => {
-  if (f === "RPM") {
-    return `Request-Per-Minute (RPM: ${task.RPM})`; 
-  }
-  return f;
-});
+  const formattedFreq = freqArray.map(f => {
+    if (f === "RPM") {
+      return `Request-Per-Minute (RPM: ${task.RPM})`;
+    }
+    return f;
+  });
 
 
 
@@ -307,7 +308,7 @@ const formattedFreq = freqArray.map(f => {
                   }),
                   new TextRun({
                     text: ` :- ${d.name || "-"} `,
-                    bold: true,
+
                     size: 24,
                   }),
                 ],
@@ -315,10 +316,15 @@ const formattedFreq = freqArray.map(f => {
               new Paragraph({
                 indent: { left: 1440 },
                 children: [
-                  new TextRun({
-                    text: `Type of Platform:- ${d.typeOfPlatform || "-"}`,
-                    bold: true,
-                    size: 24,
+                  new ExternalHyperlink({
+                    link: d.typeOfPlatform || "-",
+                    children: [
+                      new TextRun({
+                        text: `Type of Platform:- ${d.typeOfPlatform || "-"}`,
+                        style: "Hyperlink",
+                        size: 24,
+                      }),
+                    ],
                   }),
                 ],
               }),
@@ -327,8 +333,8 @@ const formattedFreq = freqArray.map(f => {
                 indent: { left: 1440 },
                 children: [
                   new TextRun({
-                    text: `Remarks:- [${d.domainRemarks || "-"}]`,
-                    bold: true,
+                    text: `Remarks:- ${d.domainRemarks || "-"}`,
+
                     size: 24,
                   }),
                 ],
@@ -469,16 +475,16 @@ const formattedFreq = freqArray.map(f => {
 
           dividerLine,
 
-         // ===== 7️⃣ Frequency =====
-new Paragraph({
-  children: [new TextRun({ text: "7. Frequency", bold: true, size: 24 })],
-}),
-...formattedFreq.map((f) =>
-  new Paragraph({
-    indent: { left: 720 },
-    children: [new TextRun({ text: `• ${f}`, size: 24 })],
-  })
-),
+          // ===== 7️⃣ Frequency =====
+          new Paragraph({
+            children: [new TextRun({ text: "7. Frequency", bold: true, size: 24 })],
+          }),
+          ...formattedFreq.map((f) =>
+            new Paragraph({
+              indent: { left: 720 },
+              children: [new TextRun({ text: `• ${f}`, size: 24 })],
+            })
+          ),
 
           dividerLine,
           // ===== 8️⃣ Additional Remarks =====

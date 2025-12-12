@@ -5,16 +5,17 @@ import PageBreadcrumb from "../common/PageBreadCrumb";
 import CreateUserModal from "./CreateUserModal";
 import EditUserModal from "./EditUserModal";
 import {  FiEdit2 } from "react-icons/fi";
-import { FaThumbtack } from "react-icons/fa";
-import { FaFileExcel } from "react-icons/fa";
+
 
 interface User {
+  slackId: string;
   _id: string;
   name: string;
   email: string;
   department?: string;
   designation?: string;
-  role?: string;
+  originalPassword?: string;
+  role: string | number | readonly string[];
 }
 
 const AdminDashboard: React.FC = () => {
@@ -41,7 +42,7 @@ const AdminDashboard: React.FC = () => {
         u.email.toLowerCase().includes(searchText.toLowerCase()) ||
         u.designation?.toLocaleLowerCase().includes(searchText.toLowerCase()) ||
         (u.department?.toLowerCase().includes(searchText.toLowerCase()) ?? false) ||
-        (u.role?.toLowerCase().includes(searchText.toLowerCase()) ?? false)
+        (typeof u.role === 'string' && u.role.toLowerCase().includes(searchText.toLowerCase()))
     );
   }, [users, searchText]);
 

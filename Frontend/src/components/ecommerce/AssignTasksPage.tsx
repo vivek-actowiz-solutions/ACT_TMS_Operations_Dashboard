@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 import PageBreadcrumb from "../common/PageBreadCrumb";
@@ -111,21 +111,21 @@ const AssignTasksPage = () => {
       </div>
 
       {/* Assign Modal */}
-      {openModal && (
+      {/* {openModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-[99999]">
 
-          <div className="bg-white w-80 p-5 rounded">
-            <h3 className="text-lg font-semibold mb-3">Assign</h3>
+          <div className="bg-white w-1/4 p-10  rounded">
+            <h3 className="text-lg font-semibold mb-3">Assign To Manager</h3>
 
             <select
               className="w-full border p-2 rounded mb-4"
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
             >
-              <option value="" hidden>Select User</option>
+              <option value="" hidden>Select Manager</option>
               {users.map((u) => (
                 <option key={u._id} value={u._id}>
-                  {u.name} ({u.role})
+                  {u.name} 
                 </option>
               ))}
             </select>
@@ -147,7 +147,50 @@ const AssignTasksPage = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
+      {openModal && (
+  <div
+    className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-[99999]"
+    onClick={() => setOpenModal(false)}  
+  >
+    <div
+      className="bg-white w-1/4 p-10 rounded"
+      onClick={(e) => e.stopPropagation()}  
+    >
+      <h3 className="text-lg font-semibold mb-3">Assign To Manager</h3>
+
+      <select
+        className="w-full border p-2 rounded mb-4"
+        value={selectedUser}
+        onChange={(e) => setSelectedUser(e.target.value)}
+      >
+        <option value="" hidden>Select Manager</option>
+        {users.map((u) => (
+          <option key={u._id} value={u._id}>
+            {u.name}
+          </option>
+        ))}
+      </select>
+
+      <div className="flex justify-end gap-2">
+        <button
+          className="px-3 py-1 bg-gray-300 rounded"
+          onClick={() => setOpenModal(false)}
+        >
+          Cancel
+        </button>
+
+        <button
+          className="px-4 py-1 bg-blue-600 text-white rounded"
+          onClick={handleAssign}
+        >
+          Assign
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
     </>
   );

@@ -798,16 +798,16 @@ export const submitTask = async (req, res) => {
       submittedDevelopers = [...new Set(submittedDevelopers)];
 
       // ✅ Convert dev IDs → Slack IDs
-      const developerUsers = await User.find({ _id: { $in: submittedDevelopers } }).lean();
-      const submittedDevMentions = developerUsers
-        .map(u => u.slackId ? `<@${u.slackId}>` : '')
-        .filter(Boolean)
-        .join(", ") || "N/A";
+      // const developerUsers = await User.find({ _id: { $in: submittedDevelopers } }).lean();
+      // const submittedDevMentions = developerUsers
+      //   .map(u => u.slackId ? `<@${u.slackId}>` : '')
+      //   .filter(Boolean)
+      //   .join(", ") || "N/A";
 
-      const submittedDomainsText = submittedDomainNames.join(", ");
+      // const submittedDomainsText = submittedDomainNames.join(", ");
 
-      const proxyUsed = submissionData.proxyUsed === true || submissionData.proxyUsed === "true";
-      const feasible = submissionData.feasible === true || submissionData.feasible === "true";
+      // const proxyUsed = submissionData.proxyUsed === true || submissionData.proxyUsed === "true";
+      // const feasible = submissionData.feasible === true || submissionData.feasible === "true";
 
 
       // const feasibleText = feasible ? "Yes" : "No";
@@ -833,7 +833,7 @@ CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>,<@${proces
 `;
 
 
-      const taskAssigner = await User.findById(task.assignedBy).lean();
+      //const taskAssigner = await User.findById(task.assignedBy).lean();
 
       const slackMsg2 =
         `:white_check_mark: *Task Submitted Successfully*
@@ -1172,7 +1172,7 @@ export const getTaskList = async (req, res) => {
   try {
     // Read token from cookie
     const token =
-      req.cookies?.TMSAuthToken ||
+      req.cookies?.token ||
       req.cookies?.accessToken ||
       req.cookies?.jwt;
 
@@ -1204,16 +1204,20 @@ export const getTaskList = async (req, res) => {
     const tasks = await Task.find({
       assignedBy: new mongoose.Types.ObjectId(userId),
     })
-      .select("title projectCode assignedBy")
+      .select("title projectCode assignedBy domains")
       .populate("assignedBy", "name role")
       .sort({ createdAt: -1 });
 
+const submittedTasks = tasks.filter(task => {
+      if (!task.domains || task.domains.length === 0) return false;
+      return task.domains.every((d) => d.status === "submitted");
+    });
 
 
 
     // Attach POC information to each task
     const tasksWithPOC = await Promise.all(
-      tasks.map(async (task) => {
+      submittedTasks.map(async (task) => {
         const poc = await POC.findOne({ taskId: task._id });
 
         return {
@@ -1225,6 +1229,7 @@ export const getTaskList = async (req, res) => {
       })
     );
 
+
     // FINAL RETURN (only this one)
     return res.status(200).json({ tasks: tasksWithPOC });
 
@@ -1234,6 +1239,8 @@ export const getTaskList = async (req, res) => {
   }
 };
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/*******  7594615f-dcc2-4464-8afa-9804f09b60bd  *******/
 export const getSingleTaskList = async (req, res) => {
   try {
     const { id } = req.params;

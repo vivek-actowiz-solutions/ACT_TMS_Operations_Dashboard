@@ -784,8 +784,8 @@ const TaskDetail: React.FC = () => {
         </div>
       </div>
       {showDescModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[99999]">
-          <div className="bg-white rounded-xl max-w-3xl w-full p-6 shadow-lg">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[99999]" onClick={() => setShowDescModal(false)}>
+          <div className="bg-white rounded-xl max-w-3xl w-full p-6 shadow-lg" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold mb-4">Description</h3>
 
             <div className="max-h-80 overflow-y-auto whitespace-pre-line text-gray-700 text-sm">

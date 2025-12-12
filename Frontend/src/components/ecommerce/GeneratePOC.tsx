@@ -103,18 +103,26 @@ const GeneratePOCModal = ({ onClose, onSelect }: any) => {
 
   return (
 
-    <div className="fixed inset-x-0 top-20  bg-opacity-30 backdrop-blur-sm flex items-start justify-center z-50 p-4">
-      <div className="bg-white p-4 md:p-6 rounded-lg w-full md:w-4/5 lg:w-3/5 max-h-[80vh] flex flex-col shadow-xl border border-gray-300">
+    <div
+  className="fixed inset-0 top-0 bg-black/30 backdrop-blur-md flex items-start justify-center p-4 pt-8 h-full z-[999999]"
+  onClick={onClose}
+>
+  <div
+    className="bg-white p-4 mt-20 md:p-6 rounded-lg w-full md:w-3/4 lg:w-3/5 max-h-[100vh] flex flex-col shadow-xl border border-gray-300"
+    onClick={(e) => e.stopPropagation()}
+  >
+
+
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4" >
           <h2 className="text-lg md:text-xl font-bold text-[#3C01AF] mb-2 md:mb-0">
             Select Task For POC
           </h2>
           <Button
             variant="outlined"
             color="secondary"
-            onClick={onClose}
+            onClick={onClose} 
             sx={{ mt: 0 }}
           >
             <CloseIcon />

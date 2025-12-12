@@ -984,7 +984,7 @@ const TaskPage: React.FC = () => {
                 assignedDate: formatDate(row.task.taskAssignedDate),
                 completionDate: formatDate(row.task.completeDate),
 
-                developers: row.developers || [],
+                developers: row.developers || "-",
                 status: row.domainStatus,
                 task: row.task,
                 domainName: row.domainName,
@@ -1370,7 +1370,7 @@ const TaskPage: React.FC = () => {
                         </ActionIcon>
 
                         {/* EDIT */}
-                        {(role === "Admin" || role === "Manager" || role === "SuperAdmin") &&
+                        {(role === "Manager" || role === "SuperAdmin") &&
                           (
 
                             <ActionIcon
@@ -1584,8 +1584,8 @@ const TaskPage: React.FC = () => {
 
       {statusModalOpen && currentTask && currentDomain && currentDomain.status.toLowerCase() !== 'submitted' &&
         (
-          <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-30">
-            <div className="bg-white rounded-lg p-6 w-96">
+          <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-[9999]" onClick={() => setStatusModalOpen(false)}>
+            <div className="bg-white shadow rounded-lg p-6 w-96" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-lg font-semibold mb-4">Update Status</h2>
 
               <div className="mb-4">
@@ -1691,11 +1691,13 @@ const TaskPage: React.FC = () => {
 
             <TopPopupPortal>
               <div
-                className="fixed inset-0  flex items-center justify-center z-[999999]"
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm  flex items-center justify-center z-[999999]"
+                onClick={() => setShowPopup(false)}
               >
                 <div
-                  className="bg-white border border-gray-300 shadow-2xl rounded-lg 
+                  className="bg-white border border-gray-300 shadow-2xl rounded-lg          
         px-6 py-6 w-[420px]"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <p className="text-gray-800 font-medium text-center text-xl mb-3">
                     Terminate Domain
