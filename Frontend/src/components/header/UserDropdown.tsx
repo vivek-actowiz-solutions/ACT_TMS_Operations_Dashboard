@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import { jwtDecode } from "jwt-decode";
 
 export default function UserDropdown() {
-  const { user,logout } = useAuth(); // fetch user from auth context
+  const { user, logout } = useAuth(); // fetch user from auth context
   const [isOpen, setIsOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -17,26 +17,26 @@ export default function UserDropdown() {
 
   const openPasswordModal = () => {
     setIsPasswordModalOpen(true);
-    closeDropdown(); 
+    closeDropdown();
   };
 
   const handleLogout = async () => {
-  // try {
-  //   // Call backend logout route
-  //   await fetch(`${apiUrl}/users/logout`, {
-  //     method: "POST",
-  //     credentials: "include", // important for cookies
-  //   });
+    // try {
+    //   // Call backend logout route
+    //   await fetch(`${apiUrl}/users/logout`, {
+    //     method: "POST",
+    //     credentials: "include", // important for cookies
+    //   });
 
-  //   // Redirect to login page
-  //   navigate("/login");
-  // } catch (err) {
-  //   console.error("Logout failed", err);
-  // }
-  logout()
-};
+    //   // Redirect to login page
+    //   navigate("/login");
+    // } catch (err) {
+    //   console.error("Logout failed", err);
+    // }
+    logout()
+  };
 
-  
+
 
   return (
     <div className="relative">
@@ -45,17 +45,16 @@ export default function UserDropdown() {
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400"
       >
-        
 
-<span className="mr-3 overflow-hidden rounded-full h-11 w-11 bg-blue-600 flex items-center justify-center text-white text-lg font-semibold">
-  {user?.name ? user.name.charAt(0).toUpperCase() : "?"}
-</span>
-<span className="block font-medium">{user?.name}</span>
+
+        <span className="mr-3 overflow-hidden rounded-full h-11 w-11 bg-blue-600 flex items-center justify-center text-white text-lg font-semibold">
+          {user?.name ? user.name.charAt(0).toUpperCase() : "?"}
+        </span>
+        <span className="block font-medium">{user?.name}</span>
 
         <svg
-          className={`ml-2 stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`ml-2 stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
           width="18"
           height="20"
           viewBox="0 0 18 20"
@@ -74,7 +73,7 @@ export default function UserDropdown() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-60 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50">
+        <div className="absolute right-0 mt-2 w-60 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50" >
           <ul className="flex flex-col py-2">
             <li>
               <button
@@ -100,7 +99,7 @@ export default function UserDropdown() {
       {isPasswordModalOpen && (
         <ChangePasswordModal
           onClose={() => setIsPasswordModalOpen(false)}
-          // userId={user?.id}
+        // userId={user?.id}
         />
       )}
     </div>

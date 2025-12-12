@@ -11,12 +11,51 @@ interface EditUserModalProps {
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onUpdate }) => {
   const [form, setForm] = useState<User | null>(user);
+  const [users, setUsers] = useState<User[]>([]);
+
 
 
   const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
+  if (isOpen) {
+    fetchAllUsers();
     setForm(user);
-  }, [user]);
+  }
+}, [isOpen, user]);
+const fetchAllUsers = async () => {
+  try {
+    const res = await fetch(`${apiUrl}/users/all`, {
+      credentials: "include",
+    });
+    const data = await res.json();
+    setUsers(data);
+  } catch (err) {
+    console.error("Failed to fetch users", err);
+  }
+};
+
+const getReportingUsers = () => {
+  if (!form) return [];
+
+  switch (form.role) {
+    
+
+    case "TL":
+      return users.filter((u) => u.role === "Manager");
+
+    case "Manager":
+      return users.filter((u) => u.role === "Admin");
+
+    case "Admin":
+      return users.filter((u) => u.role === "Admin");
+
+    
+
+    default:
+      return [];
+  }
+};
+
 
   if (!isOpen || !form) return null;
 
@@ -109,6 +148,26 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
           <option value="Sales">Sales</option>
           <option value="SuperAdmin">Super Admin</option>
         </select>
+
+        {/* Reporting To Field */}
+{form.role !== "SuperAdmin" && (
+  <select
+    name="reportingTo"
+    value={form.reportingTo || ""}
+    onChange={handleChange}
+    className="w-full border border-gray-300 p-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    required
+  >
+    <option value="" hidden>Select Reporting To</option>
+
+    {getReportingUsers().map((u) => (
+      <option key={u._id} value={u._id}>
+        {u.name} 
+      </option>
+    ))}
+  </select>
+)}
+
         <input
           name="slackId"
           placeholder="Slack ID"

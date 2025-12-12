@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router"
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import PageBreadcrumb from "../common/PageBreadCrumb";
 import { ToastContainer, toast } from "react-toastify";
 // Removed unnecessary icons: FileText, Download, Globe, Link2
@@ -56,11 +56,33 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
   const [editingDomain, setEditingDomain] = useState<string | null>(null);
   const [editDomainInput, setEditDomainInput] = useState<Domain | null>(null);
 
-  const [users, setUsers] = useState<{ _id: string; name: string; role: string }[]>([]);
+  const [users, setUsers] = useState<{
+    reportingTo: any; _id: string; name: string; role: string 
+}[]>([]);
+  const [loggedUser, setLoggedUser] = useState(null);
   const [activeTab, setActiveTab] = useState<"task" | "submit">("task");
+
+  const getCookie = (name: string) => {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? match[2] : null;
+};
+
+const getLoggedUserFromToken = () => {
+  const token = getCookie("TMSAuthToken");
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1])); 
+    return payload; // { _id, name, role, email }
+  } catch (err) {
+    console.error("Invalid token", err);
+    return null;
+  }
+};
 
 
   useEffect(() => {
+     setLoggedUser(getLoggedUserFromToken());
     const fetchUsers = async () => {
       try {
         const res = await fetch(`${apiUrl}/users/all`, {
@@ -71,16 +93,23 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
         });
         const data = await res.json();
         setUsers(data);
+        console.log(data);
+    
       } catch (err) {
         console.error("Error fetching users:", err);
       }
     };
 
     fetchUsers();
+    
   }, []);
 
   // Filtered user options
-  const developerOptions = users.filter((u) =>  u.role === "TL");
+  const developerOptions = users.filter(
+  (u) => u.role === "TL" && u.reportingTo === loggedUser?.id
+ 
+  
+);
 
 
   const normalizeUserId = (user: any) => {

@@ -69,54 +69,10 @@ export default function ChangePasswordModal({ onClose }: Props) {
   };
 
   return (
-    // <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-    //   <ToastContainer position="top-center" autoClose={2000} />
-    //   <div className="bg-white dark:bg-gray-800 p-6 rounded-xl w-80 shadow-lg">
-    //     <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">
-    //       Change Password
-    //     </h2>
-
-    //     <input
-    //       type="password"
-    //       placeholder="Current password"
-    //       value={currentPassword}
-    //       onChange={(e) => setCurrentPassword(e.target.value)}
-    //       className="w-full px-3 py-2 mb-3 border rounded dark:bg-gray-700 dark:text-white"
-    //     />
-    //     <input
-    //       type="password"
-    //       placeholder="New password"
-    //       value={newPassword}
-    //       onChange={(e) => setNewPassword(e.target.value)}
-    //       className="w-full px-3 py-2 mb-3 border rounded dark:bg-gray-700 dark:text-white"
-    //     />
-    //     <input
-    //       type="password"
-    //       placeholder="Confirm new password"
-    //       value={confirmPassword}
-    //       onChange={(e) => setConfirmPassword(e.target.value)}
-    //       className="w-full px-3 py-2 mb-4 border rounded dark:bg-gray-700 dark:text-white"
-    //     />
-    //     <div className="flex justify-end gap-2">
-    //       <button
-    //         onClick={onClose}
-    //         className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white"
-    //       >
-    //         Cancel
-    //       </button>
-    //       <button
-    //         onClick={handleChangePassword}
-    //         disabled={loading}
-    //         className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
-    //       >
-    //         {loading ? "Saving..." : "Save"}
-    //       </button>
-    //     </div>
-    //   </div>
-    // </div>
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
       <ToastContainer position="top-center" autoClose={2000} />
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl w-96 shadow-lg">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl w-96 shadow-lg" onClick={(e) => e.stopPropagation()}>
         <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">
           Change Password
         </h2>

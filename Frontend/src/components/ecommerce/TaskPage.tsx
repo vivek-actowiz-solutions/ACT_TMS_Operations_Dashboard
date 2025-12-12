@@ -907,7 +907,7 @@ const TaskPage: React.FC = () => {
           {(role === "Admin" || role === "SuperAdmin") && (
             <Link
               to="/TMS-operations/assign-tasks"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow sm:w-auto w-full text-center"
             >
               📋 Assign Tasks
             </Link>
@@ -1191,7 +1191,7 @@ const TaskPage: React.FC = () => {
 
                 // ✅ Completion Date column
                 {
-                  field: "completionDate", headerName: "Completion Date", width: 140, renderCell: (params) => (
+                  field: "completionDate", headerName: "Completion Date", width: 120, renderCell: (params) => (
                     <Tooltip title={params.value || "-"} placement="top" arrow componentsProps={{
                       tooltip: {
                         sx: {
@@ -1217,6 +1217,9 @@ const TaskPage: React.FC = () => {
                   sortable: false,
                   renderCell: (params) => {
                     const devs = params.row.developers || [];
+                    if (devs.length === 0) {
+                      return <span className="text-center w-full">-</span>;
+                    }
 
                     return (
                       <div
@@ -1230,7 +1233,7 @@ const TaskPage: React.FC = () => {
                             key={index}
                             className="px-1 py-[2px] text-xs font-medium"
                           >
-                            {dev}
+                            {dev || "-"}
                           </span>
                         ))}
                       </div>

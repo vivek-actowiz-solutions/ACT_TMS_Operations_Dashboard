@@ -8,7 +8,7 @@ import { UserDB2 } from "../models/UserDB2.js";
 
 // Create a new user
 export const createUser = async (req, res) => {
-  const { name, email, password, department, designation, role, slackId } = req.body;
+  const { name, email, password, department, designation, role, slackId, reportingTo} = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ message: "Name, email, and password are required." });
@@ -27,18 +27,12 @@ export const createUser = async (req, res) => {
     department,
     designation,
     role,
-    slackId
+    slackId,
+    reportingTo
   });
-  const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+  
 
-  const token = jwt.sign({ id: newUser._id, role: newUser.role, email: newUser.email, name: newUser.name }, JWT_SECRET, { expiresIn: "1d" });
-
-  // res.cookie("TMSAuthToken", token, {
-  //   httpOnly: true,       // JS cannot access
-  //   sameSite: "lax",
-  //   secure: false,   // CSRF protection
-  //   maxAge: 24 * 60 * 60 * 1000, // 1 day
-  // });
+  
 
   await newUser.save();
   res.status(201).json({ message: "User registered successfully" });
@@ -170,10 +164,10 @@ export const editUser = async (req, res) => {
     const userId = req.params.id;
     console.log("UserId", userId);
 
-    const { name, email, department, designation, role, slackId, isActive } = req.body;
+    const { name, email, department, designation, role, slackId, isActive, reportingTo } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { name, email, department, designation, role, slackId, isActive },
+      { name, email, department, designation, role, slackId, isActive, reportingTo },
       { new: true }
     ).select("-password");
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
