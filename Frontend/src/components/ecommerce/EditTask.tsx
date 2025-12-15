@@ -43,7 +43,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
   });
 
   const [domainInput, setDomainInput] = useState("");
-  const [developerInput, setDeveloperInput] = useState<Record<string, string>>({});
+  //const [developerInput, setDeveloperInput] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -57,32 +57,32 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
   const [editDomainInput, setEditDomainInput] = useState<Domain | null>(null);
 
   const [users, setUsers] = useState<{
-    reportingTo: any; _id: string; name: string; role: string 
-}[]>([]);
+    reportingTo: any; _id: string; name: string; role: string
+  }[]>([]);
   const [loggedUser, setLoggedUser] = useState(null);
   const [activeTab, setActiveTab] = useState<"task" | "submit">("task");
 
   const getCookie = (name: string) => {
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  return match ? match[2] : null;
-};
+    const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+    return match ? match[2] : null;
+  };
 
-const getLoggedUserFromToken = () => {
-  const token = getCookie("TMSAuthToken");
-  if (!token) return null;
+  const getLoggedUserFromToken = () => {
+    const token = getCookie("TMSAuthToken");
+    if (!token) return null;
 
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1])); 
-    return payload; // { _id, name, role, email }
-  } catch (err) {
-    console.error("Invalid token", err);
-    return null;
-  }
-};
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload; // { _id, name, role, email }
+    } catch (err) {
+      console.error("Invalid token", err);
+      return null;
+    }
+  };
 
 
   useEffect(() => {
-     setLoggedUser(getLoggedUserFromToken());
+    setLoggedUser(getLoggedUserFromToken());
     const fetchUsers = async () => {
       try {
         const res = await fetch(`${apiUrl}/users/all`, {
@@ -93,23 +93,34 @@ const getLoggedUserFromToken = () => {
         });
         const data = await res.json();
         setUsers(data);
-        console.log(data);
-    
+
+
       } catch (err) {
         console.error("Error fetching users:", err);
       }
     };
 
     fetchUsers();
-    
+
   }, []);
 
-  // Filtered user options
-  const developerOptions = users.filter(
-  (u) => u.role === "TL" && u.reportingTo === loggedUser?.id
- 
-  
-);
+
+  const developerOptions = users.filter((u) => {
+    if (!u.isActive || u.role !== "TL") return false;
+    // SuperAdmin sees all TLs
+    if (loggedUser?.role === "SuperAdmin") return true;
+    if (loggedUser?.role === "Manager") {
+      const adminIds = users.filter((x) => x.role === "Admin").map((x) => x._id);
+      return (
+        u.reportingTo === loggedUser?.id || adminIds.includes(u.reportingTo)
+      );
+    }
+
+    // Admin sees all TLs
+    if (loggedUser?.role === "Admin") return true;
+
+    return false;
+  });
 
 
   const normalizeUserId = (user: any) => {
@@ -319,35 +330,35 @@ const getLoggedUserFromToken = () => {
   };
 
 
-  const handleDeveloperAdd = (domainName: string) => {
-    const devId = developerInput[domainName];
-    if (!devId) return;
+  // const handleDeveloperAdd = (domainName: string) => {
+  //   const devId = developerInput[domainName];
+  //   if (!devId) return;
 
-    // const alreadyAssigned = Object.values(task.developers).some(arr => arr.includes(devId));
-    // if (alreadyAssigned) {
-    //   toast.error("This developer is already assigned!");
-    //   return;
-    // }
+  //   // const alreadyAssigned = Object.values(task.developers).some(arr => arr.includes(devId));
+  //   // if (alreadyAssigned) {
+  //   //   toast.error("This developer is already assigned!");
+  //   //   return;
+  //   // }
 
-    setTask(prev => ({
-      ...prev,
-      developers: {
-        ...prev.developers,
-        [domainName]: [...(prev.developers[domainName] || []), devId],
-      },
-    }));
-    setDeveloperInput(prev => ({ ...prev, [domainName]: "" }));
-  };
+  //   setTask(prev => ({
+  //     ...prev,
+  //     developers: {
+  //       ...prev.developers,
+  //       [domainName]: [...(prev.developers[domainName] || []), devId],
+  //     },
+  //   }));
+  //   setDeveloperInput(prev => ({ ...prev, [domainName]: "" }));
+  // };
 
-  const handleDeveloperRemove = (domainName: string, devId: string) => {
-    setTask(prev => ({
-      ...prev,
-      developers: {
-        ...prev.developers,
-        [domainName]: prev.developers[domainName].filter(d => d !== devId),
-      },
-    }));
-  };
+  // const handleDeveloperRemove = (domainName: string, devId: string) => {
+  //   setTask(prev => ({
+  //     ...prev,
+  //     developers: {
+  //       ...prev.developers,
+  //       [domainName]: prev.developers[domainName].filter(d => d !== devId),
+  //     },
+  //   }));
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -471,6 +482,36 @@ const getLoggedUserFromToken = () => {
     }
   };
 
+  const userMap = React.useMemo(() => {
+    const map: Record<string, string> = {};
+    users.forEach((u) => {
+      map[u._id] = u.name;
+      if ((u as any).id) map[(u as any).id] = u.name; // safety
+    });
+    return map;
+  }, [users]);
+
+  const resolveUserName = (dev: any) => {
+    if (!dev) return "-";
+
+    // object case
+    if (typeof dev === "object") {
+      return (
+        dev.name ||
+        userMap[dev._id] ||
+        userMap[dev.id] ||
+        dev._id ||
+        dev.id ||
+        "-"
+      );
+    }
+
+    // string case (id)
+    return userMap[dev] || dev;
+  };
+
+
+
   if (initialLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -512,8 +553,8 @@ const getLoggedUserFromToken = () => {
         <button
           type="button"
           className={`px-4 py-2 border-b-2 ${activeTab === "task"
-              ? "border-[#3C01AF] text-[#3C01AF] font-bold"
-              : "border-transparent text-gray-600"
+            ? "border-[#3C01AF] text-[#3C01AF] font-bold"
+            : "border-transparent text-gray-600"
             }`}
           onClick={() => setActiveTab("task")}
         >
@@ -526,7 +567,7 @@ const getLoggedUserFromToken = () => {
 
 
         {/* Show Submit Tab only if the selected domain = submitted */}
-        {(role === "Admin" ||  role === "Manager"  || role === "SuperAdmin") &&
+        {(role === "Admin" || role === "Manager" || role === "SuperAdmin") &&
           task.domains.some(
             (d) =>
               decodeURIComponent(domainFromUrl || "") === d.name &&
@@ -559,7 +600,7 @@ const getLoggedUserFromToken = () => {
               <form onSubmit={handleSubmit} className="space-y-10">
 
 
-                
+
                 <div className="bg-white border border-blue-200 rounded-2xl shadow-md p-6">
                   <div className="w-full bg-gradient-to-r from-blue-50 to-blue-25 border border-blue-100 rounded-lg shadow-sm p-4 mb-6">
                     <div className="flex items-center gap-3 ">
@@ -586,10 +627,18 @@ const getLoggedUserFromToken = () => {
 
                         <tbody>
                           {previousDomains.map((p, i) =>
+
+
                             p.oldValue.map((d: any, idx: number) => {
-                              const developerNames = d.developers
-                                ?.map((id: string) => users.find((u) => u._id === id)?.name || id)
-                                .join(", ") || "-";
+                              console.log("d", d)
+                              const developerNames =
+                                d.developers
+                                  ?.map((dev: any) => resolveUserName(dev))
+                                  .join(", ") || "-";
+
+
+
+
 
                               return (
                                 <tr key={`${i}-${idx}`} className="text-center">
@@ -607,16 +656,16 @@ const getLoggedUserFromToken = () => {
                   )}
 
 
-                  
+
                   {task.domains.map((d) => (
                     <div
                       key={d.name}
                       className={`bg-blue-50 border rounded-lg p-4 mb-3 ${editingDomain === d.name ? 'border-purple-500' : 'border-blue-200'}`}
                     >
                       {editingDomain === d.name && editDomainInput ? (
-                       
+
                         <div className="space-y-3">
-                         
+
                           <input
                             type="text"
                             value={editDomainInput.name}
@@ -626,7 +675,7 @@ const getLoggedUserFromToken = () => {
                           />
 
                           <div className="flex gap-3">
-                            
+
                             <select
                               value={editDomainInput.typeOfPlatform || ""}
                               onChange={(e) => setEditDomainInput(p => (p ? { ...p, typeOfPlatform: e.target.value } : null))}
@@ -638,7 +687,7 @@ const getLoggedUserFromToken = () => {
                               <option value="both (app & web)">Both (App & Web)</option>
                             </select>
 
-                           
+
                             <input
                               type="text"
                               value={editDomainInput.domainRemarks || ""}
@@ -648,7 +697,7 @@ const getLoggedUserFromToken = () => {
                             />
                           </div>
 
-                          
+
                           <div className="flex justify-end gap-2">
                             <button
                               type="button"
@@ -667,16 +716,16 @@ const getLoggedUserFromToken = () => {
                           </div>
                         </div>
                       ) : (
-                        
+
                         <>
                           <div className="grid grid-cols-4 gap-4 items-center w-full pb-4  px-3   bg-blue-50">
 
-                            
+
                             <div className="text-gray-800 font-medium break-words">
                               {d.name}
                             </div>
 
-                            
+
                             <div className="text-center">
                               {d.typeOfPlatform ? (
                                 <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
@@ -687,15 +736,15 @@ const getLoggedUserFromToken = () => {
                               )}
                             </div>
 
-                            
+
                             <div className="text-center text-gray-600 italic break-words">
                               {d.domainRemarks || "-"}
                             </div>
 
-                            
+
                             <div className="flex justify-end gap-3">
 
-                             
+
                               {(role === "Sales" || role === "Admin" || role === "SuperAdmin") && (
                                 <button
                                   type="button"
@@ -707,7 +756,7 @@ const getLoggedUserFromToken = () => {
                                 </button>
                               )}
 
-                              
+
                               {(role === "Sales" || role === "Admin" || role === "SuperAdmin") && (
                                 <button
                                   type="button"
@@ -723,7 +772,7 @@ const getLoggedUserFromToken = () => {
                           </div>
 
 
-                          
+
 
                           {(role === "TL" || role === "Manager" || role === "Admin" || role === "SuperAdmin") && (
                             <div className="flex flex-col gap-2">
@@ -757,7 +806,7 @@ const getLoggedUserFromToken = () => {
                                 className="rounded-lg  dark:border-gray-600 dark:text-white/90"
                               />
 
-                              
+
                             </div>
                           )}
 
@@ -770,8 +819,8 @@ const getLoggedUserFromToken = () => {
 
                   {(role === "Sales" || role === "Admin" || role === "SuperAdmin") && (
                     <div className="flex flex-wrap gap-3 mb-4 items-end">
-                      
-                      <input  
+
+                      <input
                         type="text"
                         value={domainInput}
                         onChange={(e) => {
@@ -782,7 +831,7 @@ const getLoggedUserFromToken = () => {
                         className="flex-1 rounded-lg border border-gray-300 p-3 dark:text-white/90"
                       />
 
-                      
+
                       <select
                         value={domainPlatform}
                         onChange={(e) => setDomainPlatform(e.target.value)}
@@ -794,7 +843,7 @@ const getLoggedUserFromToken = () => {
                         <option value="both (app & web)">Both (App & Web)</option>
                       </select>
 
-                      
+
                       <input
                         type="text"
                         value={domainRemark}
@@ -803,7 +852,7 @@ const getLoggedUserFromToken = () => {
                         className="flex-1 rounded-lg border border-gray-300 p-3 dark:text-white/90"
                       />
 
-                      
+
                       <button
                         type="button"
                         onClick={handleDomainAdd}
@@ -814,7 +863,7 @@ const getLoggedUserFromToken = () => {
                     </div>
                   )}
 
-                  
+
                   {errors.domains && <p className="text-red-500 mb-2">{errors.domains}</p>}
                 </div>
 
@@ -838,23 +887,23 @@ const getLoggedUserFromToken = () => {
         </>
       )}
 
-     
-        {activeTab === "submit" && (
-  <div className="mt-6">
-    {task.domains.map((d) => (
-      <div key={d.name}>
-        {decodeURIComponent(domainFromUrl || "") === d.name &&
-          d.status === "submitted" && (
-            <div className="mt-4">
-              {(role === "TL" || role === "Manager" || role === "Admin" || role === "SuperAdmin") && (
-                <EditSubmit />
-              )}
+
+      {activeTab === "submit" && (
+        <div className="mt-6">
+          {task.domains.map((d) => (
+            <div key={d.name}>
+              {decodeURIComponent(domainFromUrl || "") === d.name &&
+                d.status === "submitted" && (
+                  <div className="mt-4">
+                    {(role === "TL" || role === "Manager" || role === "Admin" || role === "SuperAdmin") && (
+                      <EditSubmit />
+                    )}
+                  </div>
+                )}
             </div>
-          )}
-      </div>
-    ))}
-  </div>
-)}
+          ))}
+        </div>
+      )}
 
     </>
   );

@@ -889,7 +889,7 @@ const CreateTaskUI: React.FC = () => {
     <>
       <PageBreadcrumb items={[{ title: "Home", path: "/TMS-operations/" }, { title: "Tasks", path: "/TMS-operations/tasks" }, { title: "Create Task" }]} />
       <div className="min-h-screen w-full bg-white flex justify-center py-10 px-4">
-        <div className="w-full max-w-6xl  p-8 rounded-2xl  ">
+        <div className="w-full max-w-6xl  md:p-8  rounded-2xl  ">
           <ToastContainer
             position="top-center"
             autoClose={3000}

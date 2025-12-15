@@ -55,27 +55,48 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onCr
   }, [isOpen]);
 
 
+  // const getReportingUsers = () => {
+  //   if (!form.role) return [];
+
+  //   switch (form.role) {
+
+
+  //     case "TL":
+  //       return users.filter((u: any) => u.role === "Manager" || u.role==="Admin");
+
+  //     case "Manager":
+  //       return users.filter((u: any) => u.role === "Admin");
+
+  //     case "Admin":
+  //       return users.filter((u: any) => u.role === "Admin");
+
+
+
+  //     default:
+  //       return [];
+  //   }
+  // };
+
   const getReportingUsers = () => {
-    if (!form.role) return [];
+  if (!form.role) return [];
 
-    switch (form.role) {
+  switch (form.role) {
+    case "TL":
+      return users.filter(
+        (u: any) => u.role === "Manager" || u.role === "Admin"
+      );
 
+    case "Manager":
+      return users.filter((u: any) => u.role === "Admin");
 
-      case "TL":
-        return users.filter((u: any) => u.role === "Manager");
+    case "Admin":
+      return users.filter((u: any) => u.role === "Admin");
 
-      case "Manager":
-        return users.filter((u: any) => u.role === "Admin");
+    default:
+      return [];
+  }
+};
 
-      case "Admin":
-        return users.filter((u: any) => u.role === "Admin");
-
-
-
-      default:
-        return [];
-    }
-  };
 
 
 
@@ -234,7 +255,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onCr
       )}
 
       {/* Slack ID — Full Width */}
-      <div className="md:col-span-2 flex flex-col gap-2">
+      <div className=" flex flex-col gap-2">
         <label className="text-gray-700 font-medium">Slack ID</label>
         <input
           name="slackId"

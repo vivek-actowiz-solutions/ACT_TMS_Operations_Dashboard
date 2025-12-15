@@ -23,7 +23,7 @@ const encodeKey = (key) => typeof key === "string" ? key.replace(/\./g, "‧") :
 const decodeKey = (key) => typeof key === "string" ? key.replace(/‧/g, ".") : key;
 
 const space = '\u2003';
-
+  
 const encodeDevelopers = (devs) => {
   if (!devs) return devs;
   if (typeof devs === "string") {
@@ -43,7 +43,7 @@ const decodeDevelopers = (devs) => {
   const entries = devs instanceof Map ? Array.from(devs.entries()) : Object.entries(devs);
   for (const [k, v] of entries) out[decodeKey(k)] = v;
   return out;
-};
+};        
 
 const decodeSubmissions = (subs) => {
   if (!subs) return subs;
@@ -123,8 +123,6 @@ const safeParseArray = (value) => {
   return cleaned;
 };
 
-
-
 /* ------------------ Controllers ------------------ */
 
 // CREATE TASK
@@ -132,8 +130,6 @@ export const createTask = async (req, res) => {
 
   // console.log("🔍 Received Domains in Backend:", req.body);
   // console.log("Received File:", req.file);
-
-
   try {
     const raw = req.body || {};
     const developers = encodeDevelopers(raw.developers);
@@ -168,7 +164,7 @@ export const createTask = async (req, res) => {
 
     if (!Array.isArray(domains)) domains = [];
 
-    // Ignore remark, only store name + typeOfPlatform
+    
     const formattedDomains = domains.map((d) => ({
       name: d.domain || d.name || "",
       typeOfPlatform: d.typeOfPlatform || "",
@@ -203,7 +199,6 @@ export const createTask = async (req, res) => {
       frequency: raw.frequency,
       description: raw.description,
       RPM: raw.RPM,
-
     },
       {},
       "create"
@@ -234,7 +229,7 @@ export const createTask = async (req, res) => {
     for (const d of formattedDomains) {
       await ActivityLog.create({
         taskId: task._id,
-        domainName: d.name,     // 👈 EXACT domain
+        domainName: d.name, 
         action: "Task Created",
         changedBy: req.user?.name || "Unknown User",
         role: req.user?.role || "Unknown Role",
@@ -245,8 +240,8 @@ export const createTask = async (req, res) => {
 
     /* ------------------ Slack Notification ------------------ */
     const assignedUser = await User.findById(assignedByUserId).lean();
-     const slackTag = assignedUser?.slackId ? `<@${assignedUser.slackId}>` : "";
-   // const assignedToUser = await User.findById(raw.assignedTo).lean();
+    const slackTag = assignedUser?.slackId ? `<@${assignedUser.slackId}>` : "";
+    // const assignedToUser = await User.findById(raw.assignedTo).lean();
     // const assignedToSlackTag =
     //   assignedToUser?.slackId
     //     ? `<@${assignedToUser.slackId}>`
@@ -254,7 +249,7 @@ export const createTask = async (req, res) => {
 
     const dashboardUrl = `${process.env.FRONTEND_URL}/tasks`;
 
-    const admin=`<@${process.env.SLACK_ID_VISHAL}>`
+    const admin = `<@${process.env.SLACK_ID_VISHAL}>`
 
     const slackMessage = `
         :bell: *New Task Assigned*
@@ -281,20 +276,18 @@ export const createTask = async (req, res) => {
 
 };
 
-//
+// Update Task
 export const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
     const body = cleanBody(req.body);
 
-    //console.log("req.body", req.body);
+    // const urlFields = ["sowUrls", "inputUrls", "outputUrls", "clientSampleSchemaUrls"];
 
-    const urlFields = ["sowUrls", "inputUrls", "outputUrls", "clientSampleSchemaUrls"];
-
-    // Parse stringified arrays (from FormData)
-    urlFields.forEach((field) => {
-      if (body[field] !== undefined) body[field] = safeParseArray(body[field]);
-    });
+    // // Parse stringified arrays (from FormData)
+    // urlFields.forEach((field) => {
+    //   if (body[field] !== undefined) body[field] = safeParseArray(body[field]);
+    // });
 
     const task = await Task.findById(id);
     if (!task) return res.status(404).json({ error: "Task not found" });
@@ -324,9 +317,6 @@ export const updateTask = async (req, res) => {
         else task[f] = body[f];
       }
     });
-
-
-
 
     let incomingDomains = [];
     if (body.domains) {
@@ -544,10 +534,9 @@ export const submitTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const body = req.body;   // ← DO NOT CLEAN FILE FORM DATA!
+    const body = req.body;   
 
-    // console.log(req.body);
-    // console.log("this nkodsmnvpifs", req.files)
+    
     const task = await Task.findById(id);
     if (!task) return res.status(404).json({ error: "Task not found" });
 
@@ -875,11 +864,11 @@ CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>
   }
 };
 
-// controllers/taskController.js (add/replace function)
+// Submit Task Edit
 export const editDomainSubmission = async (req, res) => {
   try {
     const { id } = req.params;
-    // console.log("USER IN CONTROLLER:", req.user);
+    
 
     const {
       domainName,
@@ -923,7 +912,7 @@ export const editDomainSubmission = async (req, res) => {
       outputFiles: [...keptFiles, ...newFiles],
 
       // ❌ REMOVE in-review
-      status: "submitted", // or "in-progress"
+      status: "submitted", 
     };
 
     // 6. Update domain status (remove in-review)
@@ -1168,6 +1157,7 @@ export const getTask = async (req, res) => {
   }
 };
 
+// Get task list
 export const getTaskList = async (req, res) => {
   try {
     // Read token from cookie
@@ -1208,7 +1198,7 @@ export const getTaskList = async (req, res) => {
       .populate("assignedBy", "name role")
       .sort({ createdAt: -1 });
 
-const submittedTasks = tasks.filter(task => {
+    const submittedTasks = tasks.filter(task => {
       if (!task.domains || task.domains.length === 0) return false;
       return task.domains.every((d) => d.status === "submitted");
     });
@@ -1239,8 +1229,7 @@ const submittedTasks = tasks.filter(task => {
   }
 };
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/*******  7594615f-dcc2-4464-8afa-9804f09b60bd  *******/
+// GET SINGLE TASK LIST
 export const getSingleTaskList = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1659,7 +1648,7 @@ export const getDevelopersDomainStatus = async (req, res) => {
     console.error("Error fetching developer domain stats:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
-};
+}; 
 
 // export const getTLUsers = async (req, res) => {
 //   try {
@@ -2140,7 +2129,7 @@ export const reOpenTask = async (req, res) => {
     if (Object.keys(changedFields).length > 0) {
       if (!Array.isArray(task.previousDomain)) {
         task.previousDomain = [];
-        task.assignedTo=null
+        task.assignedTo = null
       }
       task.previousDomain.push({
         oldValue: JSON.parse(JSON.stringify(task.domains)),
@@ -2155,7 +2144,7 @@ export const reOpenTask = async (req, res) => {
         d.completeDate = null;
         d.submission = [];
         d.developers = [];
-        
+
         d.status = "Reopened";
       });
 
@@ -2916,62 +2905,6 @@ export const getAllTasks = async (req, res) => {
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
-
-
-
-
-// export const assignTask = async (req, res) => {
-//   console.log("Assigning task...",req.body);
-  
-//   try {
-//     const { id } = req.params;
-//     const { assignedTo } = req.body;
-
-//     if (!assignedTo)
-//       return res.status(400).json({ message: "assignedTo is required" });
-
-//     const task = await Task.findById(id);
-//     if (!task) return res.status(404).json({ message: "Task not found" });
-
-//     task.assignedTo = assignedTo;
-
-//     if (task.domains && Array.isArray(task.domains)) {
-//       task.domains = task.domains.map((domain) => ({
-//         ...domain,
-//         status: "pending",
-//       }));
-//     }
-    
-//     await task.save();
-
-
-
-//     const dashboardUrl = `${process.env.FRONTEND_URL}/tasks`;
-
-
-
-  
-
-//     const AssignedBySlack= 
-//     const AssignedToSlack= 
-
-//     const slackMessage = `
-//         :bell: *New Task Assigned*
-//         :briefcase: *Task:* ${raw.title}
-//         :bust_in_silhouette: *Assigned By:* ${AssignedBySlack} 
-//         :date: *Assigned To:* ${AssignedToSlack} 
-//         :memo: *Details:* Please review feasibility and assign to a TL accordingly.
-//         :link: *View Task:* <${dashboardUrl}|Open Dashboard>
-//         CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
-//       `;
-
-//     await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
-
-//     res.json({ message: "Task assigned successfully", task });
-//   } catch (error) {
-//     res.status(500).json({ message: "Server error", error: error.message });
-//   }
-// };
 
 
 export const assignTask = async (req, res) => {

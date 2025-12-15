@@ -35,21 +35,19 @@ const fetchAllUsers = async () => {
 };
 
 const getReportingUsers = () => {
-  if (!form) return [];
+  if (!form.role) return [];
 
   switch (form.role) {
-    
-
     case "TL":
-      return users.filter((u) => u.role === "Manager");
+      return users.filter(
+        (u: any) => u.role === "Manager" || u.role === "Admin"
+      );
 
     case "Manager":
-      return users.filter((u) => u.role === "Admin");
+      return users.filter((u: any) => u.role === "Admin");
 
     case "Admin":
-      return users.filter((u) => u.role === "Admin");
-
-    
+      return users.filter((u: any) => u.role === "Admin");
 
     default:
       return [];
@@ -305,7 +303,7 @@ const getReportingUsers = () => {
       )}
 
       {/* Slack ID – Full width */}
-      <div className="flex flex-col gap-2 md:col-span-2">
+      <div className="flex flex-col gap-2 ">
         <label className="text-gray-700 font-medium">Slack ID</label>
         <input
           name="slackId"
