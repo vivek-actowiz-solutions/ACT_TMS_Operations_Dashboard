@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-// make sure this is used in your app.js/server.js
+
 
 const JWT_SECRET=process.env.JWT_SECRET 
 

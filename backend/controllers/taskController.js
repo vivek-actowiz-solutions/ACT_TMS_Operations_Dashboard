@@ -128,14 +128,10 @@ const safeParseArray = (value) => {
 // CREATE TASK
 export const createTask = async (req, res) => {
 
-  // console.log("🔍 Received Domains in Backend:", req.body);
-  // console.log("Received File:", req.file);
   try {
     const raw = req.body || {};
     const developers = encodeDevelopers(raw.developers);
-    // console.log("🔍 Received Domains in Backend:", req.body.domains);
-
-
+    
     /* ------------------ Auth Check ------------------ */
     let assignedByUserId =
       req.user?._id || req.userId || req.user?.id || null;
@@ -188,7 +184,7 @@ export const createTask = async (req, res) => {
 
     const sowFilePath = await generateSOWDocxFromTemplate({
       title: raw.title,
-      date: new Date().toLocaleDateString(),
+      date: assignedDate.toLocaleDateString(),
       typeOfDelivery: raw.typeOfDelivery,
       domains: formattedDomains,
       inputDescription: raw.inputUrls,
@@ -200,8 +196,8 @@ export const createTask = async (req, res) => {
       description: raw.description,
       RPM: raw.RPM,
     },
-      {},
-      "create"
+    {},
+    "create"
     );
 
     /* ------------------ Task creation ------------------ */
@@ -213,12 +209,12 @@ export const createTask = async (req, res) => {
       taskAssignedDate: assignedDate,
       targetDate,
       sowFiles: [sowFilePath],
-      inputFiles: req.files?.inputFile?.map((f) => `uploads/${f.filename}`) || [],
-      clientSampleSchemaFiles:
-        req.files?.clientSampleSchemaFiles?.map((f) => `uploads/${f.filename}`) || [],
-      sowUrls,
-      inputUrls,
-      clientSampleSchemaUrls,
+      //inputFiles: req.files?.inputFile?.map((f) => `uploads/${f.filename}`) || [],
+      // clientSampleSchemaFiles:
+      //   req.files?.clientSampleSchemaFiles?.map((f) => `uploads/${f.filename}`) || [],
+      // sowUrls,
+       inputUrls,
+       clientSampleSchemaUrls,
       assignedBy: assignedByUserId,
     };
 
@@ -261,7 +257,7 @@ export const createTask = async (req, res) => {
         CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
       `;
 
-    await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
+    //await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
 
 
 
@@ -282,12 +278,7 @@ export const updateTask = async (req, res) => {
     const { id } = req.params;
     const body = cleanBody(req.body);
 
-    // const urlFields = ["sowUrls", "inputUrls", "outputUrls", "clientSampleSchemaUrls"];
-
-    // // Parse stringified arrays (from FormData)
-    // urlFields.forEach((field) => {
-    //   if (body[field] !== undefined) body[field] = safeParseArray(body[field]);
-    // });
+   
 
     const task = await Task.findById(id);
     if (!task) return res.status(404).json({ error: "Task not found" });
@@ -879,7 +870,7 @@ export const editDomainSubmission = async (req, res) => {
     } = req.body;
 
     if (!domainName) {
-      return res.status(400).json({ message: "domainName is required" });
+      return res.status(400).json({ message: "Domain Name is required" });
     }
 
     // 1. Find the Task
@@ -2934,7 +2925,7 @@ export const assignTask = async (req, res) => {
     const dashboardUrl = `${process.env.FRONTEND_URL}/tasks`;
 
     // Get Slack ID of current logged-in user
-    const currentUser = await User.findById(req.user.id); // assuming req.user.id is set from JWT
+    const currentUser = await User.findById(req.user.id); 
     const AssignedBySlack = currentUser?.slackId || "";
 
     // Get Slack ID of assignedTo user from DB
@@ -2952,6 +2943,26 @@ export const assignTask = async (req, res) => {
       `;
 
     await sendSlackMessage(process.env.OP_CHANNEL, slackMessage);
+
+    //Activity Log
+   try {
+      const domainList = task.domains?.map(d => d.name) || ["-"];
+
+      for (const domain of domainList) {
+        await ActivityLog.create({
+          taskId: task._id,
+          domainName: domain,   
+          action: "Task Assigned",
+          changedBy: req.user?.name || "Unknown",
+          role: req.user?.role || "Unknown",
+        });
+      }
+
+
+
+    } catch (err) {
+      console.error("Failed to create ActivityLog:", err);
+    }
 
     res.json({ message: "Task assigned successfully", task });
   } catch (error) {

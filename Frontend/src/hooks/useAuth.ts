@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 
 // Define the type of the decoded JWT payload
 interface DecodedToken {
+  _id?: string;
   name?: string;
   email?: string;
   role?: string;
@@ -19,6 +20,7 @@ interface User {
 
 export const useAuth = () => {
   const [user, setUser] = useState<User>({
+    id: "",
     name: "",
     email: "",
     role: "",
@@ -33,10 +35,11 @@ export const useAuth = () => {
           name: decoded.name || "User",
           email: decoded.email || "",
           role: decoded.role || "",
+          id: decoded._id || "",
         });
       } catch (error) {
         console.error("Invalid JWT token:", error);
-        setUser({ name: "", email: "", role: "" });
+        setUser({ name: "", email: "", role: "", id: "" });
       }
     }
   }, []);

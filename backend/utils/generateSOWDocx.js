@@ -17,7 +17,7 @@ export const generateSOWDocxFromTemplate = async (task,
   mode = "create", fileType = "SOW") => {
   // Helper function
 
-  //console.log("generateSOWDocxFromTemplate", task);
+
   const now = new Date();
   const dateSuffix =
     `${now.getDate()}_${now.getMonth() + 1}_${now.getFullYear()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
@@ -142,7 +142,7 @@ export const generateSOWDocxFromTemplate = async (task,
               new TextRun({
                 text: "Version: ",
 
-                bold: true,
+                bold: true, 
                 size: 28,
               }),
               new TextRun({ text: "1.0", size: 28 }),

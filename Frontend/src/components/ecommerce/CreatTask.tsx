@@ -690,10 +690,10 @@ const CreateTaskUI: React.FC = () => {
     oputputFormat: "",
     status: "pending",
     sowFile: [],
-    sowUrls: [],
-    inputFile: [],
+    // sowUrls: [],
+    // inputFile: [],
     inputUrls: [],
-    clientSampleSchemaFiles: [],
+    // clientSampleSchemaFiles: [],
     clientSampleSchemaUrls: [],
   });
 
@@ -864,9 +864,12 @@ const CreateTaskUI: React.FC = () => {
       Object.entries(task).forEach(([key, value]) => {
         if (value === undefined || value === null) return;
 
+         if (Array.isArray(value) && value.length === 0) return;
+
         if (key === "domainDetails") formData.append("domains", JSON.stringify(value));
         else if (Array.isArray(value)) formData.append(key, value as any);
         else formData.append(key, value as any);
+
       });
       const res = await fetch(`${apiUrl}/tasks`, { method: "POST", credentials: "include", body: formData });
       const data = await res.json();

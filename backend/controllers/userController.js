@@ -45,40 +45,6 @@ export const createUser = async (req, res) => {
 };
 
 
-// login user
-// export const loginUser = async (req, res) => {
-//   const { email, password } = req.body;
-//   const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
-
-//   if (!email || !password) {
-//     return res.status(400).json({ message: "Email and password are required." });
-//   }
-
-//   const user = await User.findOne({ email });
-//   if (!user) return res.status(400).json({ message: "Invalid email or password" });
-
-//   const isMatch = await bcrypt.compare(password, user.password);
-//   if (!isMatch) return res.status(400).json({ message: "Invalid email or password" });
-
-//   const token = jwt.sign({ id: user._id, role: user.role, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: "1d" });
-//   // req.cookies.token = token;
-//   res.cookie("token", token, {
-//     httpOnly: false,
-//     sameSite: "lax",
-//     secure: false,
-//     maxAge: 24 * 60 * 60 * 1000,
-//   });
-
-//   //console.log("Created JWT:", token);
-
-//   res.json({ message: "Login successful" });
-//   // server login response
-//   // res
-//   //   .cookie("token", token, { httpOnly: true })
-//   //   .json({ role: user.role, name: user.name }); // send minimal info
-
-// }
-
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   const JWT_SECRET = process.env.JWT_SECRET;

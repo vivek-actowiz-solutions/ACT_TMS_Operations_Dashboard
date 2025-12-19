@@ -15,8 +15,7 @@ import {
   TabStopPosition,
   TabStopType
 } from "docx";
-import fs from "fs";
-import path from "path";
+
 
 /**
  * Generate a DOCX buffer for a POC object following the uploaded SOW structure (exact reproduction).
@@ -254,36 +253,7 @@ function bodyCell(text, width) {
               ],
             })
           ),
-          // Static TOC entries (matching your original)
-          // new Paragraph({
-          //   children: [new TextRun({ text: "Document Control ................................................................. 3", size: SIZE_BODY })],
-          // }),
-          // new Paragraph({
-          //   children: [new TextRun({ text: "Purpose of the Document................................................................. 4", size: SIZE_BODY })],
-          // }),
-          // new Paragraph({
-          //   children: [new TextRun({ text: "Purpose of the Project .................................................................5", size: SIZE_BODY })],
-          // }),
-          // new Paragraph({
-          //   children: [new TextRun({ text: "Requirement Map .................................................................6", size: SIZE_BODY })],
-          // }),
-          // new Paragraph({
-          //   children: [new TextRun({ text: "1. Project Details ................................................................. 6", size: SIZE_BODY })],
-          // }),
-          // new Paragraph({
-          //   children: [new TextRun({ text: "2. Scope Of Project ................................................................. 6", size: SIZE_BODY })],
-          // }),
-          // new Paragraph({
-          //   children: [new TextRun({ text: "3. Additional Notes ................................................................. 7", size: SIZE_BODY })],
-          // }),
-          // new Paragraph({
-          //   children: [new TextRun({ text: "4. Mandatory Fields ................................................................. 7", size: SIZE_BODY })],
-          // }),
-          // new Paragraph({
-          //   children: [new TextRun({ text: "5. Annotations ................................................................. 9", size: SIZE_BODY })],
-          // }),
-
-          // page break to next section (TOC end -> Doc Control)
+          
 
           new Paragraph({
             children: [],
@@ -296,30 +266,7 @@ function bodyCell(text, width) {
             children: [new TextRun({ text: "Document Control", bold: true, size: SIZE_H2 })],
           }),
 
-          // Add the small table with version, date, author, release summary
-          // new Table({
-          //   width: { size: 100, type: WidthType.PERCENTAGE },
-
-          //   rows: [
-          //     new TableRow({
-          //       children: [
-          //         headerCell("Version", 50),
-          //         headerCell("Date", 40),
-          //         headerCell("Author", 50),
-          //         headerCell("Release Summary", 50),
-          //       ],
-          //     }),
-          //     new TableRow({
-
-          //       children: [
-          //         new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "1.0", size: SIZE_BODY })] })] }),
-          //         new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: poc.date ? new Date(poc.date).toLocaleDateString() : new Date().toLocaleDateString(), size: SIZE_BODY })] })] }),
-          //         new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: poc.asignedBy || poc.assignedBy || "", size: SIZE_BODY })] })] }),
-          //         new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "First Release", size: SIZE_BODY })] })] }),
-          //       ],
-          //     }),
-          //   ],
-          // }),
+          
           new Table({
   width: { size: 100, type: WidthType.PERCENTAGE },
   layout: "fixed",  // 🔥 forces perfect alignment

@@ -101,17 +101,18 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ open, onClose, task, domain
               <TableCell><strong>Timestamp</strong></TableCell>
             </TableRow>
           </TableHead>
-          <TableBody> 
+          <TableBody>
             {logs && logs.length > 0 ? (
               logs.map((log, i) => {
                 const actionColors: Record<string, string> = {
-                  "Task Created": "text-green-600 bg-green-50",
-                  "Task Updated": "text-blue-600 bg-blue-50",
-                  "Task Submitted": "text-purple-600 bg-purple-50",
-                  "Status Update to In-R&D": "text-orange-600 bg-orange-50",
-                  "Domain submission edited": "text-gray-600 bg-gray-100",
-                  "Task Reopened": "text-gray-600 bg-gray-100",
-                  "Domain Terminated": "text-red-600 bg-red-50",
+                  "Task Created": "text-emerald-700 bg-emerald-50",
+                  "Task Updated": "text-sky-700 bg-sky-50",
+                  "Task Submitted": "text-violet-700 bg-violet-50",
+                  "Status Update to In-R&D": "text-amber-700 bg-amber-50",
+                  "Domain submission edited": "text-slate-700 bg-slate-100",
+                  "Task Reopened": "text-indigo-700 bg-indigo-50",
+                  "Domain Terminated": "text-rose-700 bg-rose-50",
+                  "Assign Task": "text-teal-700 bg-teal-50",
                 };
 
                 const colorClass =
@@ -130,6 +131,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ open, onClose, task, domain
                         {log.action === "Domain submission edited" && "✏️"}
                         {log.action === "Task Reopened" && "🔄"}
                         {log.action === "Domain Terminated" && "❌"}
+                        {log.action === "Assign Task" && "👥"}
 
                         <span>{log.action}</span>
                       </div>

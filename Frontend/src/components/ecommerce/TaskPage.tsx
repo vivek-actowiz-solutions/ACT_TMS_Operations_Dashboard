@@ -950,9 +950,9 @@ const TaskPage: React.FC = () => {
             sx={{
               height: "100%",
               width: "100%",
-              overflowX: "auto", // ✅ horizontal scroll for smaller screens
+              overflowX: "auto", 
               "& .MuiDataGrid-root": {
-                minWidth: "100%", // ✅ Prevent squishing columns
+                minWidth: "100%",
               },
               "@media (max-width: 768px)": {
                 "& .MuiDataGrid-columnHeaders": { fontSize: "0.75rem" },
@@ -962,7 +962,6 @@ const TaskPage: React.FC = () => {
             }}
           >
             <DataGrid
-
               disableColumnResize
               disableColumnMenu
               disableColumnSelector
@@ -973,7 +972,7 @@ const TaskPage: React.FC = () => {
               isCellEditable={() => false}
               rows={paginatedRows.map((row, idx) => ({
                 id: `${row.task._id}-${row.domainName ?? "none"}`,
-                srNo: (page - 1) * pageSize + idx + 1, // ✅ Always sequential
+                srNo: (page - 1) * pageSize + idx + 1,
                 projectCode: row.task.projectCode,
                 platform: row.domainName || "-",
                 project: row.task.title,
@@ -1374,6 +1373,7 @@ const TaskPage: React.FC = () => {
 
                         {/* EDIT */}
                         {(role === "Manager" || role === "SuperAdmin") &&
+                        params.row.status?.trim().toLowerCase() !== "terminated" &&
                           (
 
                             <ActionIcon

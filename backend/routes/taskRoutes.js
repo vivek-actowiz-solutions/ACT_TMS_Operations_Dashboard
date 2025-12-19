@@ -38,7 +38,7 @@ import upload from "../middleware/multer.js";
 
 
 router.get("/tasks/test", testDB2);
-// router.get("/tasksrd", gettaskcheck);
+
 router.post("/tasks", authorize(['Admin', 'Manager','Sales','SuperAdmin']), upload.fields([
   { name: "sowFile", maxCount: 10 },
   { name: "inputFile", maxCount: 10 },
@@ -59,7 +59,7 @@ router.get("/tasks/:id/reopen-data",
 );
 
 
-// router.put("/tasks/:id", authorize(['Admin', 'TL', 'Manager']), updateTask);
+
 
 router.put("/tasks/:id/reopen", upload.fields([{ name: "sowFile", maxCount: 20 }]), authorize(['Admin', 'Manager','Sales','SuperAdmin']), reOpenTask);
 

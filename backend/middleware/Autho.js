@@ -1,12 +1,12 @@
-// backend/middleware/Autho.js
+
 import jwt from "jsonwebtoken";
 
 // Middleware to authorize by roles
-// Usage: authorize(["Admin", "TL"])
+
 export const authorize = (allowedRoles = []) => (req, res, next) => {
   
   try {
-    // Read token from cookies instead of headers
+    // Read token from cookies 
     let token = req.cookies?.TMSAuthToken;
 
 
@@ -35,8 +35,6 @@ export const authorize = (allowedRoles = []) => (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 };
-
-
 
 
 // Middleware to filter tasks based on developer

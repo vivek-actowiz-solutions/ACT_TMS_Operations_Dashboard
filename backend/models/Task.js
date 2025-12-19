@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-
-
 const domainSchema = new mongoose.Schema({
   name: { type: String, required: true }, // e.g., "web", "app", "both"
   status: {
@@ -87,21 +85,19 @@ reopenCount: {
     githubLink: { type: String },
 
     sowFiles: { type: [String], default: [] },
-    sowUrls: { type: [String], default: [] },
-    inputFiles: { type: [String], default: [] },
-    inputUrls: { type: [String], default: [] },
+    sowUrls: { type: [String],  default: undefined},
+    inputFiles: { type: [String], default: undefined},
+    inputUrls: { type: [String],  default: undefined },
     // outputFiles: { type: [String], default: [] },
     // outputUrls: { type: [String], default: [] },
-    clientSampleSchemaFiles: { type:   [String], default: [] },
-    clientSampleSchemaUrls: { type:   [String], default: [] },
+    clientSampleSchemaFiles: { type:   [String],  default: undefined },
+    clientSampleSchemaUrls: { type:   [String],  default: undefined},
     
     
     remark: { type: String },
   },
   { timestamps: true }
 );
-
-
 
 const Task = mongoose.model("Task", taskSchema);
 export default Task;
