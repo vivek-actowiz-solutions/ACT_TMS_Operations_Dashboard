@@ -175,7 +175,7 @@ export const createTask = async (req, res) => {
       const lastNum = parseInt(parts[1]);
       if (!isNaN(lastNum)) nextNum = lastNum + 1;
     }
-    const projectCode = `RD-${String(nextNum).padStart(3, "0")}`;
+    const projectCode = `OPS-${String(nextNum).padStart(3, "0")}`;
 
     /* ------------------ Date setup ------------------ */
     const assignedDate = new Date();
