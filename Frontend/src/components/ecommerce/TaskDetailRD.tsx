@@ -240,7 +240,7 @@ const TaskDetail: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <MessageSquare size={16} />
                         <span className="text-sm font-medium ">Remarks:</span>
-                        <span className="text-sm font-semibold text-gray-900">{domainObj?.domainRemarks}</span>
+                        <span className="text-sm font-semibold text-gray-900">{domainObj?.domainRemarks || "-"}</span>
                       </div>
                     </div>
 
