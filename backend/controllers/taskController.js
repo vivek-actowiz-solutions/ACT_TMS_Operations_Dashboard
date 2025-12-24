@@ -2186,13 +2186,15 @@ export const reOpenTask = async (req, res) => {
       ? `<@${task.assignedTo.slackId}>`
       : task.assignedTo?.name;
 
+    const admin = `<@${process.env.SLACK_ID_VISHAL}>`  
+
 
     // slack notification
     const slackMessage = `
 :repeat: Task Reopened
 ${space}:briefcase: Task: ${task.title}
 ${space}:bust_in_silhouette: Assigned By: ${assignedByName}(Sales)
-${space}:date:Assigned To: ${assignedToName} (Manager)
+${space}:date:Assigned To: ${admin} (Manager)
 ${space}:memo: Details: The task has been reopened due to required updates. Please review the changes and proceed accordingly.
 ${space}:link: <${dashboardUrl} |Open Dashboard>
 CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
