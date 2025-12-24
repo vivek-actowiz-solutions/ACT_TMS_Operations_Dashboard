@@ -23,7 +23,7 @@ const encodeKey = (key) => typeof key === "string" ? key.replace(/\./g, "‧") :
 const decodeKey = (key) => typeof key === "string" ? key.replace(/‧/g, ".") : key;
 
 const space = '\u2003';
-  
+
 const encodeDevelopers = (devs) => {
   if (!devs) return devs;
   if (typeof devs === "string") {
@@ -43,7 +43,7 @@ const decodeDevelopers = (devs) => {
   const entries = devs instanceof Map ? Array.from(devs.entries()) : Object.entries(devs);
   for (const [k, v] of entries) out[decodeKey(k)] = v;
   return out;
-};        
+};
 
 const decodeSubmissions = (subs) => {
   if (!subs) return subs;
@@ -131,7 +131,7 @@ export const createTask = async (req, res) => {
   try {
     const raw = req.body || {};
     const developers = encodeDevelopers(raw.developers);
-    
+
     /* ------------------ Auth Check ------------------ */
     let assignedByUserId =
       req.user?._id || req.userId || req.user?.id || null;
@@ -160,7 +160,7 @@ export const createTask = async (req, res) => {
 
     if (!Array.isArray(domains)) domains = [];
 
-    
+
     const formattedDomains = domains.map((d) => ({
       name: d.domain || d.name || "",
       typeOfPlatform: d.typeOfPlatform || "",
@@ -196,8 +196,8 @@ export const createTask = async (req, res) => {
       description: raw.description,
       RPM: raw.RPM,
     },
-    {},
-    "create"
+      {},
+      "create"
     );
 
     /* ------------------ Task creation ------------------ */
@@ -213,8 +213,8 @@ export const createTask = async (req, res) => {
       // clientSampleSchemaFiles:
       //   req.files?.clientSampleSchemaFiles?.map((f) => `uploads/${f.filename}`) || [],
       // sowUrls,
-       inputUrls,
-       clientSampleSchemaUrls,
+      inputUrls,
+      clientSampleSchemaUrls,
       assignedBy: assignedByUserId,
     };
 
@@ -225,7 +225,7 @@ export const createTask = async (req, res) => {
     for (const d of formattedDomains) {
       await ActivityLog.create({
         taskId: task._id,
-        domainName: d.name, 
+        domainName: d.name,
         action: "Task Created",
         changedBy: req.user?.name || "Unknown User",
         role: req.user?.role || "Unknown Role",
@@ -257,7 +257,7 @@ export const createTask = async (req, res) => {
         CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>
       `;
 
-    //await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
+    await sendSlackMessage(process.env.SALES_OP_CHANNEL, slackMessage);
 
 
 
@@ -278,7 +278,7 @@ export const updateTask = async (req, res) => {
     const { id } = req.params;
     const body = cleanBody(req.body);
 
-   
+
 
     const task = await Task.findById(id);
     if (!task) return res.status(404).json({ error: "Task not found" });
@@ -525,9 +525,9 @@ export const submitTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const body = req.body;   
+    const body = req.body;
 
-    
+
     const task = await Task.findById(id);
     if (!task) return res.status(404).json({ error: "Task not found" });
 
@@ -859,7 +859,7 @@ CC: <@${process.env.SLACK_ID_DEEP}>,<@${process.env.SLACK_ID_VISHAL}>
 export const editDomainSubmission = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
 
     const {
       domainName,
@@ -903,7 +903,7 @@ export const editDomainSubmission = async (req, res) => {
       outputFiles: [...keptFiles, ...newFiles],
 
       // ❌ REMOVE in-review
-      status: "submitted", 
+      status: "submitted",
     };
 
     // 6. Update domain status (remove in-review)
@@ -1639,7 +1639,7 @@ export const getDevelopersDomainStatus = async (req, res) => {
     console.error("Error fetching developer domain stats:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
-}; 
+};
 
 // export const getTLUsers = async (req, res) => {
 //   try {
@@ -2882,7 +2882,6 @@ export const getDomainStatsRD = async (req, res) => {
   }
 };
 
-
 export const getAllTasks = async (req, res) => {
   try {
     const tasks = await Task.find({
@@ -2925,7 +2924,7 @@ export const assignTask = async (req, res) => {
     const dashboardUrl = `${process.env.FRONTEND_URL}/tasks`;
 
     // Get Slack ID of current logged-in user
-    const currentUser = await User.findById(req.user.id); 
+    const currentUser = await User.findById(req.user.id);
     const AssignedBySlack = currentUser?.slackId || "";
 
     // Get Slack ID of assignedTo user from DB
@@ -2945,13 +2944,13 @@ export const assignTask = async (req, res) => {
     await sendSlackMessage(process.env.OP_CHANNEL, slackMessage);
 
     //Activity Log
-   try {
+    try {
       const domainList = task.domains?.map(d => d.name) || ["-"];
 
       for (const domain of domainList) {
         await ActivityLog.create({
           taskId: task._id,
-          domainName: domain,   
+          domainName: domain,
           action: "Task Assigned",
           changedBy: req.user?.name || "Unknown",
           role: req.user?.role || "Unknown",
