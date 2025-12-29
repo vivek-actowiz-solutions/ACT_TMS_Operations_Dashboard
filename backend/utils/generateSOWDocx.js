@@ -142,7 +142,7 @@ export const generateSOWDocxFromTemplate = async (task,
               new TextRun({
                 text: "Version: ",
 
-                bold: true, 
+                bold: true,
                 size: 28,
               }),
               new TextRun({ text: "1.0", size: 28 }),
@@ -152,7 +152,7 @@ export const generateSOWDocxFromTemplate = async (task,
             children: [
               new TextRun({ text: "Date: ", bold: true, size: 28 }),
               new TextRun({
-                text: task.date || new Date().toLocaleDateString("en-IN"),
+                text: task.date || "-",
                 size: 28,
               }),
             ],
@@ -302,25 +302,15 @@ export const generateSOWDocxFromTemplate = async (task,
                 indent: { left: 720 },
                 children: [
                   new TextRun({
-                    text: `${i + 1}  Platform Name`,
+                    text: `${i + 1} Platform Name :- `,
                     bold: true,
                     size: 24,
                   }),
-                  new TextRun({
-                    text: ` :- ${d.name || "-"} `,
-
-                    size: 24,
-                  }),
-                ],
-              }),
-              new Paragraph({
-                indent: { left: 1440 },
-                children: [
                   new ExternalHyperlink({
-                    link: d.typeOfPlatform || "-",
+                    link: d.name || "",
                     children: [
                       new TextRun({
-                        text: `Type of Platform:- ${d.typeOfPlatform || "-"}`,
+                        text: d.name || "-",
                         style: "Hyperlink",
                         size: 24,
                       }),
@@ -333,14 +323,24 @@ export const generateSOWDocxFromTemplate = async (task,
                 indent: { left: 1440 },
                 children: [
                   new TextRun({
-                    text: `Remarks:- ${d.domainRemarks || "-"}`,
+                    text: `Type of Platform:- ${d.typeOfPlatform || "-"}`,
+                    size: 24,
+                  }),
+                ],
+              }),
 
+              new Paragraph({
+                indent: { left: 1440 },
+                children: [
+                  new TextRun({
+                    text: `Remarks:- ${d.domainRemarks || "-"}`,
                     size: 24,
                   }),
                 ],
               }),
             ])
-            : [new Paragraph("-")]),
+            : [new Paragraph({ text: "-" })]),
+
 
           dividerLine,
 

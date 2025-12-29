@@ -243,7 +243,7 @@ export const createTask = async (req, res) => {
     //     ? `<@${assignedToUser.slackId}>`
     //     : assignedToUser?.email;
 
-    const dashboardUrl = `${process.env.FRONTEND_URL}/tasks`;
+    const dashboardUrl = `${process.env.FRONTEND_URL}/TMS-operations/tasks`;
 
     const admin = `<@${process.env.SLACK_ID_VISHAL}>`
 
@@ -488,7 +488,7 @@ export const updateTask = async (req, res) => {
           .map(d => d.slackId ? `<@${d.slackId}>` : d.email)
           .join(", ");
 
-        const taskUrl = `${process.env.FRONTEND_URL}/tasks`;
+        const taskUrl = `${process.env.FRONTEND_URL}/TMS-operations/tasks`;
 
 
 
@@ -1070,12 +1070,12 @@ export const getTask = async (req, res) => {
             $match: {
               $or: [
                 { projectCode: { $regex: search, $options: "i" } },
-                { title: { $regex: search, $options: "i" } },
-                { description: { $regex: search, $options: "i" } },
+                // { title: { $regex: search, $options: "i" } },
+                // { description: { $regex: search, $options: "i" } },
                 { "domains.name": { $regex: search, $options: "i" } },
-                { "assignedBy.name": { $regex: search, $options: "i" } },
-                { "assignedTo.name": { $regex: search, $options: "i" } },
-                { "domainDevelopers.name": { $regex: search, $options: "i" } },
+                // { "assignedBy.name": { $regex: search, $options: "i" } },
+                // { "assignedTo.name": { $regex: search, $options: "i" } },
+                // { "domainDevelopers.name": { $regex: search, $options: "i" } },
               ],
             },
           },
@@ -1562,7 +1562,7 @@ export const getDomainStats = async (req, res) => {
       error: err.message,
     });
   }
-};
+}; 
 
 // GET DEVELOPERS DOMAIN STATUS
 export const getDevelopersDomainStatus = async (req, res) => {
@@ -1860,26 +1860,18 @@ export const reOpenTask = async (req, res) => {
       });
     }
 
-
-    // taskAssignedDate → reset to now
-    const assignedDate = new Date();
-    task.taskAssignedDate = assignedDate;
-
-    // completeDate → reset
-    task.completeDate = null;
-
-    // targetDate → +2 days from assigned date
-    const targetDate = new Date(assignedDate);
-    targetDate.setDate(assignedDate.getDate() + 2);
-
-    task.targetDate = targetDate;
-
-
-
     const oldTaskData = JSON.parse(JSON.stringify(task.toObject()));
 
-    if (!oldTaskData.RPM) oldTaskData.RPM = task.RPM || "-";
+    const formatDate = (date) =>
+      date ? new Date(date).toLocaleDateString("en-GB") : "-";
 
+    oldTaskData.taskAssignedDate = formatDate(task.taskAssignedDate);
+    oldTaskData.date = oldTaskData.taskAssignedDate;
+    console.log("SOW Assigned Date:", oldTaskData.taskAssignedDate);
+
+
+
+    if (!oldTaskData.RPM) oldTaskData.RPM = task.RPM || "-";
 
 
 
@@ -2012,69 +2004,41 @@ export const reOpenTask = async (req, res) => {
       JSON.stringify(oldDomainsForCompare) !== JSON.stringify(newDomains);
 
 
-    //console.log("DOMAIN CHANGED?", hasDomainChanged);
-
-    // ------------------------------------------
-    // UPDATE DOMAIN ONLY IF CHANGED
-    // ------------------------------------------
-    // if (hasDomainChanged) {
-    //   //console.log("➡ Updating domain status to Reopened");
-
-    //   if (!Array.isArray(task.previousDomain)) task.previousDomain = [];
-
-    //   task.previousDomain.push({
-    //     oldValue: JSON.parse(JSON.stringify(task.domains)),
-    //     changedAt: new Date(),
-    //   });
-
-    //   task.domains = newDomains.map((d) => ({
-    //     ...d,
-    //     status: "Reopened",
-    //   }));
-    //   task.markModified("domains");
-
-    //   // Add to changedFields so SOW is generated
-    //   changedFields.domains = newDomains.map(d => ({
-    //     name: d.name,
-    //     typeOfPlatform: d.typeOfPlatform,
-    //     domainRemarks: d.domainRemarks || ""
-    //   }));
-
-    // } else {
-    //   //console.log("➡ Domains unchanged → NOT updating domain status");
-    // }
-
-    // const savedTask = await Task.findById(id);
-    // console.log(savedTask.domains);
 
     let changedDomainList = [];
 
 
     if (updateData.domains) {
-      const newDomains = Array.isArray(updateData.domains)
-        ? updateData.domains
-        : JSON.parse(updateData.domains);
+  const incomingDomains = Array.isArray(updateData.domains)
+    ? updateData.domains
+    : JSON.parse(updateData.domains);
 
-      const onlyNewDomains = [];
+  const existingDomains = task.domains || [];
+  const existingNames = existingDomains.map(d => d.name);
 
-      newDomains.forEach((newD) => {
-        const oldD = oldDomainsForCompare.find(od => od.name === newD.name);
+  const onlyNewDomains = incomingDomains.filter(
+    d => !existingNames.includes(d.name)
+  );
 
-        // ✅ It is NEW if NOT found in old list
-        if (!oldD) {
-          onlyNewDomains.push({
-            name: newD.name || "-",
-            typeOfPlatform: newD.typeOfPlatform || "-",
-            domainRemarks: newD.domainRemarks || "-"
-          });
-        }
-      });
+  // ✅ ADD new domains to DB
+  if (onlyNewDomains.length > 0) {
+    task.domains = [
+      ...existingDomains,
+      ...onlyNewDomains.map(d => ({
+        name: d.name,
+        typeOfPlatform: d.typeOfPlatform,
+        domainRemarks: d.domainRemarks,
+        status: "Reopened",
+        submission: [],
+        completeDate: null,
+        rejectDomainCount: 0
+      }))
+    ];
 
-      // If new domains exist → add ONLY them to changedFields
-      if (onlyNewDomains.length > 0) {
-        changedFields.domains = onlyNewDomains;
-      }
-    }
+    changedFields.domains = onlyNewDomains;
+    task.markModified("domains");
+  }
+}
 
 
 
@@ -2100,10 +2064,9 @@ export const reOpenTask = async (req, res) => {
       const mergedTaskData = oldTaskData;
 
 
-
       newSowFile = await generateSOWDocxFromTemplate(
         mergedTaskData,
-        changedFields,   // <-- NOW CORRECT
+        changedFields,
         "edit"
       );
 
@@ -2120,7 +2083,6 @@ export const reOpenTask = async (req, res) => {
     if (Object.keys(changedFields).length > 0) {
       if (!Array.isArray(task.previousDomain)) {
         task.previousDomain = [];
-        task.assignedTo = null
       }
       task.previousDomain.push({
         oldValue: JSON.parse(JSON.stringify(task.domains)),
@@ -2138,6 +2100,21 @@ export const reOpenTask = async (req, res) => {
 
         d.status = "Reopened";
       });
+
+
+      // taskassignDATE
+
+      task.taskAssignedDate = new Date();
+
+
+      // ✅ Reset completion
+      task.completeDate = null;
+
+      // ✅ Recalculate target date from TODAY (or original date – your choice)
+      const newTargetDate = new Date();
+      newTargetDate.setDate(newTargetDate.getDate() + 2);
+      task.targetDate = newTargetDate;
+
 
       task.markModified("domains");
     }
@@ -2169,13 +2146,9 @@ export const reOpenTask = async (req, res) => {
         });
       }
 
-
-
     } catch (err) {
       console.error("Failed to create ActivityLog:", err);
     }
-
-
 
     const dashboardUrl = `${process.env.FRONTEND_URL}/TMS-operations/tasks`;
     const assignedByName = task.assignedBy?.slackId
@@ -2186,7 +2159,7 @@ export const reOpenTask = async (req, res) => {
       ? `<@${task.assignedTo.slackId}>`
       : task.assignedTo?.name;
 
-    const admin = `<@${process.env.SLACK_ID_VISHAL}>`  
+    const admin = `<@${process.env.SLACK_ID_VISHAL}>`
 
 
     // slack notification
@@ -2194,7 +2167,7 @@ export const reOpenTask = async (req, res) => {
 :repeat: Task Reopened
 ${space}:briefcase: Task: ${task.title}
 ${space}:bust_in_silhouette: Assigned By: ${assignedByName}(Sales)
-${space}:date:Assigned To: ${admin} (Manager)
+${space}:date:Assigned To: ${assignedToName} (Manager)
 ${space}:memo: Details: The task has been reopened due to required updates. Please review the changes and proceed accordingly.
 ${space}:link: <${dashboardUrl} |Open Dashboard>
 CC: <@${process.env.SLACK_ID_DEEP}>, <@${process.env.SLACK_ID_VISHAL}>,<@${process.env.SLACK_ID_SUNIL}>

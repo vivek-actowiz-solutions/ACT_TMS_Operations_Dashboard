@@ -1511,7 +1511,14 @@ const ReopenTask: React.FC = () => {
                       <div className="space-y-2">
                         {task.domainDetails.map((d, i) => (
                           <div key={i} className="flex flex-col sm:flex-row justify-between items-center bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
-                            <span className="text-sm font-medium text-gray-800 mb-2 sm:mb-0">{d.domain}</span>
+                            <span
+  className="text-sm font-medium text-gray-800 mb-2 sm:mb-0
+             max-w-[160px] truncate inline-block"
+  title={d.domain}  // full text on hover
+>
+  {d.domain}
+</span>
+
                             <span className="text-xs bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-full">{d.typeOfPlatform || "-"}</span>
                             {d.domainRemarks && <span className="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full">{d.domainRemarks}</span>}
                             <div className="flex gap-2 mt-2 sm:mt-0">
@@ -1753,7 +1760,7 @@ const ReopenTask: React.FC = () => {
   className={`px-8 py-3 font-semibold rounded-lg text-white
     ${!isChanged || loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#3C01AF] hover:bg-blue-700"}`}
 >
-  {loading ? "Saving..." : "Update"}
+  {loading ? "Saving..." : "Reopen"}
 </button>
 
 
