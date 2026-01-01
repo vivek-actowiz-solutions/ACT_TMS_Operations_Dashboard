@@ -29,14 +29,15 @@ const AssignTasksPage = () => {
 
   // Fetch users
   const fetchUsers = async () => {
-    const res = await fetch(`${apiUrl}/users/all`, {
-      headers: { Authorization: `Bearer ${token}` },
-      credentials: "include",
-    });
-    const data = await res.json();
-    const activeUsers = data.filter((u: any) => u.role === "Manager" && u.isActive);
-    setUsers(activeUsers);
-  };
+  const res = await fetch(`${apiUrl}/users?roles=Manager`, {
+    headers: { Authorization: `Bearer ${token}` },
+    credentials: "include",
+  });
+
+  const { users } = await res.json();
+  setUsers(users || []);
+};
+
 
   useEffect(() => {
     fetchTasks();

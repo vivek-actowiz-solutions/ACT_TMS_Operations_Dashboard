@@ -6,13 +6,13 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { UserDB2 } from "../models/UserDB2.js";
 
-// Create a new user
+// Create a new user 
 export const createUser = async (req, res) => {
-  const { name, email, password, department, designation, role, slackId, reportingTo} = req.body;
+  const { name, email, password, department, designation, role, slackId, reportingTo } = req.body;
 
   if (req.body.reportingTo === "") {
-  req.body.reportingTo = null;
-}
+    req.body.reportingTo = null;
+  }
 
 
   if (!name || !email || !password) {
@@ -35,9 +35,9 @@ export const createUser = async (req, res) => {
     slackId,
     reportingTo
   });
-  
 
-  
+
+
 
   await newUser.save();
   res.status(201).json({ message: "User registered successfully" });
@@ -108,6 +108,31 @@ export const getAllUsers = async (req, res) => {
   res.json(users);
 }
 
+export const getUsersByRole = async (req, res) => {
+  try {
+    const { roles } = req.query;
+
+    const query = {
+      isActive: true,
+    };
+
+    if (roles) {
+      const roleArray = roles.split(","); // ["Developer", "Sales"]
+      query.role = { $in: roleArray };
+    }
+
+    const users = await User.find(query).select(
+      "_id name role isActive reportingTo"
+    );
+
+
+    res.json({ users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const getUserProfile = async (req, res) => {
   const requestedUserId = req.params.id; // from URL
   const loggedInUser = req.user; // from token
@@ -127,7 +152,6 @@ export const getUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // edit user
 export const editUser = async (req, res) => {

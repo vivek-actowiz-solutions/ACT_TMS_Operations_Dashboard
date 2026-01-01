@@ -1714,6 +1714,8 @@ export const getTLUsers = async (req, res) => {
     );
 
     res.json(final);
+   
+    
   } catch (error) {
     console.error("getTLUsers error:", error);
     res.status(500).json({ message: "Failed to fetch TL summary" });
@@ -2873,7 +2875,7 @@ export const getAllTasks = async (req, res) => {
 
 
 export const assignTask = async (req, res) => {
-  console.log("Assigning task...", req.body);
+  
 
   try {
     const { id } = req.params;

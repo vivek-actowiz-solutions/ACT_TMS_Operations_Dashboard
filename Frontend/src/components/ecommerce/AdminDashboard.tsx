@@ -26,14 +26,28 @@ const AdminDashboard: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    fetch(`${apiUrl}/users/all`)
-   
-      .then(res => res.json())
-      .then(data => setUsers(data))
-      .catch(err => console.error(err));
+   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${apiUrl}/users/all`, {
+          headers: { Authorization: token ? `Bearer ${token}` : "" },
+          credentials: "include",
+        });
+        const data = await response.json();
+        console.log("API Response:", data);
 
-  }, []);
+        // Adjust this depending on your API response
+        const usersFromApi = data.users || data || [];
+        setUsers(usersFromApi);
+
+      } catch (error) {
+        console.error("Network error:", error);
+        setUsers([]);
+      }
+    };
+    fetchUsers();
+  }, [apiUrl]);
 
   const filteredUsers = useMemo(() => {
     return users.filter(

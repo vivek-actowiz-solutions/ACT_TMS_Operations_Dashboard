@@ -970,20 +970,26 @@ const ReopenTask: React.FC = () => {
 
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`${apiUrl}/users/all`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const data = await res.json();
-        // keep TL & Manager similar to CreateTask
-        setAssignedToOptions(data.filter((u: any) => u.role === "TL" || u.role === "Manager"));
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      }
-    };
-    if (apiUrl) fetchUsers();
-  }, [apiUrl]);
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(`${apiUrl}/users?roles=TL,Manager`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      // ✅ ALWAYS use data.users
+      setAssignedToOptions(data.users || []);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  };
+
+  if (apiUrl) fetchUsers();
+}, [apiUrl]);
 
 
   useEffect(() => {

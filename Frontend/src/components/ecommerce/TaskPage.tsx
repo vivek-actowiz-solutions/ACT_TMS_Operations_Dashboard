@@ -161,24 +161,23 @@ const TaskPage: React.FC = () => {
 
 
   const fetchSalesUsers = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/users/all`, {
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-      });
+  try {
+    const response = await fetch(`${apiUrl}/users?roles=Sales`, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
 
-      const users = await response.json();
+      },
+      credentials: "include",
+    });
 
-      // Filter only Sales
-      const sales = users.filter((u: any) => u.role === "Sales");
+    const data = await response.json();
 
-      setSalesList(sales);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
+    // ✅ backend already sends only Sales users
+    setSalesList(data.users || []);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
+};
   useEffect(() => {
     fetchSalesUsers();
   }, []); // only once
@@ -290,7 +289,7 @@ const TaskPage: React.FC = () => {
   };
 
   const token = getCookie("TMSAuthToken");
-  if (!token) return navigate("/TMS-operations/login");
+  if (!token) return navigate("/TMS-operations/login"); 
 
   useEffect(() => {
     try {

@@ -69,7 +69,8 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
 
   const getLoggedUserFromToken = () => {
     const token = getCookie("TMSAuthToken");
-    if (!token) return null;
+    if (!token) return  navigate("/TMS-operations/login");
+
 
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
@@ -80,47 +81,59 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
     }
   };
 
-
   useEffect(() => {
-    setLoggedUser(getLoggedUserFromToken());
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`${apiUrl}/users/all`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          credentials: "include"
-        });
-        const data = await res.json();
-        setUsers(data);
-
-
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      }
-    };
-
-    fetchUsers();
-
+    const user = getLoggedUserFromToken();
+    setLoggedUser(user);
   }, []);
 
+  
+  useEffect(() => { 
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(`${apiUrl}/users?roles=Developer,TL`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        credentials: "include",
+      });
 
-  const developerOptions = users.filter((u) => {
-    if (!u.isActive || u.role !== "TL") return false;
-    // SuperAdmin sees all TLs
-    if (loggedUser?.role === "SuperAdmin") return true;
-    if (loggedUser?.role === "Manager") {
-      const adminIds = users.filter((x) => x.role === "Admin").map((x) => x._id);
-      return (
-        u.reportingTo === loggedUser?.id || adminIds.includes(u.reportingTo)
-      );
+      const data = await res.json();
+
+      // ✅ CORRECT
+      setUsers(data.users || []);
+    } catch (err) {
+      console.error("Error fetching users:", err);
     }
+  };
 
-    // Admin sees all TLs
-    if (loggedUser?.role === "Admin") return true;
+  fetchUsers();
+}, [apiUrl]);
 
-    return false;
-  });
+
+ 
+
+ const developerOptions = users.filter((u) => {
+  // must be active
+  if (!u.isActive) return false;
+   
+   
+  // Admin sees all TLs
+  if (role === "Admin" || role === "SuperAdmin") {
+    return u.role === "TL";
+  }
+
+  // Manager sees only TLs reporting to them
+  if (role === "Manager") {
+    return (
+      u.role === "TL" &&
+      u.reportingTo?.toString() === loggedUser?.id
+    );
+  }
+
+  return false;
+});
+
+
 
 
   const normalizeUserId = (user: any) => {
@@ -630,7 +643,7 @@ const EditTaskUI: React.FC<{ taskData?: Task }> = ({ taskData }) => {
 
 
                             p.oldValue.map((d: any, idx: number) => {
-                              console.log("d", d)
+                           
                               const developerNames =
                                 d.developers
                                   ?.map((dev: any) => resolveUserName(dev))
